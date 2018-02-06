@@ -2,7 +2,7 @@
   "name": "electron-quick-start",
   "version": "1.0.0",
   "description": "A minimal Electron application",
-  "main": "app/main.js",
+  "main": "app/App.js",
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
@@ -19,16 +19,22 @@
   "author": "GitHub",
   "license": "CC0-1.0",
   "devDependencies": {
+    "@types/nedb": "^1.8.5",
+    "@types/sqlite3": "^3.1.1",
     "babel-plugin-transform-async-to-generator": "^6.24.1",
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.24.1",
     "electron": "1.7.10",
     "electron-forge": "^4.1.7",
-    "electron-prebuilt-compile": "1.8.2-beta.3"
+    "electron-prebuilt-compile": "1.8.2-beta.3",
+    "nedb": "^1.8.0",
+    "path": "^0.12.7",
+    "sqlite3": "^3.1.13"
   },
   "dependencies": {
     "electron-compile": "^6.4.2",
-    "electron-squirrel-startup": "^1.0.0"
+    "electron-squirrel-startup": "^1.0.0",
+    "jquery": "^3.2.1"
   },
   "config": {
     "forge": {
