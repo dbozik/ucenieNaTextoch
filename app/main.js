@@ -1,10 +1,12 @@
-var electron_1 = require('electron');
-var path_1 = require('path');
-var url_1 = require('url');
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var electron_1 = require("electron");
+var path_1 = require("path");
+var url_1 = require("url");
 // import {Database} from 'sqlite3';
 // import {Nedb} from 'nedb';
 // var Datastore = require('nedb');
-var Main = (function () {
+var Main = /** @class */ (function () {
     function Main() {
     }
     // static database: Database;
@@ -66,6 +68,6 @@ var Main = (function () {
         Main.application.on('activate', Main.onReady);
     };
     return Main;
-})();
+}());
 exports.default = Main;
 //# sourceMappingURL=Main.js.map
