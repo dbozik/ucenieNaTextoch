@@ -4,6 +4,7 @@ import {format, URL} from 'url';
 // import {Database} from 'sqlite3';
 // import {Nedb} from 'nedb';
 // var Datastore = require('nedb');
+
 export default class Main {
     static mainWindow: Electron.BrowserWindow;
     static application: Electron.App;
