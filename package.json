@@ -1,40 +1,40 @@
 {
-  "name": "electron-quick-start",
+  "name": "LWT",
   "version": "1.0.0",
-  "description": "A minimal Electron application",
+  "description": "learning with texts in electron",
   "main": "app/App.js",
   "scripts": {
     "start": "tsc & electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make"
   },
-  "repository": "https://github.com/electron/electron-quick-start",
+  "repository": "",
   "keywords": [
     "Electron",
-    "quick",
-    "start",
-    "tutorial",
-    "demo"
+    "electron-forge",
+    "nedb",
+    "language-learning"
   ],
-  "author": "GitHub",
+  "author": "Dano Bozik",
   "license": "CC0-1.0",
   "devDependencies": {
     "@types/nedb": "^1.8.5",
-    "@types/sqlite3": "^3.1.1",
+    "@types/sqlite3": "^3.1.3",
     "babel-plugin-transform-async-to-generator": "^6.24.1",
-    "babel-preset-env": "^1.6.1",
+    "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
-    "electron": "1.7.10",
-    "electron-forge": "^4.1.7",
-    "electron-prebuilt-compile": "1.8.2-beta.3",
+    "electron": "^2.0.8",
+    "electron-forge": "^5.2.2",
+    "electron-prebuilt-compile": "2.0.7",
     "nedb": "^1.8.0",
     "path": "^0.12.7",
     "sqlite3": "^3.1.13"
   },
   "dependencies": {
-    "electron-compile": "^6.4.2",
+    "electron-compile": "^6.4.3",
     "electron-squirrel-startup": "^1.0.0",
-    "jquery": "^3.2.1"
+    "jquery": "^3.3.1",
+    "reinstall": "^2.0.0"
   },
   "config": {
     "forge": {
@@ -54,7 +54,7 @@
         "packageManager": "npm"
       },
       "electronWinstallerConfig": {
-        "name": "electron_quick_start"
+        "name": "LWT"
       },
       "electronInstallerDebian": {},
       "electronInstallerRedhat": {},
@@ -64,7 +64,7 @@
       },
       "windowsStoreConfig": {
         "packageName": "",
-        "name": "electronquickstart"
+        "name": "lwt"
       }
     }
   }

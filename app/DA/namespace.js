@@ -5,5 +5,5 @@ function __export(m) {
 Object.defineProperty(exports, "__esModule", { value: true });
 //export * from './settings';
 __export(require("./texts"));
-//export * from './words'; 
+//export * from './words';
 //# sourceMappingURL=namespace.js.map
