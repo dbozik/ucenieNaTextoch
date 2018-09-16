@@ -34,7 +34,8 @@
     "electron-compile": "^6.4.3",
     "electron-squirrel-startup": "^1.0.0",
     "jquery": "^3.3.1",
-    "reinstall": "^2.0.0"
+    "reinstall": "^2.0.0",
+    "rxjs": "^6.3.2"
   },
   "config": {
     "forge": {
