@@ -4,7 +4,7 @@ export class textService {
     constructor() { }
 
     saveText(text: string, userId: number, languageId: number): number {
-        var texts = new DA.texts();
+        const texts = new DA.texts();
         texts.addText(text, userId, languageId);
 
         return texts.textId;

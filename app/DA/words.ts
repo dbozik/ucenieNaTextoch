@@ -3,47 +3,49 @@ import {format, URL} from 'url';
 import * as Datastore from 'nedb';
 import {Observable, ReplaySubject} from 'rxjs';
 import { WordObject } from '../Objects/namespace';
+import { database } from './database';
 
 export class words {
     public wordId: number;
 
+    private db: database = new database();
+
     public constructor() { }
 
-    public add(word: string, exampleSentence: string): Observable<string> {
-        const wordSource: ReplaySubject<string> = new ReplaySubject(1);
-
-        const db:  {words: Datastore} = {words: null};
-        db.words = new Datastore({
-          filename: path.join(process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + 'Library/Preferences' : '/var/local'), 'words.db'),
-          autoload: true
-        });
+    public add(word: string, exampleSentence: string, languageId: number = 1)
+        : Observable<WordObject> {
+        const wordSource$: ReplaySubject<WordObject> = new ReplaySubject(1);
 
         const newWord: WordObject = {
             word: word,
             exampleSentence: exampleSentence,
             level: 0,
-            languageId: 1,
+            languageId: languageId,
         };
-        db.words.insert(newWord, (error, dbWord) => {
-            wordSource.next(dbWord._id);
+        this.db.words.insert(newWord, (error, dbWord) => {
+            wordSource$.next(dbWord);
         });
 
-        return wordSource.asObservable();
+        return wordSource$.asObservable();
     }
 
     public get(word: string): Observable<WordObject> {
-        const wordSource: ReplaySubject<WordObject> = new ReplaySubject(1);
+        const wordSource$: ReplaySubject<WordObject> = new ReplaySubject(1);
 
-        const db:  {words: Datastore} = {words: null};
-        db.words = new Datastore({
-          filename: path.join(process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + 'Library/Preferences' : '/var/local'), 'words.db'),
-          autoload: true
+        this.db.words.findOne({word: word}, (error, foundWord: WordObject) => {
+            wordSource$.next(foundWord);
         });
 
-        db.words.findOne({word: word}, (error, foundWord) => {
-            wordSource.next(foundWord);
+        return wordSource$.asObservable();
+    }
+
+    public getById(id: string): Observable<WordObject> {
+        const wordSource$: ReplaySubject<WordObject> = new ReplaySubject(1);
+
+        this.db.words.findOne({_id: id}, (error, foundWord: WordObject) => {
+            wordSource$.next(foundWord);
         });
 
-        return wordSource.asObservable();
+        return wordSource$.asObservable();
     }
 }
