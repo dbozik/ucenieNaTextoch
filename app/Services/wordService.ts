@@ -11,13 +11,13 @@ export class wordService {
         const words = new DA.words();
 
         words.get(word).subscribe(retrievedWord => {
-            if (!retrievedWord) {
+            if (retrievedWord) {
+                wordSource$.next(retrievedWord);
+            } else {
                 words.add(word, exampleSentence).subscribe(addedWord => {
                     wordSource$.next(addedWord);
                 });
             }
-
-            wordSource$.next(retrievedWord);
         });
 
         return wordSource$.asObservable();

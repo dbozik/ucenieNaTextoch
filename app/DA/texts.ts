@@ -1,34 +1,26 @@
 import * as path from 'path';
 import {format, URL} from 'url';
 import * as Datastore from 'nedb';
+import { database } from './database';
+import { ReplaySubject, Observable } from 'rxjs';
+import { TextObject } from '../Objects/TextObject';
 
 export class texts {
-    public textId: number;
+    private db: database = new database();
 
     public constructor() { }
 
-    public addText(text: string, userId: number, languageId: number): void {
-        const words = text.split(/[\s,.?!;:_()\[\]/\\"-]+/)
-            .filter(word => word !== "");
+    public addText(text: string, userId: number, languageId: number)
+    : Observable<TextObject> 
+    {
+        const textSource$: ReplaySubject<TextObject> = new ReplaySubject(1);
         
-        const parsedText: string[] = [];
-
-        for (let index = 0; index < words.length - 1; index++) {
-            parsedText.push(words[index]);
-            const beginning = text.indexOf(words[index]) + words[index].length;
-            const end = text.indexOf(words[index + 1]);
-            const separator = text.substring(beginning, end);
-            parsedText.push(separator);
-        }
-        
-        console.dir(words);
-        console.dir(parsedText);
-
-        const db:  {texts: Datastore} = {texts: null};
-        db.texts = new Datastore({
-          filename: path.join(process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + 'Library/Preferences' : '/var/local'), 'texts.db'),
-          autoload: true
+        this.db.texts.insert(
+            { id: 1, userId: userId, languageId: languageId, text: text},
+        (error, dbText) => {
+            textSource$.next(dbText);
         });
-        db.texts.insert({ id: 1, userId: userId, languageId: languageId, text: text});
+
+        return textSource$.asObservable();
     }
 }
