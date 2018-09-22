@@ -1,18 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var DA = require("../DA/namespace");
-var textService = /** @class */ (function () {
-    function textService() {
-    }
-    textService.prototype.saveText = function (text, userId, languageId) {
-        var texts = new DA.texts();
+const DA = require("../DA/namespace");
+class textService {
+    constructor() { }
+    saveText(text, userId, languageId) {
+        const texts = new DA.texts();
         this.parseText(text, userId, languageId);
         return texts.addText(text, userId, languageId);
-    };
-    textService.prototype.parseText = function (text, userId, languageId) {
-        var wordsDA = new DA.words();
-        var sentences = text.split(/[.?!]+/)
-            .filter(function (sentence) { return sentence !== ""; });
+    }
+    parseText(text, userId, languageId) {
+        const wordsDA = new DA.words();
+        const sentences = text.split(/[.?!]+/)
+            .filter(sentence => sentence !== "");
         // from(sentences).pipe(
         //     switchMap(sentence => {
         //         const words = sentence.split(/[\s,.?!;:_()\[\]/\\"-]+/)
@@ -32,19 +31,36 @@ var textService = /** @class */ (function () {
         //         if (!wordObject.word)
         //     })
         // )
-        sentences.forEach(function (sentence) {
-            var words = sentence.split(/[\s,.?!;:_()\[\]/\\"-]+/)
-                .filter(function (word) { return word !== ""; })
-                .map(function (word) { return word.toLowerCase(); });
-            words.forEach(function (word) {
-                wordsDA.get(word).subscribe(function (wordObject) {
-                    console.dir(word);
-                    console.dir(sentence);
-                    console.dir(wordObject);
-                    if (!wordObject) {
-                        wordsDA.add(word, sentence);
-                    }
+        // sentences.forEach(sentence => {
+        //     const words = sentence.split(/[\s,.?!;:_()\[\]/\\"-]+/)
+        //         .filter(word => word !== "")
+        //         .map(word => word.toLowerCase());
+        //     words.forEach(word => {
+        //         wordsDA.get(word).subscribe(wordObject => {
+        //             if (!wordObject) {
+        //                 wordsDA.add(word, sentence);
+        //             }
+        //         });
+        //     });
+        // });
+        let wordObjects = [];
+        sentences.forEach(sentence => {
+            const words = sentence.split(/[\s,.?!;:_()\[\]/\\"-]+/)
+                .filter(word => word !== "")
+                .map(word => word.toLowerCase());
+            words.forEach(word => {
+                wordObjects.push({
+                    word: word,
+                    sentence: sentence,
                 });
+            });
+        });
+        wordObjects = this.uniqBy(wordObjects, 'word');
+        wordObjects.forEach(wordObject => {
+            wordsDA.get(wordObject.word).subscribe(wordObjectDb => {
+                if (!wordObjectDb) {
+                    wordsDA.add(wordObject.word, wordObject.sentence);
+                }
             });
         });
         // const parsedText: string[] = [];
@@ -55,8 +71,14 @@ var textService = /** @class */ (function () {
         //     const separator = text.substring(beginning, end);
         //     parsedText.push(separator);
         // }
-    };
-    return textService;
-}());
+    }
+    uniqBy(array, key) {
+        const seen = new Set();
+        return array.filter(item => {
+            const property = item[key]; // key(item);
+            return seen.has(property) ? false : seen.add(property);
+        });
+    }
+}
 exports.textService = textService;
 //# sourceMappingURL=textService.js.map

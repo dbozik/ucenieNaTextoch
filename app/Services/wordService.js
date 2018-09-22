@@ -1,26 +1,24 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var DA = require("../DA/namespace");
-var rxjs_1 = require("rxjs");
-var wordService = /** @class */ (function () {
-    function wordService() {
-    }
-    wordService.prototype.getWord = function (word, exampleSentence) {
-        var wordSource$ = new rxjs_1.ReplaySubject(1);
-        var words = new DA.words();
-        words.get(word).subscribe(function (retrievedWord) {
+const DA = require("../DA/namespace");
+const rxjs_1 = require("rxjs");
+class wordService {
+    constructor() { }
+    getWord(word, exampleSentence) {
+        const wordSource$ = new rxjs_1.ReplaySubject(1);
+        const words = new DA.words();
+        words.get(word).subscribe(retrievedWord => {
             if (retrievedWord) {
                 wordSource$.next(retrievedWord);
             }
             else {
-                words.add(word, exampleSentence).subscribe(function (addedWord) {
+                words.add(word, exampleSentence).subscribe(addedWord => {
                     wordSource$.next(addedWord);
                 });
             }
         });
         return wordSource$.asObservable();
-    };
-    return wordService;
-}());
+    }
+}
 exports.wordService = wordService;
 //# sourceMappingURL=wordService.js.map

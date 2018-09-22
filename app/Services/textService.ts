@@ -42,23 +42,44 @@ export class textService {
         //     })
         // )
 
+        // sentences.forEach(sentence => {
+        //     const words = sentence.split(/[\s,.?!;:_()\[\]/\\"-]+/)
+        //         .filter(word => word !== "")
+        //         .map(word => word.toLowerCase());
+
+        //     words.forEach(word => {
+        //         wordsDA.get(word).subscribe(wordObject => {
+        //             if (!wordObject) {
+        //                 wordsDA.add(word, sentence);
+        //             }
+        //         });
+        //     });
+        // });
+
+        let wordObjects = [];
+
         sentences.forEach(sentence => {
             const words = sentence.split(/[\s,.?!;:_()\[\]/\\"-]+/)
                 .filter(word => word !== "")
                 .map(word => word.toLowerCase());
 
             words.forEach(word => {
-                wordsDA.get(word).subscribe(wordObject => {
-                    console.dir(word);
-                    console.dir(sentence);
-                    console.dir(wordObject);
-                    if (!wordObject) {
-                        wordsDA.add(word, sentence);
-                    }
+                wordObjects.push({
+                    word: word,
+                    sentence: sentence,
                 });
             });
         });
 
+        wordObjects = this.uniqBy(wordObjects, 'word');
+
+        wordObjects.forEach(wordObject => {
+            wordsDA.get(wordObject.word).subscribe(wordObjectDb => {
+                if (!wordObjectDb) {
+                    wordsDA.add(wordObject.word, wordObject.sentence);
+                }
+            });
+        });
 
         // const parsedText: string[] = [];
 
@@ -69,5 +90,13 @@ export class textService {
         //     const separator = text.substring(beginning, end);
         //     parsedText.push(separator);
         // }
+    }
+
+    private uniqBy(array: any[], key: string): any[] {
+        const seen = new Set();
+        return array.filter(item => {
+            const property = item[key]; // key(item);
+            return seen.has(property) ? false : seen.add(property);
+        });
     }
 }
