@@ -1,21 +1,51 @@
 import * as DA from "../DA/namespace";
-import { Observable, of, from } from "rxjs";
-import { switchMap } from "rxjs/operators";
+import { Observable, of, from, forkJoin } from "rxjs";
+import { switchMap, tap } from "rxjs/operators";
 import { TextObject } from "../Objects/TextObject";
+import { parseTextService } from "./parseTextService";
+import { WordObject } from "../Objects/namespace";
 
 export class textService {
     public constructor() { }
+
+    public getText(textId: string): Observable<any> {
+        const texts = new DA.texts();
+
+        return texts.get(textId);
+    }
 
     public saveText(text: string, userId: number, languageId: number)
         : Observable<TextObject> {
         const texts = new DA.texts();
 
-        this.parseText(text, userId, languageId);
+        this.saveWords(text, userId, languageId);
 
         return texts.addText(text, userId, languageId);
     }
 
-    private parseText(text: string, userId: number, languageId: number): void {
+    public parseText(text: string, userId: number, languageId: number): any {
+        const wordsDA = new DA.words();
+
+        const words = parseTextService.splitToWords(text);
+        const textParts = parseTextService.splitToParts(text);
+
+        const wordObjects: WordObject[] = [];
+        const getWords$: Observable<WordObject>[] = [];
+
+        words.forEach(word => {
+            const getWord$ = wordsDA.get(word).pipe(
+                tap(wordObject => wordObjects.push(wordObject)),
+            );
+
+            getWords$.push(getWord$);
+        });
+
+        forkJoin(getWords$).subscribe(() => {
+            
+        });
+    }
+
+    private saveWords(text: string, userId: number, languageId: number): void {
         const wordsDA = new DA.words();
 
         const sentences = text.split(/[.?!]+/)
