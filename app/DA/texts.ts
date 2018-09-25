@@ -23,4 +23,14 @@ export class texts {
 
         return textSource$.asObservable();
     }
+
+    public get(textId: string): Observable<TextObject> {
+        const textSource$: ReplaySubject<TextObject> = new ReplaySubject(1);
+
+        this.db.texts.findOne({_id: textId}, (error, text: TextObject) => {
+            textSource$.next(text);
+        });
+
+        return textSource$.asObservable();
+    }
 }

@@ -1,14 +1,34 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const DA = require("../DA/namespace");
+const rxjs_1 = require("rxjs");
+const operators_1 = require("rxjs/operators");
+const parseTextService_1 = require("./parseTextService");
 class textService {
     constructor() { }
+    getText(textId) {
+        const texts = new DA.texts();
+        return texts.get(textId);
+    }
     saveText(text, userId, languageId) {
         const texts = new DA.texts();
-        this.parseText(text, userId, languageId);
+        this.saveWords(text, userId, languageId);
         return texts.addText(text, userId, languageId);
     }
     parseText(text, userId, languageId) {
+        const wordsDA = new DA.words();
+        const words = parseTextService_1.parseTextService.splitToWords(text);
+        const textParts = parseTextService_1.parseTextService.splitToParts(text);
+        const wordObjects = [];
+        const getWords$ = [];
+        words.forEach(word => {
+            const getWord$ = wordsDA.get(word).pipe(operators_1.tap(wordObject => wordObjects.push(wordObject)));
+            getWords$.push(getWord$);
+        });
+        rxjs_1.forkJoin(getWords$).subscribe(() => {
+        });
+    }
+    saveWords(text, userId, languageId) {
         const wordsDA = new DA.words();
         const sentences = text.split(/[.?!]+/)
             .filter(sentence => sentence !== "");

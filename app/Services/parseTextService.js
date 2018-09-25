@@ -3,16 +3,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class parseTextService {
     constructor() { }
     static splitToWords(text) {
-        return text.split(/[\s,.?!;:_()\[\]/\\"-]+/)
-            .filter(word => word !== "")
+        return this.splitToWordsCase(text)
             .map(word => word.toLowerCase());
     }
     static splitToSentences(text) {
         return text.split(/[.?!]+/)
             .filter(sentence => sentence !== "");
     }
-    static split(text) {
-        const justWords = parseTextService.splitToWords(text);
+    static splitToParts(text) {
+        const justWords = parseTextService.splitToWordsCase(text);
         const textParts = [];
         // iterate through words
         justWords.forEach(word => {
@@ -30,6 +29,10 @@ class parseTextService {
         // include the last part
         textParts.push(text);
         return textParts.filter(word => word !== '');
+    }
+    static splitToWordsCase(text) {
+        return text.split(/[\s,.?!;:_()\[\]/\\"-]+/)
+            .filter(word => word !== "");
     }
 }
 exports.parseTextService = parseTextService;

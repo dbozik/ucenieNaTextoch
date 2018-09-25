@@ -1,34 +1,44 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <script src="../Sources/Scripts/jquery-3.2.1.min.js"></script>
-    <script>
-        window.jQuery = window.$ = require('jquery');
-    </script>
-    <script src="../../node_modules/tether/dist/js/tether.min.js"></script>
-    <!-- <script src="../Sources/Scripts/jquery-3.2.1.min.js"></script> -->
-    <link rel="stylesheet" href="../Sources/Styles/bootstrap.min.css">
-    <link rel="stylesheet" href="../Sources/Styles/bootstrap-grid.min.css">
-    <link rel="stylesheet" href="../Sources/Styles/bootstrap-reboot.min.css">
-    <script src="../Sources/Scripts/bootstrap.min.js"></script>
-    <title>Add Text</title>
-  </head>
-  <body style="background-color:aquamarine;">
-    
-    
-    <div class="panel panel-default">
-        <div class="panel-body">
-            <h3>Read text</h3>
-            <div class="form-group row">
-                    <!-- <label for="comment">Comment:</label> -->
-                <p>TEXT</p>
-            </div>
-        </div>
-    </div>
 
-    <script>
-      require('../Renderers/readText.js')
-    </script>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <script src="../Sources/Scripts/jquery-3.2.1.min.js"></script>
+  <script>
+    window.jQuery = window.$ = require('jquery');
+  </script>
+  <script src="../../node_modules/tether/dist/js/tether.min.js"></script>
+  <!-- <script src="../Sources/Scripts/jquery-3.2.1.min.js"></script> -->
+  <link rel="stylesheet" href="../Sources/Styles/bootstrap.min.css">
+  <link rel="stylesheet" href="../Sources/Styles/bootstrap-grid.min.css">
+  <link rel="stylesheet" href="../Sources/Styles/bootstrap-reboot.min.css">
+  <script src="../Sources/Scripts/bootstrap.min.js"></script>
+
+  <!-- development version, includes helpful console warnings -->
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+  <!-- production version, optimized for size and speed -->
+  <!-- <script src="https://cdn.jsdelivr.net/npm/vue"></script> -->
+
+  <title>Add Text</title>
+</head>
+
+<body style="background-color:aquamarine;">
+
+
+  <div class="panel panel-default" id="readTextVue">
+    <div class="panel-body">
+      <h3>Read text + {{message}}</h3>
+      <div class="form-group row">
+        <!-- <label for="comment">Comment:</label> -->
+        <p>TEXT</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    require('../Renderers/readText.js')
+  </script>
+</body>
+
 </html>

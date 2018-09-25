@@ -13,6 +13,13 @@ class texts {
         });
         return textSource$.asObservable();
     }
+    get(textId) {
+        const textSource$ = new rxjs_1.ReplaySubject(1);
+        this.db.texts.findOne({ _id: textId }, (error, text) => {
+            textSource$.next(text);
+        });
+        return textSource$.asObservable();
+    }
 }
 exports.texts = texts;
 //# sourceMappingURL=texts.js.map
