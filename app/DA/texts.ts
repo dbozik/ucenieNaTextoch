@@ -33,4 +33,14 @@ export class texts {
 
         return textSource$.asObservable();
     }
+
+    public getList(): Observable<TextObject[]> {
+        const textSource$: ReplaySubject<TextObject[]> = new ReplaySubject(1);
+
+        this.db.texts.find({}, (error, texts: TextObject[]) => {
+            textSource$.next(texts);
+        });
+
+        return textSource$.asObservable();
+    }
 }

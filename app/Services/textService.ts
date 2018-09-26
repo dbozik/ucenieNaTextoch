@@ -14,6 +14,12 @@ export class textService {
         return texts.get(textId);
     }
 
+    public getList(): Observable<TextObject[]> {
+        const texts = new DA.texts();
+
+        return texts.getList();
+    }
+
     public saveText(text: string, userId: number, languageId: number)
         : Observable<TextObject> {
         const texts = new DA.texts();
