@@ -5,15 +5,13 @@ import {join} from 'path';
 import {format} from 'url';
 
 $('#addText').click(addText);
+const { ipcRenderer } = require('electron');
 
 function addText(): void {
     const text = $('#text').val();
     console.log(text);
     const textService = new Services.textService();
-    textService.saveText(text, 1, 1);
-
-    require('electron').remote.getCurrentWindow().loadURL(format({
-        pathname: join(__dirname, '../Views/readText.html'),
-        protocol: 'file:'
-    }));
+    textService.saveText(text, 1, 1).subscribe(savedText => {
+        ipcRenderer.send('main-open-text', savedText._id);
+    });
 }

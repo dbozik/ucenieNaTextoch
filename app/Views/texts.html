@@ -28,16 +28,12 @@
 
     <div class="panel panel-default" id="textListVue">
         <div class="panel-body">
-            <h3>Texts reload pokus</h3>
-            <h2>{{message}}</h2>
-            <div class="form-group row">
-                <!-- <label for="comment">Comment:</label> -->
-                <p>TEXT</p>
-            </div>
+            <h3>Texts</h3>
+            
             <div 
             v-for="text in texts"
             v-on:click="textClick(text._id)" 
-            style="margin-left:.5em;border:1px solid black;">
+            style="margin-left:.5em;border:1px solid black;padding:2px;">
                 {{text.text}}
             </div>
         </div>

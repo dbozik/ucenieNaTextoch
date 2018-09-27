@@ -28,17 +28,17 @@
 
   <div class="panel panel-default" id="readTextVue">
     <div class="panel-body">
-      <h3>Read text + {{message}}</h3>
+      <h3>Read text</h3>
       <div class="form-group row">
         <!-- <label for="comment">Comment:</label> -->
-        <p>TEXT</p>
+        <p>{{text.text}}</p>
       </div>
     </div>
   </div>
 
   <script>
-    require('../Renderers/readText.js')
-    console.log(global.location.search);
+    require('../Renderers/readText.js');
+    // loadText(global.location.search);
   </script>
 </body>
 

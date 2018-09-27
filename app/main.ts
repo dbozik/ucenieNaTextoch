@@ -71,12 +71,7 @@ export default class Main {
     }
 
     private static openText(event, arg) {
-        console.log('im in main-open-text 2');
-        console.log(
-            arg
-        );
-
-        Main.mainWindow.loadURL(`file://${__dirname}/Views/readText.html?id=${arg}`)
+        Main.mainWindow.loadURL(`file://${__dirname}/Views/readText.html?id=${arg}`);
     }
 
     static main(
