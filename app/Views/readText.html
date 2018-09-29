@@ -20,25 +20,34 @@
   <!-- production version, optimized for size and speed -->
   <!-- <script src="https://cdn.jsdelivr.net/npm/vue"></script> -->
 
-  <title>Add Text</title>
+  <title>Read Text</title>
 </head>
 
 <body style="background-color:aquamarine;">
 
 
-  <div class="panel panel-default" id="readTextVue">
-    <div class="panel-body">
+  <div class="container" id="readTextVue">
+    <div class="row">
       <h3>Read text</h3>
-      <div class="form-group row">
-        <!-- <label for="comment">Comment:</label> -->
-        <p>{{text.text}}</p>
+    </div>
+    <div class="row">
+      <p>{{text.text}}</p>
+    </div>
+    <div class="row">
+      <div class="col-sm-6">
+          <span v-for="textPart in textParts" style="background-color:red; margin:1px;padding:1px;"
+            v-on:click="clickWord(textPart)"
+          >{{textPart}}
+            </span>
+      </div>
+      <div class="col-sm-6">
+          <webview id="translateWindow" v-bind:src="translateLink()" style="display:inline-flex; width:500px; height:480px"></webview>
       </div>
     </div>
   </div>
 
   <script>
     require('../Renderers/readText.js');
-    // loadText(global.location.search);
   </script>
 </body>
 

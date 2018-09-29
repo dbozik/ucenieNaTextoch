@@ -1,6 +1,6 @@
 import * as DA from "../DA/namespace";
 import { Observable, of, from, forkJoin } from "rxjs";
-import { switchMap, tap } from "rxjs/operators";
+import { switchMap, tap, map } from "rxjs/operators";
 import { TextObject } from "../Objects/TextObject";
 import { parseTextService } from "./parseTextService";
 import { WordObject } from "../Objects/namespace";
@@ -11,7 +11,12 @@ export class textService {
     public getText(textId: string): Observable<any> {
         const texts = new DA.texts();
 
-        return texts.get(textId);
+        return texts.get(textId).pipe(
+            map(text => {
+                text.textParts = parseTextService.splitToParts(text.text);
+                return text;
+            })
+        );
     }
 
     public getList(): Observable<TextObject[]> {

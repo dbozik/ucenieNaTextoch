@@ -3,4 +3,5 @@ export class TextObject {
     public text: string;
     public languageId: number;
     public userId: number;
+    public textParts?: string[];
 }
