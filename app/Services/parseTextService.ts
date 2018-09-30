@@ -1,3 +1,6 @@
+import * as Objects from '../Objects/namespace';
+import {TextPart} from '../Objects/TextPart';
+
 export class parseTextService {
     public constructor() { }
 
@@ -11,9 +14,9 @@ export class parseTextService {
             .filter(sentence => sentence !== "");
     }
 
-    public static splitToParts(text: string): string[] {
+    public static splitToParts(text: string): TextPart[] {
         const justWords = parseTextService.splitToWordsCase(text);
-        const textParts = [];
+        const textParts: TextPart[] = [];
 
         // iterate through words
         justWords.forEach(word => {
@@ -23,18 +26,27 @@ export class parseTextService {
 
             // cut this part and push to textParts
             const beginPart = text.slice(0, wordIndex);
-            textParts.push(beginPart);
+            textParts.push({
+                content: beginPart,
+                type: 'separator',
+            } );
             text = text.substr(wordIndex);
             
             // cut the first word and push to textParts
-            textParts.push(word);
+            textParts.push({
+                content: word,
+                type: 'word',
+            });
             text = text.substr(wordLength);
         });
     
         // include the last part
-        textParts.push(text);
+        textParts.push({
+            content: text,
+            type: 'separator',
+        });
     
-        return textParts.filter(word => word !== '');
+        return textParts.filter(word => word.content !== '');
     }
 
     private static splitToWordsCase(text: string): string[] {

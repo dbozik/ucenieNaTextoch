@@ -8,10 +8,10 @@
     window.jQuery = window.$ = require('jquery');
   </script>
   <script src="../../node_modules/tether/dist/js/tether.min.js"></script>
-  <!-- <script src="../Sources/Scripts/jquery-3.2.1.min.js"></script> -->
   <link rel="stylesheet" href="../Sources/Styles/bootstrap.min.css">
   <link rel="stylesheet" href="../Sources/Styles/bootstrap-grid.min.css">
   <link rel="stylesheet" href="../Sources/Styles/bootstrap-reboot.min.css">
+  <link rel="stylesheet" href="../Sources/Styles/custom.css">
   <script src="../Sources/Scripts/bootstrap.min.js"></script>
 
   <!-- development version, includes helpful console warnings -->
@@ -31,13 +31,11 @@
       <h3>Read text</h3>
     </div>
     <div class="row">
-      <p>{{text.text}}</p>
-    </div>
-    <div class="row">
-      <div class="col-sm-6">
-          <span v-for="textPart in textParts" style="background-color:red; margin:1px;padding:1px;"
+      <div class="col-sm-6" style="background-color: white;">
+          <span v-for="textPart in textParts" style="margin:1px;padding:1px;"
             v-on:click="clickWord(textPart)"
-          >{{textPart}}
+            v-bind:class="{wordColor : (textPart.type === 'word')}"
+          >{{textPart.content}}
             </span>
       </div>
       <div class="col-sm-6">
