@@ -29,6 +29,7 @@ export class parseTextService {
             textParts.push({
                 content: beginPart,
                 type: 'separator',
+                wordId: ''
             } );
             text = text.substr(wordIndex);
             
@@ -36,6 +37,7 @@ export class parseTextService {
             textParts.push({
                 content: word,
                 type: 'word',
+                wordId: ''
             });
             text = text.substr(wordLength);
         });
@@ -44,6 +46,7 @@ export class parseTextService {
         textParts.push({
             content: text,
             type: 'separator',
+            wordId: ''
         });
     
         return textParts.filter(word => word.content !== '');

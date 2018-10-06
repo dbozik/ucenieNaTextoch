@@ -31,12 +31,11 @@
       <h3>Read text</h3>
     </div>
     <div class="row">
-      <div class="col-sm-6" style="background-color: white;">
-          <span v-for="textPart in textParts" style="margin:1px;padding:1px;"
-            v-on:click="clickWord(textPart)"
+      <div class="col-sm-6" style="background-color: white;padding:5px;line-height: 2em;">
+          <span v-for="textPart in textParts" style="margin:1px;border-radius:2px;padding:2px;"
+            v-on:click="clickWord(textPart.content)"
             v-bind:class="{wordColor : (textPart.type === 'word')}"
-          >{{textPart.content}}
-            </span>
+          >{{textPart.content}}</span>
       </div>
       <div class="col-sm-6">
           <webview id="translateWindow" v-bind:src="translateLink()" style="display:inline-flex; width:500px; height:480px"></webview>

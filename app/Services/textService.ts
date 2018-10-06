@@ -1,23 +1,71 @@
 import * as DA from "../DA/namespace";
-import { Observable, of, from, forkJoin } from "rxjs";
-import { switchMap, tap, map } from "rxjs/operators";
+import { Observable, of, from, forkJoin, BehaviorSubject, combineLatest } from "rxjs";
+import { switchMap, tap, map, takeUntil, first } from "rxjs/operators";
 import { TextObject } from "../Objects/TextObject";
 import { parseTextService } from "./parseTextService";
-import { WordObject } from "../Objects/namespace";
+import { WordObject, TextPart } from "../Objects/namespace";
 
 export class textService {
-    public constructor() { }
 
-    public getText(textId: string): Observable<any> {
-        const texts = new DA.texts();
+    private textsDA = new DA.texts();
+    private wordsDA = new DA.words();
 
-        return texts.get(textId).pipe(
-            map(text => {
-                text.textParts = parseTextService.splitToParts(text.text);
-                return text;
+    private _textId: string;
+    private textPartsSource$: BehaviorSubject<TextPart[]> = new BehaviorSubject([]);
+    private wordObjectsSource$: BehaviorSubject<WordObject[]> = new BehaviorSubject([]);
+
+    public textParts$: Observable<TextPart[]> = this.textPartsSource$.asObservable();
+    public wordObjects$: Observable<WordObject[]> = this.wordObjectsSource$.asObservable();
+
+    public set textId(textId: string) {
+        this._textId = textId;
+
+        // get textParts
+        this.textsDA.get(this._textId).subscribe(textDA => {
+            const textParts = parseTextService.splitToParts(textDA.text);
+
+            this.textPartsSource$.next(textParts);
+        });
+
+        // get wordObjects
+        this.textParts$.subscribe(textParts => {
+            const words = textParts.filter(textPart => textPart.type === 'word')
+                .map(textPart => textPart.content.toLowerCase())
+                .filter((word, index, list) => list.indexOf(word) === index);
+
+            const wordObjects: WordObject[] = [];
+            const getWordObjects$: Observable<WordObject>[] = [];
+
+            words.forEach(word => {
+                const getWordObject$ = this.wordsDA.get(word).pipe(
+                    tap(wordObject => wordObjects.push(wordObject))
+                );
+                getWordObjects$.push(getWordObject$);
+            });
+
+            combineLatest(getWordObjects$).subscribe(() =>
+                this.wordObjectsSource$.next(wordObjects)
+            );
+        });
+
+        // append wordIds to textParts
+        combineLatest(this.wordObjects$, this.textParts$).pipe(
+            first(([wordObjects, textParts]: [WordObject[], TextPart[]]) => {
+                return wordObjects.length > 0 && textParts.length > 0;
             })
-        );
+        )
+            .subscribe(
+                ([wordObjects, textParts]: [WordObject[], TextPart[]]) => {
+                    wordObjects.forEach(wordObject => {
+                        textParts.filter(textPart =>
+                            textPart.content.toLowerCase() === wordObject.word)
+                            .forEach(textPart => textPart.wordId = wordObject._id);
+                    });
+                    this.textPartsSource$.next(textParts);
+                });
     }
+
+    public constructor() { }
 
     public getList(): Observable<TextObject[]> {
         const texts = new DA.texts();
@@ -52,7 +100,7 @@ export class textService {
         });
 
         forkJoin(getWords$).subscribe(() => {
-            
+
         });
     }
 
