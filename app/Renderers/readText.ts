@@ -26,9 +26,15 @@ var app = new Vue({
         translateLink: function() {
             return 'https://translate.google.com/?sl=sk&tl=en#sk/en/' + this.translateWord;
         },
-        clickWord: function(word: string): void {
+        clickWord: function(word: string, $event): void {
+            if ($event.target.childNodes.length > 1) {
+                $event.target.childNodes[1].classList.toggle('show');
+            }
             this.translateWord = word;
         },
+        clickPopup: function($event): void {
+            $event.target.classList.toggle('show');
+        }
     },
 });
 

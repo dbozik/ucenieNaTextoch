@@ -20,6 +20,71 @@
   <!-- production version, optimized for size and speed -->
   <!-- <script src="https://cdn.jsdelivr.net/npm/vue"></script> -->
 
+  <style>
+    /* Popup container */
+    .popup {
+      position: relative;
+      display: inline-block;
+      cursor: pointer;
+    }
+
+    /* The actual popup (appears on top) */
+    .popup .popuptext {
+      visibility: hidden;
+      width: 160px;
+      background-color: #555;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 8px 0;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      margin-left: -80px;
+    }
+
+    /* Popup arrow */
+    .popup .popuptext::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: #555 transparent transparent transparent;
+    }
+
+    /* Toggle this class when clicking on the popup container (hide and show the popup) */
+    .popup .show {
+      visibility: visible;
+      -webkit-animation: fadeIn 1s;
+      animation: fadeIn 1s
+    }
+
+    /* Add animation (fade in the popup) */
+    @-webkit-keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+  </style>
+
   <title>Read Text</title>
 </head>
 
@@ -32,13 +97,22 @@
     </div>
     <div class="row">
       <div class="col-sm-6" style="background-color: white;padding:5px;line-height: 2em;">
-          <span v-for="textPart in textParts" style="margin:1px;border-radius:2px;padding:2px;"
-            v-on:click="clickWord(textPart.content)"
-            v-bind:class="{wordColor : (textPart.type === 'word')}"
-          >{{textPart.content}}</span>
+        <span 
+          v-for="textPart in textParts" 
+          style="margin:1px;border-radius:2px;padding:2px;" 
+          v-on:click="clickWord(textPart.content, $event)"
+          v-bind:class="{wordColor : (textPart.type === 'word')}" 
+          v-bind:title="textPart.type === 'word' ? textPart.content : ''"
+          class="popup"
+          >
+          {{textPart.content}}
+          <div class="popuptext" v-on:click="clickPopup($event)">
+            {{textPart.content}}
+          </div>
+        </span>
       </div>
       <div class="col-sm-6">
-          <webview id="translateWindow" v-bind:src="translateLink()" style="display:inline-flex; width:500px; height:480px"></webview>
+        <webview id="translateWindow" v-bind:src="translateLink()" style="display:inline-flex; width:500px; height:480px"></webview>
       </div>
     </div>
   </div>
