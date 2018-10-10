@@ -107,7 +107,11 @@
           >
           {{textPart.content}}
           <div class="popuptext" v-on:click="clickPopup($event)">
-            {{textPart.content}}
+              <div style="font-weight:bold;font-size:1.5em;">{{textPart.word}}</div>
+              <div>Translation:</div>
+              <div><input type="text" v-model='textPart.translation'></div>
+              <div>Example sentence:</div>
+              <div><input type="text" v-model="textPart.exampleSentence"></div>
           </div>
         </span>
       </div>

@@ -59,7 +59,13 @@ export class textService {
                     wordObjects.forEach(wordObject => {
                         textParts.filter(textPart =>
                             textPart.content.toLowerCase() === wordObject.word)
-                            .forEach(textPart => textPart.wordId = wordObject._id);
+                            .forEach(textPart => {
+                                textPart.wordId = wordObject._id;
+                                textPart.word = wordObject.word;
+                                textPart.translation = wordObject.translation;
+                                textPart.level = wordObject.level;
+                                textPart.exampleSentence = wordObject.exampleSentence;
+                            });
                     });
                     this.textPartsSource$.next(textParts);
                 });
