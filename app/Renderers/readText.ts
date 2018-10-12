@@ -1,4 +1,5 @@
 import * as Services from '../Services/namespace';
+import { TextPart } from '../Objects/TextPart';
 
 // import vue from 'vue';
 
@@ -12,6 +13,7 @@ import * as Services from '../Services/namespace';
 declare const Vue;
 
 const textsService = new Services.textService();
+const wordService = new Services.wordService();
 
 var app = new Vue({
     el: '#readTextVue',
@@ -34,7 +36,12 @@ var app = new Vue({
         },
         clickPopup: function($event): void {
             $event.target.classList.toggle('show');
-        }
+        },
+        updateTranslation: function(textPart: TextPart, translation: string): void {
+            // update the data in textService, with reflection in the renderer
+            textsService.updateTranslation(textPart.wordId, translation);
+            wordService.updateTranslation(textPart.wordId, translation);
+        },
     },
 });
 

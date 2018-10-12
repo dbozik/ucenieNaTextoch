@@ -3,9 +3,11 @@ import { Observable, ReplaySubject } from "rxjs";
 import { WordObject } from "../Objects/namespace";
 
 export class wordService {
-    constructor() { }
+    private wordsDA = new DA.words();
 
-    getWord(word: string, exampleSentence: string): Observable<WordObject> {
+    public constructor() { }
+
+    public getWord(word: string, exampleSentence: string): Observable<WordObject> {
         const wordSource$: ReplaySubject<WordObject> = new ReplaySubject(1);
 
         const words = new DA.words();
@@ -21,5 +23,13 @@ export class wordService {
         });
 
         return wordSource$.asObservable();
+    }
+
+    public updateTranslation(id: string, translation: string): void {
+        this.wordsDA.updateTranslation(id, translation);
+    }
+
+    public updateLevel(id: string, level: number): void {
+        this.wordsDA.updateLevel(id, level);
     }
 }

@@ -6,7 +6,7 @@ export class WordObject
 
     public word: string;
 
-    public translation: string;
+    public translation?: string;
 
     public level: number;
 

@@ -11,6 +11,8 @@ export class textService {
     private wordsDA = new DA.words();
 
     private _textId: string;
+    private textParts: TextPart[];
+    private wordObjects: WordObject[];
     private textPartsSource$: BehaviorSubject<TextPart[]> = new BehaviorSubject([]);
     private wordObjectsSource$: BehaviorSubject<WordObject[]> = new BehaviorSubject([]);
 
@@ -108,6 +110,9 @@ export class textService {
         forkJoin(getWords$).subscribe(() => {
 
         });
+    }
+
+    public updateTranslation(wordId: string, translation: string): void {
     }
 
     private saveWords(text: string, userId: number, languageId: number): void {

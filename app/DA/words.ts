@@ -48,4 +48,24 @@ export class words {
 
         return wordSource$.asObservable();
     }
+
+    public updateTranslation(id: string, translation: string): void {
+        const wordSource$: ReplaySubject<WordObject> = new ReplaySubject(1);
+
+        this.db.words.update(
+            {_id: id},
+            {$set: {translation: translation}},
+            {},
+        );
+    }
+
+    public updateLevel(id: string, level: number): void {
+        const wordSource$: ReplaySubject<WordObject> = new ReplaySubject(1);
+
+        this.db.words.update(
+            {_id: id},
+            {$set: {level: level}},
+            {},
+        );
+    }
 }
