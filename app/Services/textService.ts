@@ -24,9 +24,9 @@ export class textService {
 
         // get textParts
         this.textsDA.get(this._textId).subscribe(textDA => {
-            const textParts = parseTextService.splitToParts(textDA.text);
+            this.textParts = parseTextService.splitToParts(textDA.text);
 
-            this.textPartsSource$.next(textParts);
+            this.textPartsSource$.next(this.textParts);
         });
 
         // get wordObjects
@@ -35,18 +35,17 @@ export class textService {
                 .map(textPart => textPart.content.toLowerCase())
                 .filter((word, index, list) => list.indexOf(word) === index);
 
-            const wordObjects: WordObject[] = [];
             const getWordObjects$: Observable<WordObject>[] = [];
 
             words.forEach(word => {
                 const getWordObject$ = this.wordsDA.get(word).pipe(
-                    tap(wordObject => wordObjects.push(wordObject))
+                    tap(wordObject => this.wordObjects.push(wordObject))
                 );
                 getWordObjects$.push(getWordObject$);
             });
 
             combineLatest(getWordObjects$).subscribe(() =>
-                this.wordObjectsSource$.next(wordObjects)
+                this.wordObjectsSource$.next(this.wordObjects)
             );
         });
 
@@ -113,6 +112,13 @@ export class textService {
     }
 
     public updateTranslation(wordId: string, translation: string): void {
+        this.wordObjects.find(wordObject => wordObject._id === wordId).translation = translation;
+
+        this.textParts.filter(textPart => textPart.wordId === wordId)
+            .forEach(textPart => textPart.translation = translation);
+
+        this.textPartsSource$.next(this.textParts);
+        this.wordObjectsSource$.next(this.wordObjects);
     }
 
     private saveWords(text: string, userId: number, languageId: number): void {
@@ -120,41 +126,6 @@ export class textService {
 
         const sentences = text.split(/[.?!]+/)
             .filter(sentence => sentence !== "");
-
-        // from(sentences).pipe(
-        //     switchMap(sentence => {
-        //         const words = sentence.split(/[\s,.?!;:_()\[\]/\\"-]+/)
-        //             .filter(word => word !== "")
-        //             .map(word => word.toLowerCase());
-
-        //         return from(words.map(word => {
-        //             return {word: word, exampleSentence: sentence};
-        //         }));
-        //     }),
-        //     switchMap(wordObject => {
-        //         return {
-        //             word: wordsDA.get(wordObject.word), 
-        //             exampleSentence: wordObject.exampleSentence,
-        //         }
-        //     }),
-        //     switchMap(wordObject => {
-        //         if (!wordObject.word)
-        //     })
-        // )
-
-        // sentences.forEach(sentence => {
-        //     const words = sentence.split(/[\s,.?!;:_()\[\]/\\"-]+/)
-        //         .filter(word => word !== "")
-        //         .map(word => word.toLowerCase());
-
-        //     words.forEach(word => {
-        //         wordsDA.get(word).subscribe(wordObject => {
-        //             if (!wordObject) {
-        //                 wordsDA.add(word, sentence);
-        //             }
-        //         });
-        //     });
-        // });
 
         let wordObjects = [];
 
@@ -180,16 +151,6 @@ export class textService {
                 }
             });
         });
-
-        // const parsedText: string[] = [];
-
-        // for (let index = 0; index < words.length - 1; index++) {
-        //     parsedText.push(words[index]);
-        //     const beginning = text.indexOf(words[index]) + words[index].length;
-        //     const end = text.indexOf(words[index + 1]);
-        //     const separator = text.substring(beginning, end);
-        //     parsedText.push(separator);
-        // }
     }
 
     private uniqBy(array: any[], key: string): any[] {
