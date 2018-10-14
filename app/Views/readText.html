@@ -38,15 +38,19 @@
               {{textPart.content}}
             </div>
             <div>
-              <button class="minus-button">-</button>
-              <button class="plus-button">+</button>
+              <button class="minus-button" v-on:click="clickStopPropagation($event)">-</button>
+              <button class="plus-button" v-on:click="clickStopPropagation($event)">+</button>
             </div>
             <div>Translation:</div>
-            <div><input type="text" v-model='textPart.translation'></div>
+            <div><input type="text" v-model='textPart.translation'
+              v-on:click="clickStopPropagation($event)"
+              ></div>
             <div>Example sentence:</div>
-            <div><input type="text" v-model="textPart.exampleSentence"></div>
+            <div><input type="text" v-model="textPart.exampleSentence"
+              v-on:click="clickStopPropagation($event)"
+              ></div>
             <div>
-              <button v-on:click="updateTranslation(textPart)">Submit</button>
+              <button v-on:click="updateTranslation(textPart),clickStopPropagation($event)">Submit</button>
             </div>
           </div>
         </span>

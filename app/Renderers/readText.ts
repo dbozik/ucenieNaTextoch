@@ -35,7 +35,10 @@ var app = new Vue({
             this.translateWord = word;
         },
         clickPopup: function($event): void {
-            $event.target.classList.toggle('show');
+            $event.toElement.parentElement.classList.toggle('show');
+        },
+        clickStopPropagation: function($event): void {
+            $event.stopPropagation();
         },
         updateTranslation: function(textPart: TextPart): void {
             // update the data in textService, with reflection in the renderer
@@ -53,12 +56,12 @@ const id = href.split('id=')[1];
 textsService.textId = id;
 
 textsService.textParts$.subscribe(textParts => {
-    app.textParts = textParts;
-    console.dir(app.textParts);
+    if (textParts.some(textPart => textPart.hasOwnProperty('translation'))) {
+        app.textParts = textParts;
+    }
 });
 textsService.wordObjects$.subscribe(wordObjects => {
     app.wordObjects = wordObjects;
-    console.dir(app.wordObjects);
 });
 
 function clickWord(word: string): void {
