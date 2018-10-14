@@ -5,4 +5,5 @@ function __export(m) {
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(require("./parseTextService"));
 __export(require("./textService"));
+__export(require("./wordService"));
 //# sourceMappingURL=namespace.js.map

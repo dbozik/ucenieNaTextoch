@@ -37,11 +37,13 @@ var app = new Vue({
         clickPopup: function($event): void {
             $event.target.classList.toggle('show');
         },
-        updateTranslation: function(textPart: TextPart, translation: string): void {
+        updateTranslation: function(textPart: TextPart): void {
             // update the data in textService, with reflection in the renderer
-            textsService.updateTranslation(textPart.wordId, translation);
-            wordService.updateTranslation(textPart.wordId, translation);
-        },
+            if (textPart.translation) {
+                textsService.updateTranslation(textPart.wordId, textPart.translation);
+                wordService.updateTranslation(textPart.wordId, textPart.translation);    
+            }
+        }
     },
 });
 

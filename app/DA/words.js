@@ -33,6 +33,14 @@ class words {
         });
         return wordSource$.asObservable();
     }
+    updateTranslation(id, translation) {
+        const wordSource$ = new rxjs_1.ReplaySubject(1);
+        this.db.words.update({ _id: id }, { $set: { translation: translation } }, {});
+    }
+    updateLevel(id, level) {
+        const wordSource$ = new rxjs_1.ReplaySubject(1);
+        this.db.words.update({ _id: id }, { $set: { level: level } }, {});
+    }
 }
 exports.words = words;
 //# sourceMappingURL=words.js.map

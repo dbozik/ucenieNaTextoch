@@ -3,7 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const DA = require("../DA/namespace");
 const rxjs_1 = require("rxjs");
 class wordService {
-    constructor() { }
+    constructor() {
+        this.wordsDA = new DA.words();
+    }
     getWord(word, exampleSentence) {
         const wordSource$ = new rxjs_1.ReplaySubject(1);
         const words = new DA.words();
@@ -18,6 +20,12 @@ class wordService {
             }
         });
         return wordSource$.asObservable();
+    }
+    updateTranslation(id, translation) {
+        this.wordsDA.updateTranslation(id, translation);
+    }
+    updateLevel(id, level) {
+        this.wordsDA.updateLevel(id, level);
     }
 }
 exports.wordService = wordService;

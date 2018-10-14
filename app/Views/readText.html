@@ -31,16 +31,23 @@
     <div class="row">
       <div class="col-sm-6 text-area">
         <span v-for="textPart in textParts" v-on:click="clickWord(textPart.content, $event)" v-bind:class="{wordColor : (textPart.type === 'word')}"
-          v-bind:title="textPart.type === 'word' ? textPart.content : ''" class="popup text-part">
+          v-bind:title="textPart.type === 'word' ? textPart.translation : ''" class="popup text-part">
           {{textPart.content}}
           <div class="popuptext" v-on:click="clickPopup($event)">
             <div class="font-weight-bold font-size-1_5">
-              {{textPart.word}}
+              {{textPart.content}}
+            </div>
+            <div>
+              <button class="minus-button">-</button>
+              <button class="plus-button">+</button>
             </div>
             <div>Translation:</div>
             <div><input type="text" v-model='textPart.translation'></div>
             <div>Example sentence:</div>
             <div><input type="text" v-model="textPart.exampleSentence"></div>
+            <div>
+              <button v-on:click="updateTranslation(textPart)">Submit</button>
+            </div>
           </div>
         </span>
       </div>

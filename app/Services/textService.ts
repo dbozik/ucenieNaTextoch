@@ -11,8 +11,8 @@ export class textService {
     private wordsDA = new DA.words();
 
     private _textId: string;
-    private textParts: TextPart[];
-    private wordObjects: WordObject[];
+    private textParts: TextPart[] = [];
+    private wordObjects: WordObject[] = [];
     private textPartsSource$: BehaviorSubject<TextPart[]> = new BehaviorSubject([]);
     private wordObjectsSource$: BehaviorSubject<WordObject[]> = new BehaviorSubject([]);
 
@@ -62,7 +62,6 @@ export class textService {
                             textPart.content.toLowerCase() === wordObject.word)
                             .forEach(textPart => {
                                 textPart.wordId = wordObject._id;
-                                textPart.word = wordObject.word;
                                 textPart.translation = wordObject.translation;
                                 textPart.level = wordObject.level;
                                 textPart.exampleSentence = wordObject.exampleSentence;

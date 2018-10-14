@@ -29,7 +29,7 @@ export class parseTextService {
             textParts.push({
                 content: beginPart,
                 type: 'separator',
-                wordId: ''
+                wordId: '',
             } );
             text = text.substr(wordIndex);
             
