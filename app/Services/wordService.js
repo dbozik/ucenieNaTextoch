@@ -24,8 +24,8 @@ class wordService {
     updateTranslation(id, translation) {
         this.wordsDA.updateTranslation(id, translation);
     }
-    updateLevel(id, level) {
-        this.wordsDA.updateLevel(id, level);
+    updateLevel(id, newLevel) {
+        this.wordsDA.updateLevel(id, newLevel);
     }
 }
 exports.wordService = wordService;

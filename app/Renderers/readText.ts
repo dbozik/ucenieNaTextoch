@@ -1,6 +1,8 @@
 import * as Services from '../Services/namespace';
 import { TextPart } from '../Objects/TextPart';
 
+const maxLevel = 10000;
+
 // import vue from 'vue';
 
 // const component = vue.extend({
@@ -46,6 +48,30 @@ var app = new Vue({
                 textsService.updateTranslation(textPart.wordId, textPart.translation);
                 wordService.updateTranslation(textPart.wordId, textPart.translation);    
             }
+        },
+        decreaseLevel: function(textPart: TextPart): void {
+            const newLevel = textPart.level / 2;
+
+            wordService.updateLevel(textPart.wordId, newLevel);
+            textsService.updateLevel(textPart.wordId, newLevel);
+        },
+        increaseLevel: function(textPart: TextPart): void {
+            const newLevel = textPart.level / 2 + maxLevel / 2;
+
+            wordService.updateLevel(textPart.wordId, newLevel);
+            textsService.updateLevel(textPart.wordId, newLevel);
+        },
+        getColor: function(level: number): object {
+            if (typeof level === 'undefined') {
+                return {};
+            }
+            const constantColor = 255;
+            const linearColor = Math.ceil(255 * level / maxLevel);
+            const quadraticColor = Math.ceil(255 * level * level / maxLevel / maxLevel);
+
+            return {
+                backgroundColor: `rgb(${constantColor}, ${linearColor}, ${quadraticColor})`,
+            };
         }
     },
 });

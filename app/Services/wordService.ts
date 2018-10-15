@@ -29,7 +29,7 @@ export class wordService {
         this.wordsDA.updateTranslation(id, translation);
     }
 
-    public updateLevel(id: string, level: number): void {
-        this.wordsDA.updateLevel(id, level);
+    public updateLevel(id: string, newLevel: number): void {
+        this.wordsDA.updateLevel(id, newLevel);
     }
 }

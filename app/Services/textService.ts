@@ -120,6 +120,16 @@ export class textService {
         this.wordObjectsSource$.next(this.wordObjects);
     }
 
+    public updateLevel(wordId: string, level: number): void {
+        this.wordObjects.find(wordObject => wordObject._id === wordId).level = level;
+
+        this.textParts.filter(textPart => textPart.wordId === wordId)
+            .forEach(textPart => textPart.level = level);
+
+        this.textPartsSource$.next(this.textParts);
+        this.wordObjectsSource$.next(this.wordObjects);
+    }
+
     private saveWords(text: string, userId: number, languageId: number): void {
         const wordsDA = new DA.words();
 
