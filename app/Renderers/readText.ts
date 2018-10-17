@@ -28,7 +28,7 @@ var app = new Vue({
     },
     methods: {
         translateLink: function() {
-            return 'https://translate.google.com/?sl=sk&tl=en#sk/en/' + this.translateWord;
+            return 'https://translate.google.com/?sl=de&tl=en#de/en/' + this.translateWord;
         },
         clickWord: function(word: string, $event): void {
             if ($event.target.childNodes.length > 1) {
