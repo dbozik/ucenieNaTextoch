@@ -6,8 +6,10 @@ export class Text {
     // properties:
     // text
     public text: string;
+    // title
+    public title: string;
     // language
-    public languageId: number;
+    public languageId: string;
     // parsed text
     // word list
     public words: Objects.WordObject[];

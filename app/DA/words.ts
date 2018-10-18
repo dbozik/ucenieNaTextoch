@@ -12,7 +12,7 @@ export class words {
 
     public constructor() { }
 
-    public add(word: string, exampleSentence: string, languageId: number = 1)
+    public add(word: string, exampleSentence: string, languageId: string, userId: string)
         : Observable<WordObject> {
         const wordSource$: ReplaySubject<WordObject> = new ReplaySubject(1);
 
@@ -21,6 +21,7 @@ export class words {
             exampleSentence: exampleSentence,
             level: 0,
             languageId: languageId,
+            userId: userId,
         };
         this.db.words.insert(newWord, (error, dbWord) => {
             wordSource$.next(dbWord);

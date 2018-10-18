@@ -4,5 +4,6 @@ export class TextPart {
     public wordId: string;
     public translation?: string;
     public exampleSentence?: string;
+    public exampleSentenceTranslation?: string;
     public level?: number;
 }

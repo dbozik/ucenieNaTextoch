@@ -9,9 +9,10 @@ const { ipcRenderer } = require('electron');
 
 function addText(): void {
     const text = $('#text').val();
+    const title = $('#title').val();
     console.log(text);
     const textService = new Services.textService();
-    textService.saveText(text, 1, 1).subscribe(savedText => {
+    textService.saveText(text, title, '1', '1').subscribe(savedText => {
         ipcRenderer.send('main-open-text', savedText._id);
     });
 }

@@ -10,13 +10,13 @@ export class texts {
 
     public constructor() { }
 
-    public addText(text: string, userId: number, languageId: number)
+    public addText(text: string, title: string, userId: string, languageId: string)
     : Observable<TextObject> 
     {
         const textSource$: ReplaySubject<TextObject> = new ReplaySubject(1);
         
         this.db.texts.insert(
-            { id: 1, userId: userId, languageId: languageId, text: text},
+            { id: 1, userId: userId, languageId: languageId, text: text, title: title},
         (error, dbText) => {
             textSource$.next(dbText);
         });

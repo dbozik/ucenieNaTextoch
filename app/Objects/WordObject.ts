@@ -12,5 +12,7 @@ export class WordObject
 
     public exampleSentence: string;
 
-    public languageId: number;
+    public languageId: string;
+
+    public userId: string;
 }

@@ -79,13 +79,13 @@ export class textService {
         return texts.getList();
     }
 
-    public saveText(text: string, userId: number, languageId: number)
+    public saveText(text: string, title: string, userId: string, languageId: string)
         : Observable<TextObject> {
         const texts = new DA.texts();
 
         this.saveWords(text, userId, languageId);
 
-        return texts.addText(text, userId, languageId);
+        return texts.addText(text, title, userId, languageId);
     }
 
     public parseText(text: string, userId: number, languageId: number): any {
@@ -130,7 +130,7 @@ export class textService {
         this.wordObjectsSource$.next(this.wordObjects);
     }
 
-    private saveWords(text: string, userId: number, languageId: number): void {
+    private saveWords(text: string, userId: string, languageId: string): void {
         const wordsDA = new DA.words();
 
         const sentences = text.split(/[.?!]+/)
@@ -156,7 +156,7 @@ export class textService {
         wordObjects.forEach(wordObject => {
             wordsDA.get(wordObject.word).subscribe(wordObjectDb => {
                 if (!wordObjectDb) {
-                    wordsDA.add(wordObject.word, wordObject.sentence);
+                    wordsDA.add(wordObject.word, wordObject.sentence, '1', '1');
                 }
             });
         });

@@ -16,7 +16,7 @@ export class wordService {
             if (retrievedWord) {
                 wordSource$.next(retrievedWord);
             } else {
-                words.add(word, exampleSentence).subscribe(addedWord => {
+                words.add(word, exampleSentence, '1', '1').subscribe(addedWord => {
                     wordSource$.next(addedWord);
                 });
             }
