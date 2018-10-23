@@ -24,18 +24,29 @@
 </head>
 
 <body style="background-color:aquamarine;">
-
-
-    <div class="panel panel-default" id="textListVue">
-        <div class="panel-body">
+    <div class="container" id="textListVue">
+        <div class="row">
             <h3>Texts</h3>
-            
-            <div 
-            v-for="text in texts"
-            v-on:click="textClick(text._id)" 
-            style="margin-left:.5em;border:1px solid black;padding:2px;">
-                {{text.text}}
-            </div>
+        </div>
+        <div class="row">
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Perex</th>
+                        <th>Edit</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="text in texts">
+                        <td style="font-weight:bold;" v-on:click="textClick(text._id)">{{text.title ? text.title : text.text.slice(0, 10) + '...'}}</td>
+                        <td style="font-weight:lighter;" v-on:click="textClick(text._id)">{{text.text.slice(0, 100)}}...</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 

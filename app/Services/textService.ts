@@ -15,15 +15,18 @@ export class textService {
     private wordObjects: WordObject[] = [];
     private textPartsSource$: BehaviorSubject<TextPart[]> = new BehaviorSubject([]);
     private wordObjectsSource$: BehaviorSubject<WordObject[]> = new BehaviorSubject([]);
+    private textSource$: BehaviorSubject<TextObject> = new BehaviorSubject(new TextObject());
 
     public textParts$: Observable<TextPart[]> = this.textPartsSource$.asObservable();
     public wordObjects$: Observable<WordObject[]> = this.wordObjectsSource$.asObservable();
+    public text$: Observable<TextObject> = this.textSource$.asObservable();
 
     public set textId(textId: string) {
         this._textId = textId;
 
         // get textParts
         this.textsDA.get(this._textId).subscribe(textDA => {
+            this.textSource$.next(textDA);
             this.textParts = parseTextService.splitToParts(textDA.text);
 
             this.textPartsSource$.next(this.textParts);

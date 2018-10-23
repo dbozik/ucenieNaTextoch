@@ -22,6 +22,7 @@ var app = new Vue({
     data: {
         message: 'Read text!',
         text: '',
+        title: '',
         textParts: [],
         wordObjects: [],
         translateWord: '',
@@ -80,6 +81,11 @@ const href = window.location.href;
 const id = href.split('id=')[1];
 
 textsService.textId = id;
+
+textsService.text$.subscribe(text => {
+    app.title = text.title;
+    app.text = text.text;
+});
 
 textsService.textParts$.subscribe(textParts => {
     if (textParts.some(textPart => textPart.hasOwnProperty('translation'))) {

@@ -26,7 +26,7 @@
 <body>
   <div class="container" id="readTextVue">
     <div class="row">
-      <h3>Read text</h3>
+      <h3>{{title ? title : text.slice(0, 10) + '...'}}</h3>
     </div>
     <div class="row">
       <div class="col-sm-6 text-area">
