@@ -1,3 +1,4 @@
 export * from './parseTextService';
 export * from './textService';
 export * from './wordService';
+export * from './languageService';
