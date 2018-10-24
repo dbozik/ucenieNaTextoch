@@ -1,5 +1,13 @@
 body {
-    background-color:aquamarine;
+    background-image: url("../../Views/assets/jumbled-letters.jpg");
+}
+
+.background-color {
+    background-color: palegoldenrod;
+}
+
+.bordered {
+    border: 2px solid black;
 }
 
 .text-area {

@@ -25,11 +25,11 @@
 
 <body>
   <div class="container" id="readTextVue">
-    <div class="row">
+    <div class="row background-color" style="padding-left:10px;font-weight:bold;">
       <h3>{{title ? title : text.slice(0, 10) + '...'}}</h3>
     </div>
     <div class="row">
-      <div class="col-sm-6 text-area">
+      <div class="col-sm-6 text-area bordered">
         <span v-for="textPart in textParts" v-on:click="clickWord(textPart.content, $event)"
         :style="getColor(textPart.level)"  
         v-bind:title="textPart.type === 'word' ? textPart.translation : ''" class="popup text-part">
@@ -57,7 +57,9 @@
         </span>
       </div>
       <div class="col-sm-6">
-        <webview id="translateWindow" class="translate-box" v-bind:src="translateLink()"></webview>
+        <webview id="translateWindow" class="translate-box bordered" 
+          v-bind:src="translateLink()"
+        ></webview>
       </div>
     </div>
   </div>

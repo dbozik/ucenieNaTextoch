@@ -4,8 +4,8 @@
   "description": "learning with texts in electron",
   "main": "app/App.js",
   "scripts": {
-    "start": "tsc --w & electron-forge start",
-    "startParallel": "concurrently --kill-others \"tsc --w\" \"electron-forge start\" ",
+    "startOld": "tsc --w & electron-forge start",
+    "start": "concurrently --kill-others \"tsc --w\" \"electron-forge start\" ",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "dev": "tsc --w & cd app & node dev"
