@@ -66,6 +66,11 @@ var app = new Vue({
             if (typeof level === 'undefined') {
                 return {};
             }
+            if (level === 0) {
+                return {
+                    backgroundColor: 'rgb(150, 150, 150)',
+                };
+            }
             const constantColor = 255;
             const linearColor = Math.ceil(255 * level / maxLevel);
             const quadraticColor = Math.ceil(255 * level * level / maxLevel / maxLevel);
