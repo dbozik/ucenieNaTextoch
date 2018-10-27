@@ -1,6 +1,6 @@
 import * as DA from "../DA/namespace";
 import { Observable, of, from, forkJoin, BehaviorSubject, combineLatest } from "rxjs";
-import { switchMap, tap, map, takeUntil, first } from "rxjs/operators";
+import { switchMap, tap, map, takeUntil, first, filter } from "rxjs/operators";
 import { TextObject } from "../Objects/TextObject";
 import { parseTextService } from "./parseTextService";
 import { WordObject, TextPart } from "../Objects/namespace";
@@ -60,6 +60,8 @@ export class textService {
         )
             .subscribe(
                 ([wordObjects, textParts]: [WordObject[], TextPart[]]) => {
+                    console.table(wordObjects);
+                    console.table(textParts);
                     wordObjects.forEach(wordObject => {
                         textParts.filter(textPart =>
                             textPart.content.toLowerCase() === wordObject.word)
@@ -86,9 +88,9 @@ export class textService {
         : Observable<TextObject> {
         const texts = new DA.texts();
 
-        this.saveWords(text, userId, languageId);
-
-        return texts.addText(text, title, userId, languageId);
+        return this.saveWords(text, userId, languageId).pipe(
+            switchMap(() => texts.addText(text, title, userId, languageId))
+        );
     }
 
     public parseText(text: string, userId: number, languageId: number): any {
@@ -133,7 +135,7 @@ export class textService {
         this.wordObjectsSource$.next(this.wordObjects);
     }
 
-    private saveWords(text: string, userId: string, languageId: string): void {
+    private saveWords(text: string, userId: string, languageId: string): Observable<boolean> {
         const wordsDA = new DA.words();
 
         const sentences = text.split(/[.?!]+/)
@@ -156,13 +158,22 @@ export class textService {
 
         wordObjects = this.uniqBy(wordObjects, 'word');
 
+        const getWords$: Observable<WordObject>[] = [];
+
         wordObjects.forEach(wordObject => {
-            wordsDA.get(wordObject.word).subscribe(wordObjectDb => {
-                if (!wordObjectDb) {
-                    wordsDA.add(wordObject.word, wordObject.sentence, '1', '1');
-                }
-            });
+            const getWord$ = wordsDA.get(wordObject.word).pipe(
+                switchMap(wordObjectDb => {
+                    if (!wordObjectDb) {
+                        return wordsDA.add(wordObject.word, wordObject.sentence, '1', '1');
+                    } else {
+                        return of(wordObjectDb);
+                    }
+                })
+            );
+            getWords$.push(getWord$);
         });
+
+        return forkJoin(getWords$).pipe(() => of(true));
     }
 
     private uniqBy(array: any[], key: string): any[] {
