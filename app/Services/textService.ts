@@ -173,7 +173,7 @@ export class textService {
             getWords$.push(getWord$);
         });
 
-        return forkJoin(getWords$).pipe(() => of(true));
+        return forkJoin(getWords$).pipe(switchMap(() => of(true)));
     }
 
     private uniqBy(array: any[], key: string): any[] {

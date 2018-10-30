@@ -25,6 +25,7 @@ export class words {
         };
         this.db.words.insert(newWord, (error, dbWord) => {
             wordSource$.next(dbWord);
+            wordSource$.complete();
         });
 
         return wordSource$.asObservable();
@@ -35,6 +36,7 @@ export class words {
 
         this.db.words.findOne({word: word}, (error, foundWord: WordObject) => {
             wordSource$.next(foundWord);
+            wordSource$.complete();
         });
 
         return wordSource$.asObservable();
@@ -45,6 +47,7 @@ export class words {
 
         this.db.words.findOne({_id: id}, (error, foundWord: WordObject) => {
             wordSource$.next(foundWord);
+            wordSource$.complete();
         });
 
         return wordSource$.asObservable();
