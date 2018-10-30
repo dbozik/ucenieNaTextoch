@@ -24,8 +24,11 @@ body {
 
 .translate-box {
     display: inline-flex; 
-    width: 500px; 
-    height: 480px;
+    width: 45vw; 
+    height: 90vh;
+    position: fixed;
+    top: 38px;
+    left: 50vw;
 }
 
 .font-weight-bold {

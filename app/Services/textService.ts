@@ -60,8 +60,6 @@ export class textService {
         )
             .subscribe(
                 ([wordObjects, textParts]: [WordObject[], TextPart[]]) => {
-                    console.table(wordObjects);
-                    console.table(textParts);
                     wordObjects.forEach(wordObject => {
                         textParts.filter(textPart =>
                             textPart.content.toLowerCase() === wordObject.word)
