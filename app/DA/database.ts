@@ -7,6 +7,7 @@ export class database {
 
     private _words: Datastore = null;
     private _texts: Datastore = null;
+    private _textsArchived: Datastore = null;
     private _languages: Datastore = null;
     private _settings: Datastore = null;
     private _users: Datastore = null;
@@ -31,6 +32,17 @@ export class database {
         }
         
         return this._texts;
+    }
+
+    public get textsArchived(): Datastore {
+        if (!this._textsArchived) {
+            this._textsArchived = new Datastore({
+                filename: path.join(this.rootPath, 'textsArchived.db'),
+                autoload: true
+            });
+        }
+        
+        return this._textsArchived;
     }
 
     public get languages(): Datastore {

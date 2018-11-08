@@ -13,12 +13,22 @@ const app = new Vue({
 
 const textsService = new Services.textService();
 
-textsService.getList().subscribe(texts => {
-    app.texts = texts;
-});
+const getData = () => {
+    textsService.getList().subscribe(texts => {
+        app.texts = texts;
+    });
+}
+
+getData();
 
 const { ipcRenderer } = require('electron');
 
 app.textClick = (id) => {
     ipcRenderer.send('main-open-text', id);
+}
+
+app.archive = (id) => {
+    textsService.archive(id).subscribe(() => {
+        setTimeout(() => getData(), 1000);
+    });
 }

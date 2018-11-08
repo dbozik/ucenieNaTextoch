@@ -35,16 +35,18 @@
                     <tr>
                         <th>Title</th>
                         <th>Perex</th>
+                        <th>Created On</th>
                         <th>Edit</th>
-                        <th>Delete</th>
+                        <th>Archive</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="text in texts">
                         <td style="font-weight:bold;" v-on:click="textClick(text._id)">{{text.title ? text.title : text.text.slice(0, 10) + '...'}}</td>
                         <td style="font-weight:lighter;" v-on:click="textClick(text._id)">{{text.text.slice(0, 100)}}...</td>
+                        <td>{{text.createdOn}}</td>
                         <td></td>
-                        <td></td>
+                        <td><a v-on:click="archive(text._id)" style="cursor: pointer;">Archive</a></td>
                     </tr>
                 </tbody>
             </table>

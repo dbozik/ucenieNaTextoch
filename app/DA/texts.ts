@@ -1,5 +1,5 @@
 import * as path from 'path';
-import {format, URL} from 'url';
+import { format, URL } from 'url';
 import * as Datastore from 'nedb';
 import { database } from './database';
 import { ReplaySubject, Observable } from 'rxjs';
@@ -11,15 +11,21 @@ export class texts {
     public constructor() { }
 
     public addText(text: string, title: string, userId: string, languageId: string)
-    : Observable<TextObject> 
-    {
+        : Observable<TextObject> {
         const textSource$: ReplaySubject<TextObject> = new ReplaySubject(1);
-        
+
         this.db.texts.insert(
-            { id: 1, userId: userId, languageId: languageId, text: text, title: title},
-        (error, dbText) => {
-            textSource$.next(dbText);
-        });
+            {
+                createdOn: new Date(),
+                userId: userId,
+                languageId: languageId,
+                text: text,
+                title: title
+            },
+            (error, dbText) => {
+                textSource$.next(dbText);
+                textSource$.complete();
+            });
 
         return textSource$.asObservable();
     }
@@ -27,8 +33,9 @@ export class texts {
     public get(textId: string): Observable<TextObject> {
         const textSource$: ReplaySubject<TextObject> = new ReplaySubject(1);
 
-        this.db.texts.findOne({_id: textId}, (error, text: TextObject) => {
+        this.db.texts.findOne({ _id: textId }, (error, text: TextObject) => {
             textSource$.next(text);
+            textSource$.complete();
         });
 
         return textSource$.asObservable();
@@ -42,5 +49,9 @@ export class texts {
         });
 
         return textSource$.asObservable();
+    }
+
+    public delete(textId): void {
+        this.db.texts.remove({_id: textId});
     }
 }

@@ -1,5 +1,5 @@
 import * as DA from "../DA/namespace";
-import { Observable, of, from, forkJoin, BehaviorSubject, combineLatest } from "rxjs";
+import { Observable, of, from, forkJoin, BehaviorSubject, combineLatest, Subject, ReplaySubject } from "rxjs";
 import { switchMap, tap, map, takeUntil, first, filter } from "rxjs/operators";
 import { TextObject } from "../Objects/TextObject";
 import { parseTextService } from "./parseTextService";
@@ -8,6 +8,7 @@ import { WordObject, TextPart } from "../Objects/namespace";
 export class textService {
 
     private textsDA = new DA.texts();
+    private textsArchivedDA = new DA.textsArchived();
     private wordsDA = new DA.words();
 
     private _textId: string;
@@ -131,6 +132,19 @@ export class textService {
 
         this.textPartsSource$.next(this.textParts);
         this.wordObjectsSource$.next(this.wordObjects);
+    }
+
+    public archive(textId: string): Observable<boolean> {
+        const resultSource$: Subject<boolean> = new ReplaySubject<boolean>(1);
+        this.textsDA.get(textId).subscribe(text => {
+            this.textsArchivedDA.addText(text);
+            this.textsDA.delete(textId);
+            
+            resultSource$.next(true);
+            resultSource$.complete();
+        });
+
+        return resultSource$.asObservable();
     }
 
     private saveWords(text: string, userId: string, languageId: string): Observable<boolean> {
