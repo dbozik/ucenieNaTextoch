@@ -1,6 +1,7 @@
 import { BrowserWindow, Menu, ipcMain } from 'electron';
 import { join } from 'path';
 import { format, URL } from 'url';
+import { userService } from './Services/userService';
 // import {Database} from 'sqlite3';
 // import {Nedb} from 'nedb';
 // var Datastore = require('nedb');
@@ -88,6 +89,8 @@ export default class Main {
         Main.application.on('ready', Main.onReady);
         Main.application.on('activate', Main.onReady);
         ipcMain.on('main-open-text', Main.openText);
+        const userService2 = new userService();
+        ipcMain.on('lwt-login', userService2.signin);
     }
 }
 
