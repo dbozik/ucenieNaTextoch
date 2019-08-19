@@ -2,9 +2,15 @@ import { BrowserWindow, Menu, ipcMain } from 'electron';
 import { join } from 'path';
 import { format, URL } from 'url';
 import { userService } from './Services/userService';
+import { Router } from '@angular/router';
 // import {Database} from 'sqlite3';
 // import {Nedb} from 'nedb';
 // var Datastore = require('nedb');
+
+interface AngularWindow extends Window {
+    router: Router;
+}
+declare var window: AngularWindow;
 
 export default class Main {
     static mainWindow: Electron.BrowserWindow;
@@ -22,11 +28,8 @@ export default class Main {
     }
 
     private static onReady() {
-        Main.mainWindow = new Main.BrowserWindow({ width: 800, height: 600 })
-        Main.mainWindow.loadURL(format({
-            pathname: join(__dirname, 'Views/index.html'),
-            protocol: 'file:'
-        }));
+        Main.mainWindow = new Main.BrowserWindow({ width: 800, height: 600 });
+        Main.mainWindow.loadURL(`http://localhost:4200`));
 
         Main.mainWindow.webContents.openDevTools();
 
@@ -41,6 +44,16 @@ export default class Main {
         Main.mainWindow.on('closed', Main.onClose);
 
         const mainMenuTemplate = [
+            {
+                label: 'test routing',
+                click: () => {
+                    Main.mainWindow.webContents.executeJavaScript(
+                        wrapFn(() => {
+                            window.router.navigateByUrl('/test-rouitng');
+                        }),
+                    );
+                },
+            },
             {
                 label: 'Add Text!',
                 click() {
@@ -103,3 +116,7 @@ export default class Main {
 //         arg
 //     );
 // });
+
+function wrapFn(fn: () => void): string {
+    return `(${fn.toString()})()`;
+}
