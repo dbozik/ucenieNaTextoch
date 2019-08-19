@@ -1,5 +1,7 @@
 export class User {
-    public id: string;
+    public id?: string;
+
+    public createdOn: Date;
 
     public name: string;
 

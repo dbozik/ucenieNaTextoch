@@ -14,13 +14,14 @@ export class user {
         : Observable<User> {
         const userSource: ReplaySubject<User> = new ReplaySubject(1);
 
-        this.db.users.insert(
-            {
-                createdOn: new Date(),
-                name: name,
-                password: password,
-                email: password,
-            },
+        const newUser: User = {
+            createdOn: new Date(),
+            name: name,
+            password: password,
+            email: password,
+        };
+
+        this.db.users.insert(newUser,
             (error, dbUser) => {
                 userSource.next(dbUser);
                 userSource.complete();
