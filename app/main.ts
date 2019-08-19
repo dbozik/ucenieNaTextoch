@@ -2,6 +2,7 @@ import { BrowserWindow, Menu, ipcMain } from 'electron';
 import { join } from 'path';
 import { format, URL } from 'url';
 import { userService } from './Services/userService';
+import { NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 // import {Database} from 'sqlite3';
 // import {Nedb} from 'nedb';
@@ -9,8 +10,10 @@ import { Router } from '@angular/router';
 
 interface AngularWindow extends Window {
     router: Router;
+    ngZone: NgZone;
 }
 declare var window: AngularWindow;
+const PORT: number = 31411;
 
 export default class Main {
     static mainWindow: Electron.BrowserWindow;
@@ -27,11 +30,16 @@ export default class Main {
         Main.mainWindow = null;
     }
 
-    private static onReady() {
-        Main.mainWindow = new Main.BrowserWindow({ width: 800, height: 600 });
-        Main.mainWindow.loadURL(`http://localhost:4200`);
+    private static loadPage(page: string): void {
+        Main.mainWindow.webContents.executeJavaScript(
+            wrapFn(() => {
+                window.router.navigateByUrl(`/${page}`);
+            }),
+        );
+    }
 
-        Main.mainWindow.webContents.openDevTools();
+    private static onReady() {
+
 
         // var db:any = new nedb('./file.db');
         // var db = new Datastore({
@@ -41,47 +49,59 @@ export default class Main {
         // //let db = new Datastore();
 
         // Main.database = new Database(':memory:');
-        Main.mainWindow.on('closed', Main.onClose);
+
 
         const mainMenuTemplate = [
             {
-                label: 'test routing',
-                click: () => {
-                    Main.mainWindow.loadURL(`http://localhost:4200/test-routing`);
-                },
-            },
-            {
                 label: 'Add Text!',
-                click() {
-                    Main.mainWindow.loadURL(format({
-                        pathname: join(__dirname, 'Views/addText.html'),
-                        protocol: 'file:'
-                    }));
-                }
             },
             {
                 label: 'Texts',
-                click() {
-                    Main.mainWindow.loadURL(format({
-                        pathname: join(__dirname, 'Views/texts.html'),
-                        protocol: 'file:'
-                    }));
-                }
+                click: () => {
+                    // Main.loadPage('texts');
+                    Main.mainWindow.webContents.executeJavaScript(
+                        wrapFn(() => {
+                            window.ngZone.run(() => {
+                                window.router.navigateByUrl(`/texts`);
+                            });
+                        }),
+                    );
+                },
             },
             {
                 label: 'Vocabulary',
             },
             {
                 label: 'Settings'
+            },
+            {
+                label: 'Signout',
+                click: () => {
+                    // Main.loadPage('login');
+                    Main.mainWindow.webContents.executeJavaScript(
+                        wrapFn(() => {
+                            window.ngZone.run(() => {
+                                window.router.navigateByUrl(`/login`);
+                            });
+                        }),
+                    );
+                },
             }
         ];
 
         const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
         Menu.setApplicationMenu(mainMenu);
+
+        Main.mainWindow = new Main.BrowserWindow({ width: 800, height: 600 });
+        Main.mainWindow.loadURL(`http://localhost:${PORT}/login`);
+
+        Main.mainWindow.webContents.openDevTools();
+
+        Main.mainWindow.on('closed', Main.onClose);
     }
 
     private static openText(event, arg) {
-        Main.mainWindow.loadURL(`file://${__dirname}/Views/readText.html?id=${arg}`);
+        Main.mainWindow.loadURL(`http://localhost:${PORT}/readText/${arg}`);
     }
 
     static main(

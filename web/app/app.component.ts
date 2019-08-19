@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, NgZone } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +8,12 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'web';
+
+  constructor(
+    private readonly router: Router,
+    private readonly ngZone: NgZone,
+  ) {
+    (window as any).router = router;
+    (window as any).ngZone = ngZone;
+  }
 }
