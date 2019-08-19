@@ -1,3 +1,15 @@
-<p>
-  login works! {{value}}
-</p>
+<div class="input-box">
+  <label for="username">Username:</label>
+  <input type="text" name="username">
+</div>
+
+<div class="input-box">
+  <label for="password">Password:</label>
+  <input type="password" name="password">
+</div>
+
+<div class="input-box">
+  <button (click)="signin()">Signin</button>
+  <button (click)="signup()">Signup</button>
+  <button (click)="forgottenPassword()">Forgotten password</button>
+</div>

@@ -39,18 +39,6 @@ export default class Main {
     }
 
     private static onReady() {
-
-
-        // var db:any = new nedb('./file.db');
-        // var db = new Datastore({
-        //     filename: join(__dirname, 'database.db'),
-        //     autoload: true
-        // });
-        // //let db = new Datastore();
-
-        // Main.database = new Database(':memory:');
-
-
         const mainMenuTemplate = [
             {
                 label: 'Add Text!',
@@ -58,7 +46,6 @@ export default class Main {
             {
                 label: 'Texts',
                 click: () => {
-                    // Main.loadPage('texts');
                     Main.mainWindow.webContents.executeJavaScript(
                         wrapFn(() => {
                             window.ngZone.run(() => {
@@ -77,7 +64,6 @@ export default class Main {
             {
                 label: 'Signout',
                 click: () => {
-                    // Main.loadPage('login');
                     Main.mainWindow.webContents.executeJavaScript(
                         wrapFn(() => {
                             window.ngZone.run(() => {
@@ -118,20 +104,8 @@ export default class Main {
         Main.application.on('ready', Main.onReady);
         Main.application.on('activate', Main.onReady);
         ipcMain.on('main-open-text', Main.openText);
-        const userService2 = new userService();
-        ipcMain.on('lwt-login', userService2.signin);
     }
 }
-
-// const {ipcMain} = require('electron');
-
-// Attach listener in the main process with the given ID
-// ipcMain.on('main-open-text', (event, arg) => {
-//     console.log('im in main-open-text');
-//     console.log(
-//         arg
-//     );
-// });
 
 function wrapFn(fn: () => void): string {
     return `(${fn.toString()})()`;
