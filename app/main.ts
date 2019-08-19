@@ -29,7 +29,7 @@ export default class Main {
 
     private static onReady() {
         Main.mainWindow = new Main.BrowserWindow({ width: 800, height: 600 });
-        Main.mainWindow.loadURL(`http://localhost:4200`));
+        Main.mainWindow.loadURL(`http://localhost:4200`);
 
         Main.mainWindow.webContents.openDevTools();
 
@@ -47,11 +47,7 @@ export default class Main {
             {
                 label: 'test routing',
                 click: () => {
-                    Main.mainWindow.webContents.executeJavaScript(
-                        wrapFn(() => {
-                            window.router.navigateByUrl('/test-rouitng');
-                        }),
-                    );
+                    Main.mainWindow.loadURL(`http://localhost:4200/test-routing`);
                 },
             },
             {
