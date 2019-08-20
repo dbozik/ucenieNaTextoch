@@ -39,6 +39,39 @@ export default class Main {
     }
 
     private static onReady() {
+        Main.setMenu();
+
+        Main.mainWindow = new Main.BrowserWindow({ width: 800, height: 600 });
+        Main.mainWindow.loadURL(`http://localhost:${PORT}/login`);
+
+        Main.mainWindow.webContents.openDevTools();
+
+        Main.mainWindow.on('closed', Main.onClose);
+
+        Main.mainWindow.webContents.executeJavaScript(`
+            window.ngZone.run(() => {
+                window.component.ipcEvent$.subscribe();
+            });
+        `, true, value => {
+            console.dir(value);
+
+            if (value !== null) {
+                Main.mainWindow.webContents.executeJavaScript(
+                    wrapFn(() => {
+                        window.ngZone.run(() => {
+                            window.router.navigateByUrl(`/texts`);
+                        });
+                    }),
+                );
+            }
+        });
+    }
+
+    private static openText(event, arg) {
+        Main.mainWindow.loadURL(`http://localhost:${PORT}/readText/${arg}`);
+    }
+
+    private static setMenu() {
         const mainMenuTemplate = [
             {
                 label: 'Add Text!',
@@ -77,17 +110,17 @@ export default class Main {
 
         const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
         Menu.setApplicationMenu(mainMenu);
-
-        Main.mainWindow = new Main.BrowserWindow({ width: 800, height: 600 });
-        Main.mainWindow.loadURL(`http://localhost:${PORT}/login`);
-
-        Main.mainWindow.webContents.openDevTools();
-
-        Main.mainWindow.on('closed', Main.onClose);
     }
 
-    private static openText(event, arg) {
-        Main.mainWindow.loadURL(`http://localhost:${PORT}/readText/${arg}`);
+
+    private static openMenu() {
+        Main.mainWindow.webContents.executeJavaScript(
+            wrapFn(() => {
+                window.ngZone.run(() => {
+                    window.router.navigateByUrl(`/texts`);
+                });
+            }),
+        );
     }
 
     static main(
