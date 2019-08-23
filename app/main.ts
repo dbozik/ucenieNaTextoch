@@ -27,6 +27,25 @@ export default class Main {
     }
 
     private static onReady() {
+        Main.closeMenu();
+
+        Main.mainWindow = new Main.BrowserWindow({ width: 800, height: 600 });
+
+        const environment: 'dev' | 'prod' = 'dev';
+
+        if (environment === 'dev') {
+            Main.mainWindow.loadURL(`http://localhost:${PORT}/login`);
+        } else {
+            Main.mainWindow.loadFile('./dist/web/index.html');
+        }
+
+        Main.mainWindow.webContents.openDevTools();
+
+        Main.mainWindow.on('closed', Main.onClose);
+    }
+
+
+    private static openMenu() {
         const mainMenuTemplate = [
             {
                 label: 'Add Text!',
@@ -52,6 +71,7 @@ export default class Main {
             {
                 label: 'Signout',
                 click: () => {
+                    Main.closeMenu();
                     Main.mainWindow.webContents.executeJavaScript(
                         wrapFn(() => {
                             window.ngZone.run(() => {
@@ -65,21 +85,12 @@ export default class Main {
 
         const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
         Menu.setApplicationMenu(mainMenu);
-
-        Main.mainWindow = new Main.BrowserWindow({ width: 800, height: 600 });
-
-        const environment: 'dev' | 'prod' = 'dev';
-
-        if (environment === 'dev') {
-            Main.mainWindow.loadURL(`http://localhost:${PORT}/login`);
-        } else {
-            Main.mainWindow.loadFile('./dist/web/index.html');
-        }
-
-        Main.mainWindow.webContents.openDevTools();
-
-        Main.mainWindow.on('closed', Main.onClose);
     }
+
+    private static closeMenu() {
+        Menu.setApplicationMenu(null);
+    }
+
 
     private static openText(event, arg) {
         Main.mainWindow.loadURL(`http://localhost:${PORT}/readText/${arg}`);
@@ -89,6 +100,7 @@ export default class Main {
         const userService = new Services.userService();
         userService.signin(arg.username, arg.password).subscribe((success: boolean) => {
             if (success) {
+                Main.openMenu();
                 Main.mainWindow.webContents.executeJavaScript(
                     wrapFn(() => {
                         window.ngZone.run(() => {
@@ -97,16 +109,12 @@ export default class Main {
                     }),
                 );
             } else {
+                Main.mainWindow.webContents.send(ipcEvents.LOGIN_FAILED);
                 ipcMain.emit(ipcEvents.LOGIN_FAILED);
             }
         }, (error) => console.dir(error));
     }
 
-
-    private static testMethod() {
-        console.log('its working - without parameters');
-
-    }
 
     static main(
         app: Electron.App,

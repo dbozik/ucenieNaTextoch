@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, Output, Input } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output, Input, ChangeDetectorRef } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { IpcService } from '../add-text/ipc.service';
 import { ipcEvents } from '../../shared/ipc-events.enum';
@@ -16,6 +16,7 @@ export class LoginComponent implements OnInit {
   constructor(
     private readonly ipcService: IpcService,
     private readonly formBuilder: FormBuilder,
+    private readonly cdr: ChangeDetectorRef,
   ) {
   }
 
@@ -26,7 +27,10 @@ export class LoginComponent implements OnInit {
       password: this.formBuilder.control('', Validators.required),
     });
 
-    this.ipcService.ipc.on(ipcEvents.LOGIN_FAILED, () => this.wrongCredentials = true);
+    this.ipcService.ipc.on(ipcEvents.LOGIN_FAILED, () => {
+      this.wrongCredentials = true;
+      this.cdr.detectChanges();
+    });
   }
 
 
