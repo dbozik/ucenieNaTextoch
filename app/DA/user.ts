@@ -18,7 +18,7 @@ export class user {
             createdOn: new Date(),
             name: name,
             password: password,
-            email: password,
+            email: email,
         };
 
         this.db.users.insert(newUser,

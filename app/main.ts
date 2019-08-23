@@ -116,6 +116,21 @@ export default class Main {
     }
 
 
+    private static signup(event, arg) {
+        const userService = new Services.userService();
+
+        userService.signup(arg.username, arg.password, arg.email).subscribe((success: boolean) => {
+            Main.mainWindow.webContents.executeJavaScript(
+                wrapFn(() => {
+                    window.ngZone.run(() => {
+                        window.router.navigateByUrl(`/login`);
+                    });
+                }),
+            );
+        }, (error) => console.dir(error));
+    }
+
+
     static main(
         app: Electron.App,
         browserWindow: typeof BrowserWindow) {
@@ -131,6 +146,7 @@ export default class Main {
         Main.application.on('activate', Main.onReady);
         ipcMain.on('main-open-text', Main.openText);
         ipcMain.on(ipcEvents.LOGIN, Main.login);
+        ipcMain.on(ipcEvents.SIGNUP, Main.signup);
     }
 }
 

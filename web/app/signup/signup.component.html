@@ -1,0 +1,30 @@
+<div [formGroup]="signupForm">
+  <div class="input-box">
+    <label for="username">Username:</label>
+    <input type="text" name="username" formControlName="username">
+  </div>
+  
+  <div class="input-box">
+    <label for="password">Password:</label>
+    <input type="password" name="password" formControlName="password">
+  </div>
+
+  <div class="input-box">
+    <label for="repeatPassword">Repeat password:</label>
+    <input type="password" name="repeatPassword" formControlName="repeatPassword">
+  </div>
+
+  <div class="input-box">
+    <label for="email">Email:</label>
+    <input type="email" name="email" formControlName="email">
+  </div>
+
+  <div *ngIf="incorrectData" style="color: red;">
+    Incorrect data
+  </div>
+  
+  <div class="input-box">
+    <button (click)="onSignup()" [disabled]="signupForm.invalid">Signup</button>
+    <button (click)="onBack()">Back</button>
+  </div>
+</div>

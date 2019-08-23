@@ -2,6 +2,7 @@ import { Component, OnInit, EventEmitter, Output, Input, ChangeDetectorRef } fro
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { IpcService } from '../add-text/ipc.service';
 import { ipcEvents } from '../../shared/ipc-events.enum';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -17,6 +18,7 @@ export class LoginComponent implements OnInit {
     private readonly ipcService: IpcService,
     private readonly formBuilder: FormBuilder,
     private readonly cdr: ChangeDetectorRef,
+    private readonly router: Router,
   ) {
   }
 
@@ -46,7 +48,7 @@ export class LoginComponent implements OnInit {
 
 
   public onSignup(): void {
-
+    this.router.navigateByUrl('signup');
   }
 
 
