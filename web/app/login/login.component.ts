@@ -1,36 +1,37 @@
-import { Component, OnInit } from '@angular/core';
-import { AppService } from '../app-service';
-import { IpcRenderer, ipcMain } from 'electron';
+import { Component, OnInit, EventEmitter, Output } from '@angular/core';
+import { FormGroup } from '@angular/forms';
+import { IpcService } from '../add-text/ipc.service';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent {
-  private ipc: IpcRenderer
+export class LoginComponent implements OnInit {
+  public signinForm: FormGroup;
 
-  constructor() {
-    if ((<any>window).require) {
-      try {
-        this.ipc = (<any>window).require('electron').ipcRenderer
-      } catch (error) {
-        throw error
-      }
+  @Output()
+  public login: EventEmitter<void> = new EventEmitter();
+  @Output()
+  public signup: EventEmitter<void> = new EventEmitter();  
 
-      this.ipc.send('lwt-test');
-    } else {
-      console.warn('Could not load electron ipc')
-    }
+  constructor(
+    private readonly ipcService: IpcService,
+  ) {
+  }
+
+
+  public ngOnInit(): void {
+    
   }
 
 
   public signin(): void {
-
+    this.ipcService.ipc.send('lwt-test');
   }
 
 
-  public signup(): void {
+  public onSignup(): void {
 
   }
 
