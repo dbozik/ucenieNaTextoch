@@ -83,6 +83,16 @@ export default class Main {
         Main.mainWindow.loadURL(`http://localhost:${PORT}/readText/${arg}`);
     }
 
+    private static login() {
+        Main.mainWindow.webContents.executeJavaScript(
+            wrapFn(() => {
+                window.ngZone.run(() => {
+                    window.router.navigateByUrl(`/texts`);
+                });
+            }),
+        );
+    }
+
 
     private static testMethod() {
         console.log('its working - without parameters');
@@ -103,7 +113,7 @@ export default class Main {
         Main.application.on('ready', Main.onReady);
         Main.application.on('activate', Main.onReady);
         ipcMain.on('main-open-text', Main.openText);
-        ipcMain.on('lwt-test', Main.testMethod);
+        ipcMain.on('lwt-login', Main.login);
     }
 }
 
