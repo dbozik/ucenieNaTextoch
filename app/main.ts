@@ -2,6 +2,7 @@ import { BrowserWindow, Menu, ipcMain } from 'electron';
 import { NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { ipcEvents } from '../web/shared/ipc-events.enum';
+import { Routes } from '../web/shared/routes.enum';
 import * as Services from '../app/Services/namespace';
 
 interface AngularWindow extends Window {
@@ -34,7 +35,7 @@ export default class Main {
         const environment: 'dev' | 'prod' = 'dev';
 
         if (environment === 'dev') {
-            Main.mainWindow.loadURL(`http://localhost:${PORT}/login`);
+            Main.mainWindow.loadURL(`http://localhost:${PORT}/${Routes.LOGIN}`);
         } else {
             Main.mainWindow.loadFile('./dist/web/index.html');
         }
@@ -56,7 +57,7 @@ export default class Main {
                     Main.mainWindow.webContents.executeJavaScript(
                         wrapFn(() => {
                             window.ngZone.run(() => {
-                                window.router.navigateByUrl(`/texts`);
+                                window.router.navigateByUrl(`/${Routes.TEXTS}`);
                             });
                         }),
                     );
@@ -75,7 +76,7 @@ export default class Main {
                     Main.mainWindow.webContents.executeJavaScript(
                         wrapFn(() => {
                             window.ngZone.run(() => {
-                                window.router.navigateByUrl(`/login`);
+                                window.router.navigateByUrl(`/${Routes.LOGIN}`);
                             });
                         }),
                     );
@@ -93,7 +94,7 @@ export default class Main {
 
 
     private static openText(event, arg) {
-        Main.mainWindow.loadURL(`http://localhost:${PORT}/readText/${arg}`);
+        Main.mainWindow.loadURL(`http://localhost:${PORT}/${Routes.READ_TEXT}/${arg}`);
     }
 
     private static login(event, arg) {
@@ -104,7 +105,7 @@ export default class Main {
                 Main.mainWindow.webContents.executeJavaScript(
                     wrapFn(() => {
                         window.ngZone.run(() => {
-                            window.router.navigateByUrl(`/texts`);
+                            window.router.navigateByUrl(`/${Routes.TEXTS}`);
                         });
                     }),
                 );
@@ -123,7 +124,7 @@ export default class Main {
             Main.mainWindow.webContents.executeJavaScript(
                 wrapFn(() => {
                     window.ngZone.run(() => {
-                        window.router.navigateByUrl(`/login`);
+                        window.router.navigateByUrl(`/${Routes.LOGIN}`);
                     });
                 }),
             );

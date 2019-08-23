@@ -3,6 +3,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { IpcService } from '../add-text/ipc.service';
 import { ipcEvents } from '../../shared/ipc-events.enum';
 import { Router } from '@angular/router';
+import { Routes } from '../../shared/routes.enum';
 
 @Component({
   selector: 'app-login',
@@ -48,7 +49,7 @@ export class LoginComponent implements OnInit {
 
 
   public onSignup(): void {
-    this.router.navigateByUrl('signup');
+    this.router.navigateByUrl(Routes.SIGNUP);
   }
 
 
