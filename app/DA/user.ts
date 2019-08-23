@@ -33,7 +33,7 @@ export class user {
     public get(name, password): Observable<User> {
         const userSource$: ReplaySubject<User> = new ReplaySubject(null);
 
-        this.db.texts.findOne({ name, password }, (error, user: User) => {
+        this.db.users.findOne({ name, password }, (error, user: User) => {
             userSource$.next(user);
             userSource$.complete();
         });

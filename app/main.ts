@@ -1,6 +1,8 @@
 import { BrowserWindow, Menu, ipcMain } from 'electron';
 import { NgZone } from '@angular/core';
 import { Router } from '@angular/router';
+import { ipcEvents } from '../web/shared/ipc-events.enum';
+import * as Services from '../app/Services/namespace';
 
 interface AngularWindow extends Window {
     router: Router;
@@ -68,7 +70,7 @@ export default class Main {
 
         const environment: 'dev' | 'prod' = 'dev';
 
-        if  (environment === 'dev') {
+        if (environment === 'dev') {
             Main.mainWindow.loadURL(`http://localhost:${PORT}/login`);
         } else {
             Main.mainWindow.loadFile('./dist/web/index.html');
@@ -83,20 +85,27 @@ export default class Main {
         Main.mainWindow.loadURL(`http://localhost:${PORT}/readText/${arg}`);
     }
 
-    private static login() {
-        Main.mainWindow.webContents.executeJavaScript(
-            wrapFn(() => {
-                window.ngZone.run(() => {
-                    window.router.navigateByUrl(`/texts`);
-                });
-            }),
-        );
+    private static login(event, arg) {
+        const userService = new Services.userService();
+        userService.signin(arg.username, arg.password).subscribe((success: boolean) => {
+            if (success) {
+                Main.mainWindow.webContents.executeJavaScript(
+                    wrapFn(() => {
+                        window.ngZone.run(() => {
+                            window.router.navigateByUrl(`/texts`);
+                        });
+                    }),
+                );
+            } else {
+                ipcMain.emit(ipcEvents.LOGIN_FAILED);
+            }
+        }, (error) => console.dir(error));
     }
 
 
     private static testMethod() {
         console.log('its working - without parameters');
-        
+
     }
 
     static main(
@@ -113,7 +122,7 @@ export default class Main {
         Main.application.on('ready', Main.onReady);
         Main.application.on('activate', Main.onReady);
         ipcMain.on('main-open-text', Main.openText);
-        ipcMain.on('lwt-login', Main.login);
+        ipcMain.on(ipcEvents.LOGIN, Main.login);
     }
 }
 

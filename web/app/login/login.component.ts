@@ -1,7 +1,7 @@
 import { Component, OnInit, EventEmitter, Output, Input } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { IpcService } from '../add-text/ipc.service';
-import * as Services from '../../../app/Services/namespace';
+import { ipcEvents } from '../../shared/ipc-events.enum';
 
 @Component({
   selector: 'app-login',
@@ -11,12 +11,6 @@ import * as Services from '../../../app/Services/namespace';
 export class LoginComponent implements OnInit {
   public signinForm: FormGroup;
 
-  @Output()
-  public login: EventEmitter<void> = new EventEmitter();
-  @Output()
-  public signup: EventEmitter<void> = new EventEmitter();  
-
-  @Input()
   public wrongCredentials: boolean = false;
 
   constructor(
@@ -32,25 +26,18 @@ export class LoginComponent implements OnInit {
       password: this.formBuilder.control('', Validators.required),
     });
 
-    this.signinForm.valueChanges.subscribe(() => this.wrongCredentials = false);
+    this.ipcService.ipc.on(ipcEvents.LOGIN_FAILED, () => this.wrongCredentials = true);
   }
 
 
 
   public signin(): void {
     if (this.signinForm.invalid) {
+      this.wrongCredentials = true;
       return;
     }
 
-    const userService = new Services.userService();
-
-    userService.signin(this.signinForm.get('name').value, this.signinForm.get('password').value).subscribe((success: boolean) => {
-        if (success) {
-            this.ipcService.ipc.send('lwt-login');
-        } else {
-            this.wrongCredentials = true;
-        }
-    }, (error) => console.dir(error));
+    this.ipcService.ipc.send(ipcEvents.LOGIN, this.signinForm.value);
   }
 
 
