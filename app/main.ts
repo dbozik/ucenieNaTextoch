@@ -1,12 +1,6 @@
 import { BrowserWindow, Menu, ipcMain } from 'electron';
-import { join } from 'path';
-import { format, URL } from 'url';
-import { userService } from './Services/userService';
 import { NgZone } from '@angular/core';
 import { Router } from '@angular/router';
-// import {Database} from 'sqlite3';
-// import {Nedb} from 'nedb';
-// var Datastore = require('nedb');
 
 interface AngularWindow extends Window {
     router: Router;
@@ -19,7 +13,7 @@ export default class Main {
     static mainWindow: Electron.BrowserWindow;
     static application: Electron.App;
     static BrowserWindow;
-    // static database: Database;
+
     private static onWindowAllClosed() {
         if (process.platform !== 'darwin')
             Main.application.quit();
@@ -30,48 +24,7 @@ export default class Main {
         Main.mainWindow = null;
     }
 
-    private static loadPage(page: string): void {
-        Main.mainWindow.webContents.executeJavaScript(
-            wrapFn(() => {
-                window.router.navigateByUrl(`/${page}`);
-            }),
-        );
-    }
-
     private static onReady() {
-        Main.setMenu();
-
-        Main.mainWindow = new Main.BrowserWindow({ width: 800, height: 600 });
-        Main.mainWindow.loadURL(`http://localhost:${PORT}/login`);
-
-        Main.mainWindow.webContents.openDevTools();
-
-        Main.mainWindow.on('closed', Main.onClose);
-
-        Main.mainWindow.webContents.executeJavaScript(`
-            window.ngZone.run(() => {
-                window.component.ipcEvent$.subscribe();
-            });
-        `, true, value => {
-            console.dir(value);
-
-            if (value !== null) {
-                Main.mainWindow.webContents.executeJavaScript(
-                    wrapFn(() => {
-                        window.ngZone.run(() => {
-                            window.router.navigateByUrl(`/texts`);
-                        });
-                    }),
-                );
-            }
-        });
-    }
-
-    private static openText(event, arg) {
-        Main.mainWindow.loadURL(`http://localhost:${PORT}/readText/${arg}`);
-    }
-
-    private static setMenu() {
         const mainMenuTemplate = [
             {
                 label: 'Add Text!',
@@ -110,17 +63,30 @@ export default class Main {
 
         const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
         Menu.setApplicationMenu(mainMenu);
+
+        Main.mainWindow = new Main.BrowserWindow({ width: 800, height: 600 });
+
+        const environment: 'dev' | 'prod' = 'dev';
+
+        if  (environment === 'dev') {
+            Main.mainWindow.loadURL(`http://localhost:${PORT}/login`);
+        } else {
+            Main.mainWindow.loadFile('./dist/web/index.html');
+        }
+
+        Main.mainWindow.webContents.openDevTools();
+
+        Main.mainWindow.on('closed', Main.onClose);
+    }
+
+    private static openText(event, arg) {
+        Main.mainWindow.loadURL(`http://localhost:${PORT}/readText/${arg}`);
     }
 
 
-    private static openMenu() {
-        Main.mainWindow.webContents.executeJavaScript(
-            wrapFn(() => {
-                window.ngZone.run(() => {
-                    window.router.navigateByUrl(`/texts`);
-                });
-            }),
-        );
+    private static testMethod() {
+        console.log('its working - without parameters');
+        
     }
 
     static main(
@@ -137,6 +103,7 @@ export default class Main {
         Main.application.on('ready', Main.onReady);
         Main.application.on('activate', Main.onReady);
         ipcMain.on('main-open-text', Main.openText);
+        ipcMain.on('lwt-test', Main.testMethod);
     }
 }
 

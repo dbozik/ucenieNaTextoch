@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AppService } from '../app-service';
-import { ipcRenderer } from 'electron';
-import { Subject, ReplaySubject } from 'rxjs';
+import { IpcRenderer, ipcMain } from 'electron';
 
 @Component({
   selector: 'app-login',
@@ -9,19 +8,25 @@ import { Subject, ReplaySubject } from 'rxjs';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
+  private ipc: IpcRenderer
 
-  public ipcEvent$: Subject<any> = new ReplaySubject(1);
+  constructor() {
+    if ((<any>window).require) {
+      try {
+        this.ipc = (<any>window).require('electron').ipcRenderer
+      } catch (error) {
+        throw error
+      }
 
-  public ipcEvent = this.ipcEvent$.toPromise();
-
-  constructor(
-  ) { 
-    (window as any).component = this;
+      this.ipc.send('lwt-test');
+    } else {
+      console.warn('Could not load electron ipc')
+    }
   }
 
 
   public signin(): void {
-    this.ipcEvent$.next({hodnota: 'nieco'});
+
   }
 
 
