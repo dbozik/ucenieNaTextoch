@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { ipcEvents } from '../web/shared/ipc-events.enum';
 import { Routes } from '../web/shared/routes.enum';
 import * as Services from '../app/Services/namespace';
+import { Observable } from 'rxjs';
 
 interface AngularWindow extends Window {
     router: Router;
@@ -54,17 +55,7 @@ export default class Main {
             {
                 label: 'Texts',
                 click: () => {
-                    const userId: string = Services.StateService.getInstance().userId;
-                    console.dir(userId);
-                    
-
-                    Main.mainWindow.webContents.executeJavaScript(
-                        wrapFn(() => {
-                            window.ngZone.run(() => {
-                                window.router.navigateByUrl(`/texts`);
-                            });
-                        }),
-                    );
+                    Main.openPage(Routes.TEXTS);
                 },
             },
             {
@@ -77,13 +68,7 @@ export default class Main {
                 label: 'Signout',
                 click: () => {
                     Main.closeMenu();
-                    Main.mainWindow.webContents.executeJavaScript(
-                        wrapFn(() => {
-                            window.ngZone.run(() => {
-                                window.router.navigateByUrl(`/${Routes.LOGIN}`);
-                            });
-                        }),
-                    );
+                    Main.openPage(Routes.LOGIN);
                 },
             }
         ];
@@ -97,6 +82,24 @@ export default class Main {
     }
 
 
+    private static openPage(page: string): void {
+        const javascript: string = wrapFn(() => {
+            window.ngZone.run(() => {
+                window.router.navigateByUrl(`/${page}`);
+            });
+        }).replace('${page}', page);
+
+        Main.mainWindow.webContents.executeJavaScript(javascript);
+    }
+
+
+    private static sendData<T>(eventName: ipcEvents, getData: () => Observable<T>) {
+        ipcMain.on(eventName + '-get', (event, args) => {
+            getData().subscribe((data) => event.reply(eventName, data))
+        });
+    }
+
+
     private static openText(event, arg) {
         Main.mainWindow.loadURL(`http://localhost:${PORT}/${Routes.READ_TEXT}/${arg}`);
     }
@@ -106,13 +109,7 @@ export default class Main {
         userService.signin(arg.username, arg.password).subscribe((success: boolean) => {
             if (success) {
                 Main.openMenu();
-                Main.mainWindow.webContents.executeJavaScript(
-                    wrapFn(() => {
-                        window.ngZone.run(() => {
-                            window.router.navigateByUrl(`/${Routes.TEXTS}`);
-                        });
-                    }),
-                );
+                Main.openPage(Routes.TEXTS);
             } else {
                 Main.mainWindow.webContents.send(ipcEvents.LOGIN_FAILED);
                 ipcMain.emit(ipcEvents.LOGIN_FAILED);
@@ -125,13 +122,7 @@ export default class Main {
         const userService = new Services.userService();
 
         userService.signup(arg.username, arg.password, arg.email).subscribe((success: boolean) => {
-            Main.mainWindow.webContents.executeJavaScript(
-                wrapFn(() => {
-                    window.ngZone.run(() => {
-                        window.router.navigateByUrl(`/${Routes.LOGIN}`);
-                    });
-                }),
-            );
+            Main.openPage(Routes.LOGIN);
         }, (error) => console.dir(error));
     }
 
