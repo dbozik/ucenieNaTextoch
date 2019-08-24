@@ -54,10 +54,14 @@ export default class Main {
             {
                 label: 'Texts',
                 click: () => {
+                    const userId: string = Services.StateService.getInstance().userId;
+                    console.dir(userId);
+                    
+
                     Main.mainWindow.webContents.executeJavaScript(
                         wrapFn(() => {
                             window.ngZone.run(() => {
-                                window.router.navigateByUrl(`/${Routes.TEXTS}`);
+                                window.router.navigateByUrl(`/texts`);
                             });
                         }),
                     );
