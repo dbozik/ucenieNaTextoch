@@ -83,6 +83,12 @@ export class textService {
         return texts.getList();
     }
 
+    public getArchivedList(): Observable<TextObject[]> {
+        const texts = new DA.textsArchived();
+
+        return texts.getList();
+    }
+
     public saveText(text: string, title: string, userId: string, languageId: string)
         : Observable<TextObject> {
         const texts = new DA.texts();

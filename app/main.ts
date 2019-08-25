@@ -1,15 +1,23 @@
 import { BrowserWindow, Menu, ipcMain } from 'electron';
-import { join } from 'path';
-import { format, URL } from 'url';
-// import {Database} from 'sqlite3';
-// import {Nedb} from 'nedb';
-// var Datastore = require('nedb');
+import { NgZone } from '@angular/core';
+import { Router } from '@angular/router';
+import { ipcEvents } from '../web/shared/ipc-events.enum';
+import { Routes } from '../web/shared/routes.enum';
+import * as Services from '../app/Services/namespace';
+import { Observable } from 'rxjs';
+
+interface AngularWindow extends Window {
+    router: Router;
+    ngZone: NgZone;
+}
+declare var window: AngularWindow;
+const PORT: number = 31411;
 
 export default class Main {
     static mainWindow: Electron.BrowserWindow;
     static application: Electron.App;
     static BrowserWindow;
-    // static database: Database;
+
     private static onWindowAllClosed() {
         if (process.platform !== 'darwin')
             Main.application.quit();
@@ -21,48 +29,47 @@ export default class Main {
     }
 
     private static onReady() {
-        Main.mainWindow = new Main.BrowserWindow({ width: 800, height: 600 })
-        Main.mainWindow.loadURL(format({
-            pathname: join(__dirname, 'Views/index.html'),
-            protocol: 'file:'
-        }));
+        Main.closeMenu();
+
+        Main.mainWindow = new Main.BrowserWindow({ width: 800, height: 600 });
+
+        const environment: 'dev' | 'prod' = 'dev';
+
+        if (environment === 'dev') {
+            Main.mainWindow.loadURL(`http://localhost:${PORT}/${Routes.LOGIN}`);
+        } else {
+            Main.mainWindow.loadFile('./dist/web/index.html');
+        }
 
         Main.mainWindow.webContents.openDevTools();
 
-        // var db:any = new nedb('./file.db');
-        // var db = new Datastore({
-        //     filename: join(__dirname, 'database.db'),
-        //     autoload: true
-        // });
-        // //let db = new Datastore();
-
-        // Main.database = new Database(':memory:');
         Main.mainWindow.on('closed', Main.onClose);
+    }
 
+
+    private static openMenu() {
         const mainMenuTemplate = [
             {
                 label: 'Add Text!',
-                click() {
-                    Main.mainWindow.loadURL(format({
-                        pathname: join(__dirname, 'Views/addText.html'),
-                        protocol: 'file:'
-                    }));
-                }
             },
             {
                 label: 'Texts',
-                click() {
-                    Main.mainWindow.loadURL(format({
-                        pathname: join(__dirname, 'Views/texts.html'),
-                        protocol: 'file:'
-                    }));
-                }
+                click: () => {
+                    Main.openPage(Routes.TEXTS);
+                },
             },
             {
                 label: 'Vocabulary',
             },
             {
                 label: 'Settings'
+            },
+            {
+                label: 'Signout',
+                click: () => {
+                    Main.closeMenu();
+                    Main.openPage(Routes.LOGIN);
+                },
             }
         ];
 
@@ -70,9 +77,55 @@ export default class Main {
         Menu.setApplicationMenu(mainMenu);
     }
 
-    private static openText(event, arg) {
-        Main.mainWindow.loadURL(`file://${__dirname}/Views/readText.html?id=${arg}`);
+    private static closeMenu() {
+        Menu.setApplicationMenu(null);
     }
+
+
+    private static openPage(page: string): void {
+        const javascript: string = wrapFn(() => {
+            window.ngZone.run(() => {
+                window.router.navigateByUrl(`/${page}`);
+            });
+        }).replace('${page}', page);
+
+        Main.mainWindow.webContents.executeJavaScript(javascript);
+    }
+
+
+    private static sendData<T>(eventName: ipcEvents, getData: () => Observable<T>) {
+        ipcMain.on(eventName + '-get', (event, args) => {
+            getData().subscribe((data) => event.reply(eventName, data))
+        });
+    }
+
+
+    private static openText(event, arg) {
+        Main.mainWindow.loadURL(`http://localhost:${PORT}/${Routes.READ_TEXT}/${arg}`);
+    }
+
+    private static login(event, arg) {
+        const userService = new Services.userService();
+        userService.signin(arg.username, arg.password).subscribe((success: boolean) => {
+            if (success) {
+                Main.openMenu();
+                Main.openPage(Routes.TEXTS);
+            } else {
+                Main.mainWindow.webContents.send(ipcEvents.LOGIN_FAILED);
+                ipcMain.emit(ipcEvents.LOGIN_FAILED);
+            }
+        }, (error) => console.dir(error));
+    }
+
+
+    private static signup(event, arg) {
+        const userService = new Services.userService();
+
+        userService.signup(arg.username, arg.password, arg.email).subscribe((success: boolean) => {
+            Main.openPage(Routes.LOGIN);
+        }, (error) => console.dir(error));
+    }
+
 
     static main(
         app: Electron.App,
@@ -88,15 +141,11 @@ export default class Main {
         Main.application.on('ready', Main.onReady);
         Main.application.on('activate', Main.onReady);
         ipcMain.on('main-open-text', Main.openText);
+        ipcMain.on(ipcEvents.LOGIN, Main.login);
+        ipcMain.on(ipcEvents.SIGNUP, Main.signup);
     }
 }
 
-// const {ipcMain} = require('electron');
-
-// Attach listener in the main process with the given ID
-// ipcMain.on('main-open-text', (event, arg) => {
-//     console.log('im in main-open-text');
-//     console.log(
-//         arg
-//     );
-// });
+function wrapFn(fn: () => void): string {
+    return `(${fn.toString()})()`;
+}

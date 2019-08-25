@@ -19,6 +19,15 @@ const getData = () => {
     });
 }
 
+const getArchivedTexts = () => {
+    textsService.getArchivedList().subscribe(texts => {
+        app.texts = texts.sort((text1, text2) => text1.createdOn > text2.createdOn ? -1 : 
+            text1.createdOn < text2.createdOn ? 1 : 0
+        );
+    });
+
+}
+
 getData();
 
 const { ipcRenderer } = require('electron');
@@ -31,4 +40,12 @@ app.archive = (id) => {
     textsService.archive(id).subscribe(() => {
         setTimeout(() => getData(), 1000);
     });
+}
+
+app.getRegularTexts = () => {
+    getData();
+}
+
+app.getArchivedTexts = () => {
+    getArchivedTexts();
 }
