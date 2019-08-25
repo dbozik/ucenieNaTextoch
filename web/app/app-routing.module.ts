@@ -4,19 +4,25 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { AddTextComponent } from './add-text/add-text.component';
 import { SignupComponent } from './signup/signup.component';
+import { Routes as AppRoutes } from '../shared/routes.enum';
+import { SettingsComponent } from './settings/settings.component';
 
 const routes: Routes = [
   {
-    path: 'login',
+    path: AppRoutes.LOGIN,
     component: LoginComponent,
   },
   {
-    path: 'signup',
+    path: AppRoutes.SIGNUP,
     component: SignupComponent,
   },
   {
-    path: 'texts',
+    path: AppRoutes.TEXTS,
     component: AddTextComponent,
+  },
+  {
+    path: AppRoutes.SETTINGS,
+    component: SettingsComponent,
   },
 ];
 

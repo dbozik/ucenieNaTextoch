@@ -62,7 +62,10 @@ export default class Main {
                 label: 'Vocabulary',
             },
             {
-                label: 'Settings'
+                label: 'Settings',
+                click: () => {
+                    Main.openPage(Routes.SETTINGS);
+                },
             },
             {
                 label: 'Signout',
