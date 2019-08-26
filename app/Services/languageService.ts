@@ -7,8 +7,8 @@ export class languageService {
 
     public constructor() { }
 
-    public getList(): Observable<Language[]> {
-        return this.languageDA.getList();
+    public getList(userId: string): Observable<Language[]> {
+        return this.languageDA.getList(userId);
     }
 
     public get(id: string): Observable<Language> {

@@ -5,6 +5,7 @@ import { ipcEvents } from '../web/shared/ipc-events.enum';
 import { Routes } from '../web/shared/routes.enum';
 import * as Services from '../app/Services/namespace';
 import { Observable } from 'rxjs';
+import { Language } from './Objects/Language';
 
 interface AngularWindow extends Window {
     router: Router;
@@ -96,9 +97,20 @@ export default class Main {
     }
 
 
-    private static sendData<T>(eventName: ipcEvents, getData: () => Observable<T>) {
-        ipcMain.on(eventName + '-get', (event, args) => {
-            getData().subscribe((data) => event.reply(eventName, data))
+    private static bindSendData<T>(eventName: ipcEvents, getData: () => Observable<T>) {
+        ipcMain.on(eventName, (event, args) => {
+            getData().subscribe((data) => {
+                event.sender.send(eventName + '-reply', data);
+            });
+        });
+    }
+
+
+    private static bindSendLanguages() {
+        Main.bindSendData<Language[]>(ipcEvents.LANGUAGES, () => {
+            const userId = Services.StateService.getInstance().userId;
+
+            return new Services.languageService().getList(userId);
         });
     }
 
@@ -146,6 +158,7 @@ export default class Main {
         ipcMain.on('main-open-text', Main.openText);
         ipcMain.on(ipcEvents.LOGIN, Main.login);
         ipcMain.on(ipcEvents.SIGNUP, Main.signup);
+        Main.bindSendLanguages();
     }
 }
 

@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { IpcService } from '../add-text/ipc.service';
+import { Language } from '../../../app/Objects/Language';
+import { ipcEvents } from '../../shared/ipc-events.enum';
 
 @Component({
   selector: 'app-settings',
@@ -7,9 +10,22 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SettingsComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+    private readonly ipcService: IpcService,
+  ) { }
 
-  ngOnInit() {
+  public ngOnInit(): void {
+    this.getLanguages();
+  }
+
+
+  /**
+   * getLanguages
+   */
+  public getLanguages() {
+    this.ipcService.getData<Language[]>(ipcEvents.LANGUAGES).subscribe(result => {
+      console.table(result);
+    });
   }
 
 }

@@ -15,7 +15,6 @@ export class languages {
         sentenceSeparators: RegExp)
         : Observable<Language> {
         const languageSource$: ReplaySubject<Language> = new ReplaySubject(1);
-        const pokus = 6;
 
         this.db.languages.insert(
             {
@@ -33,7 +32,7 @@ export class languages {
                     userId: dbLanguage.userId,
                 };
 
-                languageSource$.next(dbLanguage);
+                languageSource$.next(language);
             });
 
         return languageSource$.asObservable();
@@ -49,10 +48,10 @@ export class languages {
         return languageSource$.asObservable();
     }
 
-    public getList(): Observable<Language[]> {
+    public getList(userId: string): Observable<Language[]> {
         const languageSource$: ReplaySubject<Language[]> = new ReplaySubject(1);
 
-        this.db.languages.find({}, (error, languages: Language[]) => {
+        this.db.languages.find({userId}, (error, languages: Language[]) => {
             languageSource$.next(languages);
         });
 

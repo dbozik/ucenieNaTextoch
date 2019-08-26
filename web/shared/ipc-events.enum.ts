@@ -3,4 +3,5 @@ export enum ipcEvents {
     LOGIN_FAILED = 'lwt-login-failed',
     SIGNUP = 'lwt-signup',
     USER_ID = 'lwt-user-id',
+    LANGUAGES = 'lwt-languages',
 }
