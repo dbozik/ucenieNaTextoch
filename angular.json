@@ -27,14 +27,11 @@
               "web/assets"
             ],
             "styles": [
-              "web/assets/Styles/bootstrap.min.css",
-              "web/assets/Styles/bootstrap-grid.min.css",
-              "web/assets/Styles/bootstrap-reboot.min.css",
+              "./node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "./node_modules/ngx-bootstrap/datepicker/bs-datepicker.css",
               "web/styles.scss"
             ],
             "scripts": [
-              "web/assets/Scripts/jquery-3.2.1.min.js",
-              "web/assets/Scripts/bootstrap.min.js"
             ],
             "es5BrowserSupport": true
           },
@@ -90,14 +87,11 @@
             "tsConfig": "web/tsconfig.spec.json",
             "karmaConfig": "web/karma.conf.js",
             "styles": [
-              "web/assets/Styles/bootstrap.min.css",
-              "web/assets/Styles/bootstrap-grid.min.css",
-              "web/assets/Styles/bootstrap-reboot.min.css",
+              "./node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "./node_modules/ngx-bootstrap/datepicker/bs-datepicker.css",
               "web/styles.scss"
             ],
             "scripts": [
-              "web/assets/Scripts/jquery-3.2.1.min.js",
-              "web/assets/Scripts/bootstrap.min.js"
             ],
             "assets": [
               "web/favicon.ico",
