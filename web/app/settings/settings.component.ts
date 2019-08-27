@@ -11,6 +11,7 @@ import { ipcEvents } from '../../shared/ipc-events.enum';
 export class SettingsComponent implements OnInit {
 
   public languages: Language[] = [];
+  public editingId: string = null;
 
   constructor(
     private readonly ipcService: IpcService,
@@ -31,6 +32,31 @@ export class SettingsComponent implements OnInit {
       this.languages = languages;
       this.changeDetection.detectChanges();
     });
+  }
+
+
+  /**
+   * add
+   */
+  public add(): void {
+    this.languages.push({
+      _id: '0',
+      name: '',
+      dictionary: 'https://translate.google.com/?sl=de&tl=en#de/en/{word}',
+      wordSeparators: new RegExp('/[.?!]+/'),
+      sentenceSeparators: new RegExp('/[\s,.?!;:_()\[\]\/\\"-]+/'),
+      userId: '',
+    });
+
+    this.editingId = '0';
+  }
+
+
+  /**
+   * save
+   */
+  public save(languageId: string): void {
+    
   }
 
 }

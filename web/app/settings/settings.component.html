@@ -13,11 +13,23 @@
 
   <tbody>
     <tr *ngFor="let language of languages">
-      <td>{{language.name}}</td>
-      <td>{{language.dictionary}}</td>
-      <td>{{language.wordSeparators}}</td>
-      <td>{{language.sentenceSeparators}}</td>
-      <td><button class="btn btn-primary">Edit</button></td>
+      <ng-container *ngIf="!editingId || editingId !== language._id">
+        <td>{{language.name}}</td>
+        <td>{{language.dictionary}}</td>
+        <td>{{language.wordSeparators}}</td>
+        <td>{{language.sentenceSeparators}}</td>
+        <td><button class="btn btn-default" (click)="edit(language._id)" [disabled]="editingId">Edit</button></td>
+      </ng-container>
+
+      <ng-container *ngIf="editingId && editingId === language._id">
+        <td>{{language.name}}</td>
+        <td>{{language.dictionary}}</td>
+        <td>{{language.wordSeparators}}</td>
+        <td>{{language.sentenceSeparators}}</td>
+        <td><button class="btn btn-default" (click)="edit(language._id)">Save</button></td>
+      </ng-container>
     </tr>
   </tbody>
 </table>
+
+<button class="btn btn-default" (click)="add()" [disabled]="editingId">Add</button>
