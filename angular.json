@@ -27,9 +27,15 @@
               "web/assets"
             ],
             "styles": [
+              "web/assets/Styles/bootstrap.min.css",
+              "web/assets/Styles/bootstrap-grid.min.css",
+              "web/assets/Styles/bootstrap-reboot.min.css",
               "web/styles.scss"
             ],
-            "scripts": [],
+            "scripts": [
+              "web/assets/Scripts/jquery-3.2.1.min.js",
+              "web/assets/Scripts/bootstrap.min.js"
+            ],
             "es5BrowserSupport": true
           },
           "configurations": {
@@ -84,9 +90,15 @@
             "tsConfig": "web/tsconfig.spec.json",
             "karmaConfig": "web/karma.conf.js",
             "styles": [
+              "web/assets/Styles/bootstrap.min.css",
+              "web/assets/Styles/bootstrap-grid.min.css",
+              "web/assets/Styles/bootstrap-reboot.min.css",
               "web/styles.scss"
             ],
-            "scripts": [],
+            "scripts": [
+              "web/assets/Scripts/jquery-3.2.1.min.js",
+              "web/assets/Scripts/bootstrap.min.js"
+            ],
             "assets": [
               "web/favicon.ico",
               "web/assets"

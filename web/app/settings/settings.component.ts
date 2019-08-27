@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { IpcService } from '../add-text/ipc.service';
 import { Language } from '../../../app/Objects/Language';
 import { ipcEvents } from '../../shared/ipc-events.enum';
@@ -10,8 +10,11 @@ import { ipcEvents } from '../../shared/ipc-events.enum';
 })
 export class SettingsComponent implements OnInit {
 
+  public languages: Language[] = [];
+
   constructor(
     private readonly ipcService: IpcService,
+    private readonly changeDetection: ChangeDetectorRef,
   ) { }
 
   public ngOnInit(): void {
@@ -23,8 +26,10 @@ export class SettingsComponent implements OnInit {
    * getLanguages
    */
   public getLanguages() {
-    this.ipcService.getData<Language[]>(ipcEvents.LANGUAGES).subscribe(result => {
-      console.table(result);
+    this.ipcService.getData<Language[]>(ipcEvents.LANGUAGES).subscribe((languages: Language[]) => {
+      console.table(languages);
+      this.languages = languages;
+      this.changeDetection.detectChanges();
     });
   }
 

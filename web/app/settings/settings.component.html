@@ -1,3 +1,23 @@
-<p>
-  settings works!
-</p>
+<h1>Languages</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Name</th>
+      <th scope="col">Dictionary</th>
+      <th scope="col">Word separators</th>
+      <th scope="col">Sentence separators</th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr *ngFor="let language of languages">
+      <td>{{language.name}}</td>
+      <td>{{language.dictionary}}</td>
+      <td>{{language.wordSeparators}}</td>
+      <td>{{language.sentenceSeparators}}</td>
+      <td><button>Edit</button></td>
+    </tr>
+  </tbody>
+</table>
