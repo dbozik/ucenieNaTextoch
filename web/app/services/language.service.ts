@@ -33,4 +33,9 @@ export class LanguageService {
     public editLanguage(language: Language) {
         this.ipcService.ipc.send(ipcEvents.EDIT_LANGUAGE, language);
     }
+
+
+    public deleteLanguage(languageId: string): void {
+        this.ipcService.ipc.send(ipcEvents.DELETE_LANGUAGE, languageId);
+    }
 }

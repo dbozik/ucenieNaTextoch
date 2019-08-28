@@ -102,7 +102,7 @@ export class SettingsComponent implements OnInit {
    * remove
    */
   public remove(languageId: string) {
-    
+    this.languageService.deleteLanguage(languageId);
   }
 
 

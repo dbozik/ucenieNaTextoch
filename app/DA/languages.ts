@@ -76,6 +76,12 @@ export class languages {
     }
 
 
+    public delete(languageId: string): void {
+        this.db.languages.remove({_id: languageId});
+        this.db.languages.persistence.compactDatafile();
+    }
+
+
     public getList(userId: string): Observable<Language[]> {
         const languageSource$: ReplaySubject<Language[]> = new ReplaySubject(1);
 

@@ -6,4 +6,5 @@ export enum ipcEvents {
     LANGUAGES = 'lwt-languages',
     ADD_LANGUAGE = 'lwt-add-language',
     EDIT_LANGUAGE = 'lwt-edit-language',
+    DELETE_LANGUAGE = 'lwt-delete-language',
 }
