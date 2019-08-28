@@ -3,3 +3,6 @@
  - forgotten password
  - languages - get id of an added language 
  - languages - not allow edit the language name
+ - languages - add a hint to dictionary field
+ - languages - regex without backslashes
+ - languages - on save the language is missing in the list
