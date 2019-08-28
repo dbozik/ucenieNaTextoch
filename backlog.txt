@@ -2,3 +2,4 @@
  - signup - check for duplicate logins
  - forgotten password
  - languages - get id of an added language 
+ - languages - not allow edit the language name

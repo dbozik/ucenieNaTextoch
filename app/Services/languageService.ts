@@ -25,8 +25,8 @@ export class languageService {
     }
 
 
-    public edit() {
-
+    public edit(event, language: Language): void {
+        (new DA.languages()).editLanguage(language._id, language.name, language.dictionary, language.wordSeparators.toString(), language.sentenceSeparators.toString());
     }
     
 

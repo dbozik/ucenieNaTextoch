@@ -37,11 +37,13 @@ export default class Main {
 
         const environment: 'dev' | 'prod' = 'dev';
 
-        if (environment === 'dev') {
-            Main.mainWindow.loadURL(`http://localhost:${PORT}/${Routes.LOGIN}`);
-        } else {
-            Main.mainWindow.loadFile('./dist/web/index.html');
-        }
+        Main.mainWindow.loadFile('./dist/web/index.html');
+        Main.openPage(Routes.LOGIN);
+        // if (environment === 'dev') {
+        //     Main.mainWindow.loadURL(`http://localhost:${PORT}`);
+        // } else {
+        //     Main.mainWindow.loadFile('./dist/web/index.html');
+        // }
 
         Main.mainWindow.webContents.openDevTools();
 
