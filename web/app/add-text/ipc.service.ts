@@ -29,11 +29,12 @@ export class IpcService {
     public getData<T>(event: ipcEvents): Observable<T> {
         const result: Subject<T> = new Subject();
 
-        this._ipc.on(event, (event, args) => {
+        this._ipc.on(event + '-reply', (event, args) => {
             result.next(args);
+            result.complete();
         });
 
-        this._ipc.send(event + '-get');
+        this._ipc.send(event);
         return result.asObservable();
     }
 }

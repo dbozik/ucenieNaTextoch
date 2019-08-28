@@ -8,5 +8,5 @@ import * as Services from '../app/Services/namespace';
 
 const languageService = new Services.languageService();
 
-languageService.add('german', 'https://translate.google.com/?sl=de&tl=en#de/en/{word}',
-/[.?!]+/, /[\s,.?!;:_()\[\]/\\"-]+/, '0');
+// languageService.add('german', 'https://translate.google.com/?sl=de&tl=en#de/en/{word}',
+// /[.?!]+/, /[\s,.?!;:_()\[\]/\\"-]+/, '0');

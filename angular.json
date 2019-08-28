@@ -27,9 +27,12 @@
               "web/assets"
             ],
             "styles": [
+              "./node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "./node_modules/ngx-bootstrap/datepicker/bs-datepicker.css",
               "web/styles.scss"
             ],
-            "scripts": [],
+            "scripts": [
+            ],
             "es5BrowserSupport": true
           },
           "configurations": {
@@ -84,9 +87,12 @@
             "tsConfig": "web/tsconfig.spec.json",
             "karmaConfig": "web/karma.conf.js",
             "styles": [
+              "./node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "./node_modules/ngx-bootstrap/datepicker/bs-datepicker.css",
               "web/styles.scss"
             ],
-            "scripts": [],
+            "scripts": [
+            ],
             "assets": [
               "web/favicon.ico",
               "web/assets"

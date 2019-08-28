@@ -1,0 +1,41 @@
+<h1>Languages</h1>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">Name</th>
+      <th scope="col">Dictionary</th>
+      <th scope="col">Word separators</th>
+      <th scope="col">Sentence separators</th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr *ngFor="let language of languages">
+      <ng-container *ngIf="!editingId || editingId !== language._id">
+        <td>{{language.name}}</td>
+        <td>{{language.dictionary}}</td>
+        <td>{{language.wordSeparators}}</td>
+        <td>{{language.sentenceSeparators}}</td>
+        <td>
+          <button class="btn btn-default" (click)="edit(language._id)" [disabled]="editingId">Edit</button>
+          <button class="btn btn-default" (click)="remove(language._id)" [disabled]="editingId">Remove</button>
+        </td>
+      </ng-container>
+
+      <ng-container *ngIf="editingId && editingId === language._id" [formGroup]="languageForm">
+        <td><input type="text" formControlName="name" class="form-control"></td>
+        <td><input type="text" formControlName="dictionary" class="form-control"></td>
+        <td><input type="text" formControlName="wordSeparators" class="form-control"></td>
+        <td><input type="text" formControlName="sentenceSeparators" class="form-control"></td>
+        <td>
+          <button class="btn btn-default" (click)="save(language._id)">Save</button>
+          <button class="btn btn-default" (click)="cancel()">Cancel</button>
+        </td>
+      </ng-container>
+    </tr>
+  </tbody>
+</table>
+
+<button class="btn btn-block" (click)="add()" [disabled]="editingId">Add</button>

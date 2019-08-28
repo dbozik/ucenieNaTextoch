@@ -1,9 +1,5 @@
-import * as path from 'path';
-import { format, URL } from 'url';
-import * as Datastore from 'nedb';
 import { database } from './database';
 import { ReplaySubject, Observable } from 'rxjs';
-import { TextObject } from '../Objects/TextObject';
 import { Language } from '../Objects/Language';
 
 export class languages {
@@ -11,11 +7,10 @@ export class languages {
 
     public constructor() { }
 
-    public addLanguage(name: string, dictionary: string, userId: string, wordSeparators: RegExp,
-        sentenceSeparators: RegExp)
+    public addLanguage(name: string, dictionary: string, userId: string, wordSeparators: string,
+        sentenceSeparators: string)
         : Observable<Language> {
         const languageSource$: ReplaySubject<Language> = new ReplaySubject(1);
-        const pokus = 6;
 
         this.db.languages.insert(
             {
@@ -33,11 +28,42 @@ export class languages {
                     userId: dbLanguage.userId,
                 };
 
-                languageSource$.next(dbLanguage);
+                languageSource$.next(language);
             });
 
         return languageSource$.asObservable();
     }
+
+
+    public editLanguage(languageId: string, name: string, dictionary: string, wordSeparators: string,
+        sentenceSeparators: string)
+        : Observable<Language> {
+        const languageSource$: ReplaySubject<Language> = new ReplaySubject(1);
+
+        this.db.languages.update(
+            {
+                _id: languageId,
+            },
+            {
+                $set: {
+                    name: name,
+                    dictionary: dictionary,
+                    wordSeparators: wordSeparators.toString(),
+                    sentenceSeparators: sentenceSeparators.toString()
+                },
+            },
+            {},
+            (error, dbLanguage: any) => {
+                const language: Language = this.retreive(dbLanguage);
+
+                languageSource$.next(language);
+            });
+        
+        this.db.languages.persistence.compactDatafile();
+
+        return languageSource$.asObservable();
+    }
+
 
     public get(languageId: string): Observable<Language> {
         const languageSource$: ReplaySubject<Language> = new ReplaySubject(1);
@@ -49,13 +75,32 @@ export class languages {
         return languageSource$.asObservable();
     }
 
-    public getList(): Observable<Language[]> {
+
+    public delete(languageId: string): void {
+        this.db.languages.remove({_id: languageId});
+        this.db.languages.persistence.compactDatafile();
+    }
+
+
+    public getList(userId: string): Observable<Language[]> {
         const languageSource$: ReplaySubject<Language[]> = new ReplaySubject(1);
 
-        this.db.languages.find({}, (error, languages: Language[]) => {
+        this.db.languages.find({ userId }, (error, languages: Language[]) => {
             languageSource$.next(languages);
         });
 
         return languageSource$.asObservable();
+    }
+
+
+    private retreive(dbLanguage: Language): Language {
+        return {
+            _id: dbLanguage._id,
+            name: dbLanguage.name,
+            dictionary: dbLanguage.dictionary,
+            wordSeparators: new RegExp(dbLanguage.wordSeparators),
+            sentenceSeparators: new RegExp(dbLanguage.sentenceSeparators),
+            userId: dbLanguage.userId,
+        };
     }
 }
