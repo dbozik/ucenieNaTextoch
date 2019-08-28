@@ -6,6 +6,7 @@ import { Routes } from '../web/shared/routes.enum';
 import * as Services from '../app/Services/namespace';
 import { Observable } from 'rxjs';
 import { Language } from './Objects/Language';
+import { take } from 'rxjs/operators';
 
 interface AngularWindow extends Window {
     router: Router;
@@ -97,20 +98,11 @@ export default class Main {
     }
 
 
-    private static bindSendData<T>(eventName: ipcEvents, getData: () => Observable<T>) {
+    public static bindSendData<T>(eventName: ipcEvents, getData: () => Observable<T>) {
         ipcMain.on(eventName, (event, args) => {
-            getData().subscribe((data) => {
+            getData().pipe(take(1)).subscribe((data) => {
                 event.sender.send(eventName + '-reply', data);
             });
-        });
-    }
-
-
-    private static bindSendLanguages() {
-        Main.bindSendData<Language[]>(ipcEvents.LANGUAGES, () => {
-            const userId = Services.StateService.getInstance().userId;
-
-            return new Services.languageService().getList(userId);
         });
     }
 
@@ -155,10 +147,15 @@ export default class Main {
         Main.application.on('window-all-closed', Main.onWindowAllClosed);
         Main.application.on('ready', Main.onReady);
         Main.application.on('activate', Main.onReady);
+
+        const languageService = new Services.languageService();
+
         ipcMain.on('main-open-text', Main.openText);
         ipcMain.on(ipcEvents.LOGIN, Main.login);
         ipcMain.on(ipcEvents.SIGNUP, Main.signup);
-        Main.bindSendLanguages();
+        languageService.bindSendLanguages();
+        ipcMain.on(ipcEvents.ADD_LANGUAGE, languageService.add);
+        ipcMain.on(ipcEvents.EDIT_LANGUAGE, languageService.edit);
     }
 }
 

@@ -1,3 +1,4 @@
  - login on enter
  - signup - check for duplicate logins
  - forgotten password
+ - languages - get id of an added language 

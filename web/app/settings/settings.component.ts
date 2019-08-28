@@ -3,11 +3,14 @@ import { IpcService } from '../add-text/ipc.service';
 import { Language } from '../../../app/Objects/Language';
 import { ipcEvents } from '../../shared/ipc-events.enum';
 import { FormGroup, FormBuilder } from '@angular/forms';
+import { LanguageService } from '../services/language.service';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.component.html',
-  styleUrls: ['./settings.component.scss']
+  styleUrls: ['./settings.component.scss'],
+  providers: [LanguageService],
 })
 export class SettingsComponent implements OnInit {
 
@@ -20,7 +23,7 @@ export class SettingsComponent implements OnInit {
 
   constructor(
     private readonly formBuilder: FormBuilder,
-    private readonly ipcService: IpcService,
+    private readonly languageService: LanguageService,
     private readonly changeDetection: ChangeDetectorRef,
   ) { }
 
@@ -33,8 +36,7 @@ export class SettingsComponent implements OnInit {
    * getLanguages
    */
   public getLanguages() {
-    this.ipcService.getData<Language[]>(ipcEvents.LANGUAGES).subscribe((languages: Language[]) => {
-      console.table(languages);
+    this.languageService.getLanguages().pipe(take(1)).subscribe((languages: Language[]) => {
       this.languages = languages;
       this.changeDetection.detectChanges();
     });
@@ -78,7 +80,21 @@ export class SettingsComponent implements OnInit {
    * save
    */
   public save(languageId: string): void {
-    
+    const language: Language = {
+      name: this.languageForm.get('name').value,
+      dictionary: this.languageForm.get('dictionary').value,
+      wordSeparators: this.languageForm.get('wordSeparators').value.toString(),
+      sentenceSeparators: this.languageForm.get('sentenceSeparators').value.toString(),
+    };
+
+    if (languageId === this.NEW_LANGUAGE_ID) {
+      this.languageService.addLanguage(language);
+    } else {
+      this.languageService.editLanguage({...language, _id: languageId});
+    }
+
+    this.getLanguages();
+    this.editingId = null;
   }
 
 

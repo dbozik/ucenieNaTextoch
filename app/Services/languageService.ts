@@ -1,6 +1,9 @@
 import * as DA from "../DA/namespace";
 import { Observable, ReplaySubject } from "rxjs";
 import { Language } from "../Objects/Language";
+import { ipcEvents } from "../../web/shared/ipc-events.enum";
+import Main from "../Main";
+import * as Services from './namespace';
 
 export class languageService {
     private languageDA = new DA.languages();
@@ -15,8 +18,23 @@ export class languageService {
         return this.languageDA.get(id);
     }
 
-    public add(name: string, dictionary: string, wordSeparators: RegExp,
-        sentenceSeparators: RegExp, userId: string): void {
-        this.languageDA.addLanguage(name, dictionary, userId, wordSeparators, sentenceSeparators);
+    public add(event, language: Language): void {
+        const userId = Services.StateService.getInstance().userId;
+
+        (new DA.languages()).addLanguage(language.name, language.dictionary, userId, language.wordSeparators.toString(), language.sentenceSeparators.toString());
+    }
+
+
+    public edit() {
+
+    }
+    
+
+    public bindSendLanguages() {
+        Main.bindSendData<Language[]>(ipcEvents.LANGUAGES, () => {
+            const userId = Services.StateService.getInstance().userId;
+
+            return this.getList(userId);
+        });
     }
 }

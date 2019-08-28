@@ -4,4 +4,6 @@ export enum ipcEvents {
     SIGNUP = 'lwt-signup',
     USER_ID = 'lwt-user-id',
     LANGUAGES = 'lwt-languages',
+    ADD_LANGUAGE = 'lwt-add-language',
+    EDIT_LANGUAGE = 'lwt-edit-language',
 }

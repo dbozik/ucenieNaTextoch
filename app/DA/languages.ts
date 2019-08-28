@@ -1,9 +1,5 @@
-import * as path from 'path';
-import { format, URL } from 'url';
-import * as Datastore from 'nedb';
 import { database } from './database';
 import { ReplaySubject, Observable } from 'rxjs';
-import { TextObject } from '../Objects/TextObject';
 import { Language } from '../Objects/Language';
 
 export class languages {
@@ -11,8 +7,8 @@ export class languages {
 
     public constructor() { }
 
-    public addLanguage(name: string, dictionary: string, userId: string, wordSeparators: RegExp,
-        sentenceSeparators: RegExp)
+    public addLanguage(name: string, dictionary: string, userId: string, wordSeparators: string,
+        sentenceSeparators: string)
         : Observable<Language> {
         const languageSource$: ReplaySubject<Language> = new ReplaySubject(1);
 
