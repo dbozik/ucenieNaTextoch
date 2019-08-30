@@ -1,21 +1,21 @@
-import * as Objects from '../Objects/namespace';
-import {TextPart} from '../Objects/TextPart';
+import { TextPart } from '../Objects/TextPart';
 
-export class parseTextService {
-    public constructor() { }
+export class ParseTextService {
+    public constructor() {
+    }
 
     public static splitToWords(text: string): string[] {
         return this.splitToWordsCase(text)
-                .map(word => word.toLowerCase());
+            .map(word => word.toLowerCase());
     }
 
     public static splitToSentences(text: string): string[] {
         return text.split(/[.?!]+/)
-            .filter(sentence => sentence !== "");
+            .filter(sentence => sentence !== '');
     }
 
     public static splitToParts(text: string): TextPart[] {
-        const justWords = parseTextService.splitToWordsCase(text);
+        const justWords = ParseTextService.splitToWordsCase(text);
         const textParts: TextPart[] = [];
 
         // iterate through words
@@ -30,9 +30,9 @@ export class parseTextService {
                 content: beginPart,
                 type: 'separator',
                 wordId: '',
-            } );
+            });
             text = text.substr(wordIndex);
-            
+
             // cut the first word and push to textParts
             textParts.push({
                 content: word,
@@ -41,20 +41,20 @@ export class parseTextService {
             });
             text = text.substr(wordLength);
         });
-    
+
         // include the last part
         textParts.push({
             content: text,
             type: 'separator',
             wordId: ''
         });
-    
+
         return textParts.filter(word => word.content !== '');
     }
 
     private static splitToWordsCase(text: string): string[] {
         return text.split(/[\s,.?!;:_()\[\]/\\"-]+/)
-                .filter(word => word !== "");
+            .filter(word => word !== '');
     }
 
     // class text
@@ -71,7 +71,7 @@ export class parseTextService {
     // arguments are none
 
     // get sentence separators
-    // 
+    //
     // get word separators from the language settings
     // split the text by the visible and hidden separators
     // save the result of words and symbols to parsed text

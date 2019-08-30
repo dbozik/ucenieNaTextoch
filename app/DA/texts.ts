@@ -1,14 +1,12 @@
-import * as path from 'path';
-import { format, URL } from 'url';
-import * as Datastore from 'nedb';
-import { database } from './database';
-import { ReplaySubject, Observable } from 'rxjs';
+import { Observable, ReplaySubject } from 'rxjs';
 import { TextObject } from '../Objects/TextObject';
+import { Database } from './database';
 
-export class texts {
-    private db: database = new database();
+export class Texts {
+    private db: Database = new Database();
 
-    public constructor() { }
+    public constructor() {
+    }
 
     public addText(text: string, title: string, userId: string, languageId: string)
         : Observable<TextObject> {
@@ -33,7 +31,7 @@ export class texts {
     public get(textId: string): Observable<TextObject> {
         const textSource$: ReplaySubject<TextObject> = new ReplaySubject(1);
 
-        this.db.texts.findOne({ _id: textId }, (error, text: TextObject) => {
+        this.db.texts.findOne({_id: textId}, (error, text: TextObject) => {
             textSource$.next(text);
             textSource$.complete();
         });

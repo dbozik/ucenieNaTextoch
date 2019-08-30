@@ -1,26 +1,28 @@
-import * as DA from "../DA/namespace";
-import { Observable, of, from, forkJoin, BehaviorSubject, combineLatest, Subject, ReplaySubject } from "rxjs";
-import { switchMap, tap, map, takeUntil, first, filter } from "rxjs/operators";
-import { TextObject } from "../Objects/TextObject";
-import { parseTextService } from "./parseTextService";
-import { WordObject, TextPart } from "../Objects/namespace";
+import { BehaviorSubject, combineLatest, forkJoin, Observable, of, ReplaySubject, Subject } from 'rxjs';
+import { first, switchMap, tap } from 'rxjs/operators';
+import * as DA from '../DA/namespace';
+import { TextPart, WordObject } from '../Objects/namespace';
+import { TextObject } from '../Objects/TextObject';
+import { ParseTextService } from './parseTextService';
 
-export class textService {
+export class TextService {
 
-    private textsDA = new DA.texts();
-    private textsArchivedDA = new DA.textsArchived();
-    private wordsDA = new DA.words();
-
-    private _textId: string;
+    private textsDA = new DA.Texts();
+    private textsArchivedDA = new DA.TextsArchived();
+    private wordsDA = new DA.Words();
     private textParts: TextPart[] = [];
     private wordObjects: WordObject[] = [];
     private textPartsSource$: BehaviorSubject<TextPart[]> = new BehaviorSubject([]);
-    private wordObjectsSource$: BehaviorSubject<WordObject[]> = new BehaviorSubject([]);
-    private textSource$: BehaviorSubject<TextObject> = new BehaviorSubject(new TextObject());
-
     public textParts$: Observable<TextPart[]> = this.textPartsSource$.asObservable();
+    private wordObjectsSource$: BehaviorSubject<WordObject[]> = new BehaviorSubject([]);
     public wordObjects$: Observable<WordObject[]> = this.wordObjectsSource$.asObservable();
+    private textSource$: BehaviorSubject<TextObject> = new BehaviorSubject(new TextObject());
     public text$: Observable<TextObject> = this.textSource$.asObservable();
+
+    public constructor() {
+    }
+
+    private _textId: string;
 
     public set textId(textId: string) {
         this._textId = textId;
@@ -28,7 +30,7 @@ export class textService {
         // get textParts
         this.textsDA.get(this._textId).subscribe(textDA => {
             this.textSource$.next(textDA);
-            this.textParts = parseTextService.splitToParts(textDA.text);
+            this.textParts = ParseTextService.splitToParts(textDA.text);
 
             this.textPartsSource$.next(this.textParts);
         });
@@ -75,23 +77,21 @@ export class textService {
                 });
     }
 
-    public constructor() { }
-
     public getList(): Observable<TextObject[]> {
-        const texts = new DA.texts();
+        const texts = new DA.Texts();
 
         return texts.getList();
     }
 
     public getArchivedList(): Observable<TextObject[]> {
-        const texts = new DA.textsArchived();
+        const texts = new DA.TextsArchived();
 
         return texts.getList();
     }
 
     public saveText(text: string, title: string, userId: string, languageId: string)
         : Observable<TextObject> {
-        const texts = new DA.texts();
+        const texts = new DA.Texts();
 
         return this.saveWords(text, userId, languageId).pipe(
             switchMap(() => texts.addText(text, title, userId, languageId))
@@ -99,10 +99,10 @@ export class textService {
     }
 
     public parseText(text: string, userId: number, languageId: number): any {
-        const wordsDA = new DA.words();
+        const wordsDA = new DA.Words();
 
-        const words = parseTextService.splitToWords(text);
-        const textParts = parseTextService.splitToParts(text);
+        const words = ParseTextService.splitToWords(text);
+        const textParts = ParseTextService.splitToParts(text);
 
         const wordObjects: WordObject[] = [];
         const getWords$: Observable<WordObject>[] = [];
@@ -145,7 +145,7 @@ export class textService {
         this.textsDA.get(textId).subscribe(text => {
             this.textsArchivedDA.addText(text);
             this.textsDA.delete(textId);
-            
+
             resultSource$.next(true);
             resultSource$.complete();
         });
@@ -154,16 +154,16 @@ export class textService {
     }
 
     private saveWords(text: string, userId: string, languageId: string): Observable<boolean> {
-        const wordsDA = new DA.words();
+        const wordsDA = new DA.Words();
 
         const sentences = text.split(/[.?!]+/)
-            .filter(sentence => sentence !== "");
+            .filter(sentence => sentence !== '');
 
         let wordObjects = [];
 
         sentences.forEach(sentence => {
             const words = sentence.split(/[\s,.?!;:_()\[\]/\\"-]+/)
-                .filter(word => word !== "")
+                .filter(word => word !== '')
                 .map(word => word.toLowerCase());
 
             words.forEach(word => {

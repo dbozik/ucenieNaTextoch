@@ -9,10 +9,10 @@
     </script>
     <script src="../../node_modules/tether/dist/js/tether.min.js"></script>
     <!-- <script src="../Sources/Scripts/jquery-3.2.1.min.js"></script> -->
-    <link rel="stylesheet" href="../Sources/Styles/bootstrap.min.css">
-    <link rel="stylesheet" href="../Sources/Styles/bootstrap-grid.min.css">
-    <link rel="stylesheet" href="../Sources/Styles/bootstrap-reboot.min.css">
-    <link rel="stylesheet" href="../Sources/Styles/custom.css">
+    <link href="../Sources/Styles/bootstrap.min.css" rel="stylesheet">
+    <link href="../Sources/Styles/bootstrap-grid.min.css" rel="stylesheet">
+    <link href="../Sources/Styles/bootstrap-reboot.min.css" rel="stylesheet">
+    <link href="../Sources/Styles/custom.css" rel="stylesheet">
     <script src="../Sources/Scripts/bootstrap.min.js"></script>
 
     <!-- development version, includes helpful console warnings -->
@@ -25,41 +25,42 @@
 </head>
 
 <body>
-    <div class="container" id="textListVue">
-        <div class="row background-color">
-            <h3>Texts</h3>
-        </div>
-        <div class="row background-color">
-            <span v-on:click="getRegularTexts()">Regular texts</span>
-            <span v-on:click="getArchivedTexts()">Archived texts</span>
-        </div>
-        <div class="row background-color">
-            <table class="table table-striped table-bordered">
-                <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th>Perex</th>
-                        <th>Created On</th>
-                        <th>Edit</th>
-                        <th>Archive</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="text in texts">
-                        <td style="font-weight:bold;" v-on:click="textClick(text._id)">{{text.title ? text.title : text.text.slice(0, 10) + '...'}}</td>
-                        <td style="font-weight:lighter;" v-on:click="textClick(text._id)">{{text.text.slice(0, 100)}}...</td>
-                        <td>{{text.createdOn}}</td>
-                        <td></td>
-                        <td><a v-on:click="archive(text._id)" style="cursor: pointer;">Archive</a></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+<div class="container" id="textListVue">
+    <div class="row background-color">
+        <h3>Texts</h3>
     </div>
+    <div class="row background-color">
+        <span v-on:click="getRegularTexts()">Regular texts</span>
+        <span v-on:click="getArchivedTexts()">Archived texts</span>
+    </div>
+    <div class="row background-color">
+        <table class="table table-striped table-bordered">
+            <thead>
+            <tr>
+                <th>Title</th>
+                <th>Perex</th>
+                <th>Created On</th>
+                <th>Edit</th>
+                <th>Archive</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="text in texts">
+                <td style="font-weight:bold;"
+                    v-on:click="textClick(text._id)">{{text.title ? text.title : text.text.slice(0, 10) + '...'}}</td>
+                <td style="font-weight:lighter;" v-on:click="textClick(text._id)">{{text.text.slice(0, 100)}}...</td>
+                <td>{{text.createdOn}}</td>
+                <td></td>
+                <td><a style="cursor: pointer;" v-on:click="archive(text._id)">Archive</a></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
 
-    <script>
-        require('../Renderers/texts.js')
-    </script>
+<script>
+    require('../Renderers/texts.js')
+</script>
 </body>
 
 </html>

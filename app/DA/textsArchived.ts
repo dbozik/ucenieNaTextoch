@@ -1,29 +1,29 @@
-import { database } from "./database";
-import { Observable, ReplaySubject } from "rxjs";
-import { TextObject } from "../Objects/TextObject";
+import { Observable, ReplaySubject } from 'rxjs';
+import { TextObject } from '../Objects/TextObject';
+import { Database } from './database';
 
-export class textsArchived {
-    private db: database = new database();
+export class TextsArchived {
+    private db: Database = new Database();
 
-    public constructor() { }
+    public constructor() {
+    }
 
     public addText(text: TextObject)
-    : Observable<TextObject> 
-    {
+        : Observable<TextObject> {
         const textSource$: ReplaySubject<TextObject> = new ReplaySubject(1);
-        
+
         this.db.textsArchived.insert(
-            { 
-                userId: text.userId, 
-                languageId: text.languageId, 
-                text: text.text, 
-                title: text.title, 
+            {
+                userId: text.userId,
+                languageId: text.languageId,
+                text: text.text,
+                title: text.title,
                 createdOn: text.createdOn,
             },
-        (error, dbText) => {
-            textSource$.next(dbText);
-            textSource$.complete();
-        });
+            (error, dbText) => {
+                textSource$.next(dbText);
+                textSource$.complete();
+            });
 
         return textSource$.asObservable();
     }

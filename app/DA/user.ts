@@ -1,14 +1,12 @@
-import * as path from 'path';
-import { format, URL } from 'url';
-import * as Datastore from 'nedb';
-import { database } from './database';
-import { ReplaySubject, Observable } from 'rxjs';
+import { Observable, ReplaySubject } from 'rxjs';
 import { User } from '../Objects/User';
+import { Database } from './database';
 
 export class user {
-    private db: database = new database();
+    private db: Database = new Database();
 
-    public constructor() { }
+    public constructor() {
+    }
 
     public addUser(name: string, password: string, email: string)
         : Observable<User> {
@@ -33,8 +31,8 @@ export class user {
     public get(name, password): Observable<User> {
         const userSource$: ReplaySubject<User> = new ReplaySubject(null);
 
-        this.db.users.findOne({ name, password }, (error, user: User) => {
-            userSource$.next(user);
+        this.db.users.findOne({name, password}, (error, response: User) => {
+            userSource$.next(response);
             userSource$.complete();
         });
 

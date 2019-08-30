@@ -1,18 +1,20 @@
 import * as Objects from './namespace';
 
 export class Text {
-    constructor() { }
-
-    // properties:
     // text
     public text: string;
+
+    // properties:
     // title
     public title: string;
     // language
     public languageId: string;
-    // parsed text
     // word list
     public words: Objects.WordObject[];
+    // parsed text
     // sentences list
     public sentences: string[];
+
+    constructor() {
+    }
 }

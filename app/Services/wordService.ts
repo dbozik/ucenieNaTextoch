@@ -1,16 +1,17 @@
-import * as DA from "../DA/namespace";
-import { Observable, ReplaySubject } from "rxjs";
-import { WordObject } from "../Objects/namespace";
+import { Observable, ReplaySubject } from 'rxjs';
+import * as DA from '../DA/namespace';
+import { WordObject } from '../Objects/namespace';
 
-export class wordService {
-    private wordsDA = new DA.words();
+export class WordService {
+    private wordsDA = new DA.Words();
 
-    public constructor() { }
+    public constructor() {
+    }
 
     public getWord(word: string, exampleSentence: string): Observable<WordObject> {
         const wordSource$: ReplaySubject<WordObject> = new ReplaySubject(1);
 
-        const words = new DA.words();
+        const words = new DA.Words();
 
         words.get(word).subscribe(retrievedWord => {
             if (retrievedWord) {

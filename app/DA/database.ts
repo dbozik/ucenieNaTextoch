@@ -1,16 +1,10 @@
 import * as Datastore from 'nedb';
 import * as path from 'path';
 
-export class database {
-    // private rootPath: string = process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + 'Library/Preferences' : '/var/local');
+export class Database {
     private rootPath = './data/';
 
     private _words: Datastore = null;
-    private _texts: Datastore = null;
-    private _textsArchived: Datastore = null;
-    private _languages: Datastore = null;
-    private _settings: Datastore = null;
-    private _users: Datastore = null;
 
     public get words(): Datastore {
         if (!this._words) {
@@ -23,6 +17,8 @@ export class database {
         return this._words;
     }
 
+    private _texts: Datastore = null;
+
     public get texts(): Datastore {
         if (!this._texts) {
             this._texts = new Datastore({
@@ -30,9 +26,11 @@ export class database {
                 autoload: true
             });
         }
-        
+
         return this._texts;
     }
+
+    private _textsArchived: Datastore = null;
 
     public get textsArchived(): Datastore {
         if (!this._textsArchived) {
@@ -41,9 +39,11 @@ export class database {
                 autoload: true
             });
         }
-        
+
         return this._textsArchived;
     }
+
+    private _languages: Datastore = null;
 
     public get languages(): Datastore {
         if (!this._languages) {
@@ -52,9 +52,11 @@ export class database {
                 autoload: true
             });
         }
-        
+
         return this._languages;
     }
+
+    private _settings: Datastore = null;
 
     public get settings(): Datastore {
         if (!this._settings) {
@@ -63,9 +65,11 @@ export class database {
                 autoload: true
             });
         }
-        
+
         return this._settings;
     }
+
+    private _users: Datastore = null;
 
     public get users(): Datastore {
         if (!this._users) {
@@ -74,7 +78,7 @@ export class database {
                 autoload: true
             });
         }
-        
+
         return this._users;
     }
 }

@@ -1,14 +1,15 @@
-import { database } from './database';
-import { ReplaySubject, Observable } from 'rxjs';
+import { Observable, ReplaySubject } from 'rxjs';
 import { Language } from '../Objects/Language';
+import { Database } from './database';
 
-export class languages {
-    private db: database = new database();
+export class Languages {
+    private db: Database = new Database();
 
-    public constructor() { }
+    public constructor() {
+    }
 
     public addLanguage(name: string, dictionary: string, userId: string, wordSeparators: string,
-        sentenceSeparators: string)
+                       sentenceSeparators: string)
         : Observable<Language> {
         const languageSource$: ReplaySubject<Language> = new ReplaySubject(1);
 
@@ -36,7 +37,7 @@ export class languages {
 
 
     public editLanguage(languageId: string, name: string, dictionary: string, wordSeparators: string,
-        sentenceSeparators: string)
+                        sentenceSeparators: string)
         : Observable<Language> {
         const languageSource$: ReplaySubject<Language> = new ReplaySubject(1);
 
@@ -58,7 +59,7 @@ export class languages {
 
                 languageSource$.next(language);
             });
-        
+
         this.db.languages.persistence.compactDatafile();
 
         return languageSource$.asObservable();
@@ -68,7 +69,7 @@ export class languages {
     public get(languageId: string): Observable<Language> {
         const languageSource$: ReplaySubject<Language> = new ReplaySubject(1);
 
-        this.db.languages.findOne({ _id: languageId }, (error, language: Language) => {
+        this.db.languages.findOne({_id: languageId}, (error, language: Language) => {
             languageSource$.next(language);
         });
 
@@ -85,8 +86,8 @@ export class languages {
     public getList(userId: string): Observable<Language[]> {
         const languageSource$: ReplaySubject<Language[]> = new ReplaySubject(1);
 
-        this.db.languages.find({ userId }, (error, languages: Language[]) => {
-            languageSource$.next(languages);
+        this.db.languages.find({userId}, (error, response: Language[]) => {
+            languageSource$.next(response);
         });
 
         return languageSource$.asObservable();

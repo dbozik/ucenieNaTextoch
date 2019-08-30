@@ -1,14 +1,15 @@
-import { Injectable } from "@angular/core";
-import { IpcService } from "../add-text/ipc.service";
-import { Language } from "../../../app/Objects/Language";
-import { ipcEvents } from "../../shared/ipc-events.enum";
-import { Observable } from "rxjs";
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { Language } from '../../../app/Objects/Language';
+import { ipcEvents } from '../../shared/ipc-events.enum';
+import { IpcService } from '../add-text/ipc.service';
 
 @Injectable()
 export class LanguageService {
     constructor(
         private readonly ipcService: IpcService,
-    ) {}
+    ) {
+    }
 
 
     /**

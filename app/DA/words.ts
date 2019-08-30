@@ -1,16 +1,14 @@
-import * as path from 'path';
-import {format, URL} from 'url';
-import * as Datastore from 'nedb';
-import {Observable, ReplaySubject} from 'rxjs';
+import { Observable, ReplaySubject } from 'rxjs';
 import { WordObject } from '../Objects/namespace';
-import { database } from './database';
+import { Database } from './database';
 
-export class words {
+export class Words {
     public wordId: number;
 
-    private db: database = new database();
+    private db: Database = new Database();
 
-    public constructor() { }
+    public constructor() {
+    }
 
     public add(word: string, exampleSentence: string, languageId: string, userId: string)
         : Observable<WordObject> {

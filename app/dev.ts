@@ -6,7 +6,7 @@ import * as Services from '../app/Services/namespace';
 
 // console.dir(words);
 
-const languageService = new Services.languageService();
+const languageService = new Services.LanguageService();
 
 // languageService.add('german', 'https://translate.google.com/?sl=de&tl=en#de/en/{word}',
 // /[.?!]+/, /[\s,.?!;:_()\[\]/\\"-]+/, '0');

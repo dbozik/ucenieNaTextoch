@@ -1,17 +1,17 @@
-import { BrowserWindow, Menu, ipcMain } from 'electron';
 import { NgZone } from '@angular/core';
 import { Router } from '@angular/router';
+import { BrowserWindow, ipcMain, Menu } from 'electron';
+import { Observable } from 'rxjs';
+import { take } from 'rxjs/operators';
+import * as Services from '../app/Services/namespace';
 import { ipcEvents } from '../web/shared/ipc-events.enum';
 import { Routes } from '../web/shared/routes.enum';
-import * as Services from '../app/Services/namespace';
-import { Observable } from 'rxjs';
-import { Language } from './Objects/Language';
-import { take } from 'rxjs/operators';
 
 interface AngularWindow extends Window {
     router: Router;
     ngZone: NgZone;
 }
+
 declare var window: AngularWindow;
 const PORT: number = 31411;
 
@@ -20,9 +20,43 @@ export default class Main {
     static application: Electron.App;
     static BrowserWindow;
 
+    public static bindSendData<T>(eventName: ipcEvents, getData: () => Observable<T>) {
+        ipcMain.on(eventName, (event, args) => {
+            getData().pipe(take(1)).subscribe((data) => {
+                event.sender.send(eventName + '-reply', data);
+            });
+        });
+    }
+
+    static main(
+        app: Electron.App,
+        browserWindow: typeof BrowserWindow) {
+        // we pass the Electron.App object and the
+        // Electron.BrowserWindow into this function
+        // so this class1 has no dependencies.  This
+        // makes the code easier to write tests for
+
+        Main.BrowserWindow = browserWindow;
+        Main.application = app;
+        Main.application.on('window-all-closed', Main.onWindowAllClosed);
+        Main.application.on('ready', Main.onReady);
+        Main.application.on('activate', Main.onReady);
+
+        const languageService = new Services.LanguageService();
+
+        ipcMain.on('main-open-text', Main.openText);
+        ipcMain.on(ipcEvents.LOGIN, Main.login);
+        ipcMain.on(ipcEvents.SIGNUP, Main.signup);
+        languageService.bindSendLanguages();
+        ipcMain.on(ipcEvents.ADD_LANGUAGE, languageService.add);
+        ipcMain.on(ipcEvents.EDIT_LANGUAGE, languageService.edit);
+        ipcMain.on(ipcEvents.DELETE_LANGUAGE, languageService.delete);
+    }
+
     private static onWindowAllClosed() {
-        if (process.platform !== 'darwin')
+        if (process.platform !== 'darwin') {
             Main.application.quit();
+        }
     }
 
     private static onClose() {
@@ -33,7 +67,7 @@ export default class Main {
     private static onReady() {
         Main.closeMenu();
 
-        Main.mainWindow = new Main.BrowserWindow({ width: 800, height: 600 });
+        Main.mainWindow = new Main.BrowserWindow({width: 800, height: 600});
 
         const environment: 'dev' | 'prod' = 'dev';
 
@@ -49,7 +83,6 @@ export default class Main {
 
         Main.mainWindow.on('closed', Main.onClose);
     }
-
 
     private static openMenu() {
         const mainMenuTemplate = [
@@ -88,7 +121,6 @@ export default class Main {
         Menu.setApplicationMenu(null);
     }
 
-
     private static openPage(page: string): void {
         const javascript: string = wrapFn(() => {
             window.ngZone.run(() => {
@@ -99,22 +131,12 @@ export default class Main {
         Main.mainWindow.webContents.executeJavaScript(javascript);
     }
 
-
-    public static bindSendData<T>(eventName: ipcEvents, getData: () => Observable<T>) {
-        ipcMain.on(eventName, (event, args) => {
-            getData().pipe(take(1)).subscribe((data) => {
-                event.sender.send(eventName + '-reply', data);
-            });
-        });
-    }
-
-
     private static openText(event, arg) {
         Main.mainWindow.loadURL(`http://localhost:${PORT}/${Routes.READ_TEXT}/${arg}`);
     }
 
     private static login(event, arg) {
-        const userService = new Services.userService();
+        const userService = new Services.UserService();
         userService.signin(arg.username, arg.password).subscribe((success: boolean) => {
             if (success) {
                 Main.openMenu();
@@ -126,39 +148,12 @@ export default class Main {
         }, (error) => console.dir(error));
     }
 
-
     private static signup(event, arg) {
-        const userService = new Services.userService();
+        const userService = new Services.UserService();
 
         userService.signup(arg.username, arg.password, arg.email).subscribe((success: boolean) => {
             Main.openPage(Routes.LOGIN);
         }, (error) => console.dir(error));
-    }
-
-
-    static main(
-        app: Electron.App,
-        browserWindow: typeof BrowserWindow) {
-        // we pass the Electron.App object and the 
-        // Electron.BrowserWindow into this function
-        // so this class1 has no dependencies.  This
-        // makes the code easier to write tests for
-
-        Main.BrowserWindow = browserWindow;
-        Main.application = app;
-        Main.application.on('window-all-closed', Main.onWindowAllClosed);
-        Main.application.on('ready', Main.onReady);
-        Main.application.on('activate', Main.onReady);
-
-        const languageService = new Services.languageService();
-
-        ipcMain.on('main-open-text', Main.openText);
-        ipcMain.on(ipcEvents.LOGIN, Main.login);
-        ipcMain.on(ipcEvents.SIGNUP, Main.signup);
-        languageService.bindSendLanguages();
-        ipcMain.on(ipcEvents.ADD_LANGUAGE, languageService.add);
-        ipcMain.on(ipcEvents.EDIT_LANGUAGE, languageService.edit);
-        ipcMain.on(ipcEvents.DELETE_LANGUAGE, languageService.delete);
     }
 }
 

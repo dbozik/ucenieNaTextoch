@@ -1,4 +1,4 @@
-import { TextPart } from "./TextPart";
+import { TextPart } from './TextPart';
 
 export class TextObject {
     public _id?: string;

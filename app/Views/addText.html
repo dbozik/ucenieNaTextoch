@@ -9,33 +9,33 @@
     </script>
     <script src="../../node_modules/tether/dist/js/tether.min.js"></script>
     <!-- <script src="../Sources/Scripts/jquery-3.2.1.min.js"></script> -->
-    <link rel="stylesheet" href="../Sources/Styles/bootstrap.min.css">
-    <link rel="stylesheet" href="../Sources/Styles/bootstrap-grid.min.css">
-    <link rel="stylesheet" href="../Sources/Styles/bootstrap-reboot.min.css">
-    <link rel="stylesheet" href="../Sources/Styles/custom.css">
+    <link href="../Sources/Styles/bootstrap.min.css" rel="stylesheet">
+    <link href="../Sources/Styles/bootstrap-grid.min.css" rel="stylesheet">
+    <link href="../Sources/Styles/bootstrap-reboot.min.css" rel="stylesheet">
+    <link href="../Sources/Styles/custom.css" rel="stylesheet">
     <script src="../Sources/Scripts/bootstrap.min.js"></script>
     <title>Add Text</title>
 </head>
 
 <body>
-    <div class="container">
-        <div class="row" class="background-color">
-            <h3>Add Text</h3>
-        </div>
-        <div class="form-group">
-            <div class="row">
-                <input type="text" id="title" placeholder="Title">
-            </div>
-            <div class="row">
-                <textarea class="form-control" rows="15" id="text"></textarea>
-            </div>
-        </div>
-        <button class="float-right" id="addText">Add</button>
+<div class="container">
+    <div class="row" class="background-color">
+        <h3>Add Text</h3>
     </div>
+    <div class="form-group">
+        <div class="row">
+            <input id="title" placeholder="Title" type="text">
+        </div>
+        <div class="row">
+            <textarea class="form-control" id="text" rows="15"></textarea>
+        </div>
+    </div>
+    <button class="float-right" id="addText">Add</button>
+</div>
 
-    <script>
-        require('../Renderers/addText.js')
-    </script>
+<script>
+    require('../Renderers/addText.js')
+</script>
 </body>
 
 </html>

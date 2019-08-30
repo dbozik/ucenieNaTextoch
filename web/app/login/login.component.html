@@ -1,21 +1,21 @@
 <div [formGroup]="signinForm">
-  <div class="input-box">
-    <label for="username">Username:</label>
-    <input type="text" name="username" formControlName="username">
-  </div>
-  
-  <div class="input-box">
-    <label for="password">Password:</label>
-    <input type="password" name="password" formControlName="password">
-  </div>
+    <div class="input-box">
+        <label for="username">Username:</label>
+        <input formControlName="username" name="username" type="text">
+    </div>
 
-  <div *ngIf="wrongCredentials" style="color: red;">
-    Wrong credentials
-  </div>
-  
-  <div class="input-box">
-    <button (click)="signin()" [disabled]="signinForm.invalid">Signin</button>
-    <button (click)="onSignup()">Signup</button>
-    <button (click)="forgottenPassword()">Forgotten password</button>
-  </div>
+    <div class="input-box">
+        <label for="password">Password:</label>
+        <input formControlName="password" name="password" type="password">
+    </div>
+
+    <div *ngIf="wrongCredentials" style="color: red;">
+        Wrong credentials
+    </div>
+
+    <div class="input-box">
+        <button (click)="signin()" [disabled]="signinForm.invalid">Signin</button>
+        <button (click)="onSignup()">Signup</button>
+        <button (click)="forgottenPassword()">Forgotten password</button>
+    </div>
 </div>

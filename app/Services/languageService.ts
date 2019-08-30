@@ -1,14 +1,15 @@
-import * as DA from "../DA/namespace";
-import { Observable, ReplaySubject } from "rxjs";
-import { Language } from "../Objects/Language";
-import { ipcEvents } from "../../web/shared/ipc-events.enum";
-import Main from "../Main";
+import { Observable } from 'rxjs';
+import { ipcEvents } from '../../web/shared/ipc-events.enum';
+import * as DA from '../DA/namespace';
+import Main from '../Main';
+import { Language } from '../Objects/Language';
 import * as Services from './namespace';
 
-export class languageService {
-    private languageDA = new DA.languages();
+export class LanguageService {
+    private languageDA = new DA.Languages();
 
-    public constructor() { }
+    public constructor() {
+    }
 
     public getList(userId: string): Observable<Language[]> {
         return this.languageDA.getList(userId);
@@ -21,19 +22,30 @@ export class languageService {
     public add(event, language: Language): void {
         const userId = Services.StateService.getInstance().userId;
 
-        (new DA.languages()).addLanguage(language.name, language.dictionary, userId, language.wordSeparators.toString(), language.sentenceSeparators.toString());
+        (new DA.Languages()).addLanguage(
+            language.name,
+            language.dictionary,
+            userId,
+            language.wordSeparators.toString(),
+            language.sentenceSeparators.toString());
     }
 
 
     public edit(event, language: Language): void {
-        (new DA.languages()).editLanguage(language._id, language.name, language.dictionary, language.wordSeparators.toString(), language.sentenceSeparators.toString());
+        (new DA.Languages()).editLanguage(
+            language._id,
+            language.name,
+            language.dictionary,
+            language.wordSeparators.toString(),
+            language.sentenceSeparators.toString()
+        );
     }
 
 
     public delete(event, languageId: string): void {
-        (new DA.languages()).delete(languageId);
+        (new DA.Languages()).delete(languageId);
     }
-    
+
 
     public bindSendLanguages() {
         Main.bindSendData<Language[]>(ipcEvents.LANGUAGES, () => {

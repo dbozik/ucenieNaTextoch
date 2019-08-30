@@ -1,10 +1,10 @@
-import * as DA from "../DA/namespace";
-import { User } from "../Objects/User";
-import { Observable } from "rxjs";
-import { tap, map } from "rxjs/operators";
-import { StateService } from "./stateService";
+import { Observable } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
+import * as DA from '../DA/namespace';
+import { User } from '../Objects/User';
+import { StateService } from './stateService';
 
-export class userService {
+export class UserService {
     private userDA = new DA.user();
 
     /**

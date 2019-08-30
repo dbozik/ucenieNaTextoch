@@ -1,5 +1,5 @@
-import * as Services from '../Services/namespace';
 import { TextPart } from '../Objects/TextPart';
+import * as Services from '../Services/namespace';
 
 const maxLevel = 10000;
 
@@ -14,8 +14,8 @@ const maxLevel = 10000;
 
 declare const Vue;
 
-const textsService = new Services.textService();
-const wordService = new Services.wordService();
+const textsService = new Services.TextService();
+const wordService = new Services.WordService();
 
 var app = new Vue({
     el: '#readTextVue',
@@ -47,7 +47,7 @@ var app = new Vue({
             // update the data in textService, with reflection in the renderer
             if (textPart.translation) {
                 textsService.updateTranslation(textPart.wordId, textPart.translation);
-                wordService.updateTranslation(textPart.wordId, textPart.translation);    
+                wordService.updateTranslation(textPart.wordId, textPart.translation);
             }
         },
         decreaseLevel: function(textPart: TextPart): void {
