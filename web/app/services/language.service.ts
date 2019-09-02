@@ -23,8 +23,8 @@ export class LanguageService {
     /**
      * addLanguage
      */
-    public addLanguage(language: Language): void {
-        this.ipcService.ipc.send(ipcEvents.ADD_LANGUAGE, language);
+    public addLanguage(language: Language): Observable<Language> {
+        return this.ipcService.sendData<Language>(ipcEvents.ADD_LANGUAGE, language);
     }
 
 

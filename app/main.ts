@@ -50,7 +50,7 @@ export default class Main {
         ipcMain.on(ipcEvents.SIGNUP, Main.signup);
 
         languageService.bindSendLanguages();
-        ipcMain.on(ipcEvents.ADD_LANGUAGE, languageService.add);
+        languageService.bindAddLanguage();
         languageService.bindEditLanguage();
         ipcMain.on(ipcEvents.DELETE_LANGUAGE, languageService.delete);
     }

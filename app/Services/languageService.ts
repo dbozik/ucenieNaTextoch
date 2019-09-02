@@ -31,17 +31,6 @@ export class LanguageService {
     }
 
 
-    public edit(event, language: Language): void {
-        (new DA.Languages()).editLanguage(
-            language._id,
-            language.name,
-            language.dictionary,
-            language.wordSeparators.toString(),
-            language.sentenceSeparators.toString()
-        );
-    }
-
-
     public delete(event, languageId: string): void {
         (new DA.Languages()).delete(languageId);
     }
@@ -58,9 +47,24 @@ export class LanguageService {
     }
 
 
+    public bindAddLanguage(): void {
+        ipcMain.on(ipcEvents.ADD_LANGUAGE, (event, arg: Language) => {
+            const userId = Services.StateService.getInstance().userId;
+
+            (new DA.Languages()).addLanguage(
+                arg.name,
+                arg.dictionary,
+                userId,
+                arg.wordSeparators.toString(),
+                arg.sentenceSeparators.toString()).subscribe((response: Language) => {
+                event.sender.send(ipcEvents.ADD_LANGUAGE + '-reply', response);
+            });
+        });
+    }
+
+
     public bindEditLanguage() {
         ipcMain.on(ipcEvents.EDIT_LANGUAGE, (event, arg: Language) => {
-            const userId = Services.StateService.getInstance().userId;
             (new DA.Languages()).editLanguage(
                 arg._id,
                 arg.name,

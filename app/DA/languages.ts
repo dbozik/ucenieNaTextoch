@@ -29,7 +29,9 @@ export class Languages {
                     userId: dbLanguage.userId,
                 };
 
-                languageSource$.next(language);
+                setTimeout(() => {
+                    languageSource$.next(language);
+                }, 100);
             });
 
         return languageSource$.asObservable();
