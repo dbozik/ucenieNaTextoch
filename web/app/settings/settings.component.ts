@@ -104,9 +104,10 @@ export class SettingsComponent implements OnInit {
      * remove
      */
     public remove(languageId: string) {
-        setTimeout(() => {
-            this.languageService.deleteLanguage(languageId);
-        }, 2000);
+        this.languageService.deleteLanguage(languageId).subscribe(() => {
+            this.getLanguages();
+            this.editingId = null;
+        });
     }
 
 

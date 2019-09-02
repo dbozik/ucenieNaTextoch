@@ -76,4 +76,13 @@ export class LanguageService {
             });
         });
     }
+
+
+    public bindDeleteLanguage() {
+        ipcMain.on(ipcEvents.DELETE_LANGUAGE, (event, arg: string) => {
+            (new DA.Languages()).delete(arg).subscribe((response: any) => {
+                event.sender.send(ipcEvents.DELETE_LANGUAGE + '-reply', response);
+            });
+        });
+    }
 }

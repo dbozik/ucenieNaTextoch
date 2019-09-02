@@ -81,9 +81,17 @@ export class Languages {
     }
 
 
-    public delete(languageId: string): void {
-        this.db.languages.remove({_id: languageId});
+    public delete(languageId: string): Observable<any> {
+        const responseSource$: ReplaySubject<any> = new ReplaySubject<any>(1);
+
+        this.db.languages.remove({_id: languageId}, (error, response) => {
+           setTimeout(() => {
+               responseSource$.next(response);
+           }, 100);
+        });
         this.db.languages.persistence.compactDatafile();
+
+        return responseSource$.asObservable();
     }
 
 

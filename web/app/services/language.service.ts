@@ -36,7 +36,7 @@ export class LanguageService {
     }
 
 
-    public deleteLanguage(languageId: string): void {
-        this.ipcService.ipc.send(ipcEvents.DELETE_LANGUAGE, languageId);
+    public deleteLanguage(languageId: string): Observable<void> {
+        return this.ipcService.sendData<string, void>(ipcEvents.DELETE_LANGUAGE, languageId);
     }
 }

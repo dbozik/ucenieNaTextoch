@@ -52,7 +52,7 @@ export default class Main {
         languageService.bindSendLanguages();
         languageService.bindAddLanguage();
         languageService.bindEditLanguage();
-        ipcMain.on(ipcEvents.DELETE_LANGUAGE, languageService.delete);
+        languageService.bindDeleteLanguage();
     }
 
     private static onWindowAllClosed() {
