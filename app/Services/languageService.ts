@@ -1,9 +1,9 @@
 import { ipcMain } from 'electron';
 import { Observable } from 'rxjs';
+import * as Services from '.';
 import { ipcEvents } from '../../web/shared/ipc-events.enum';
 import * as DA from '../DA/namespace';
 import { Language } from '../Objects/Language';
-import * as Services from './namespace';
 
 export class LanguageService {
     private languageDA = new DA.Languages();
@@ -31,57 +31,53 @@ export class LanguageService {
     }
 
 
-    public delete(event, languageId: string): void {
-        (new DA.Languages()).delete(languageId);
-    }
-
-
     public bindSendLanguages() {
-        ipcMain.on(ipcEvents.LANGUAGES, (event, arg) => {
+        this.bindEvent(ipcEvents.LANGUAGES, (arg) => {
             const userId = Services.StateService.getInstance().userId;
 
-            (new DA.Languages()).getList(userId).subscribe((response: Language[]) => {
-                event.sender.send(ipcEvents.LANGUAGES + '-reply', response);
-            });
+            return (new DA.Languages()).getList(userId);
         });
     }
 
 
     public bindAddLanguage(): void {
-        ipcMain.on(ipcEvents.ADD_LANGUAGE, (event, arg: Language) => {
+        this.bindEvent(ipcEvents.ADD_LANGUAGE, (arg: Language) => {
             const userId = Services.StateService.getInstance().userId;
 
-            (new DA.Languages()).addLanguage(
+            return (new DA.Languages()).addLanguage(
                 arg.name,
                 arg.dictionary,
                 userId,
                 arg.wordSeparators.toString(),
-                arg.sentenceSeparators.toString()).subscribe((response: Language) => {
-                event.sender.send(ipcEvents.ADD_LANGUAGE + '-reply', response);
-            });
+                arg.sentenceSeparators.toString());
         });
     }
 
 
     public bindEditLanguage() {
-        ipcMain.on(ipcEvents.EDIT_LANGUAGE, (event, arg: Language) => {
-            (new DA.Languages()).editLanguage(
+        this.bindEvent<Language>(ipcEvents.EDIT_LANGUAGE, (arg: Language) => {
+            return (new DA.Languages()).editLanguage(
                 arg._id,
                 arg.name,
                 arg.dictionary,
                 arg.wordSeparators.toString(),
                 arg.sentenceSeparators.toString()
-            ).subscribe((response: Language) => {
-                event.sender.send(ipcEvents.EDIT_LANGUAGE + '-reply', response);
-            });
+            );
         });
     }
 
 
     public bindDeleteLanguage() {
-        ipcMain.on(ipcEvents.DELETE_LANGUAGE, (event, arg: string) => {
-            (new DA.Languages()).delete(arg).subscribe((response: any) => {
-                event.sender.send(ipcEvents.DELETE_LANGUAGE + '-reply', response);
+        this.bindEvent<string>(ipcEvents.DELETE_LANGUAGE, (arg: string) => {
+            return (new DA.Languages()).delete(arg);
+        });
+    }
+
+
+    private bindEvent<T>(eventName: ipcEvents, dbRequest: (arg: T) => Observable<T>): void {
+        ipcMain.on(eventName, (event, arg: T) => {
+            dbRequest(arg).subscribe((response: any) => {
+                event.sender.send(eventName + '-reply', response);
             });
         });
     }
