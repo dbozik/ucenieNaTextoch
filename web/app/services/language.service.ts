@@ -23,20 +23,20 @@ export class LanguageService {
     /**
      * addLanguage
      */
-    public addLanguage(language: Language): void {
-        this.ipcService.ipc.send(ipcEvents.ADD_LANGUAGE, language);
+    public addLanguage(language: Language): Observable<Language> {
+        return this.ipcService.sendData<Language>(ipcEvents.ADD_LANGUAGE, language);
     }
 
 
     /**
      * editLanguage
      */
-    public editLanguage(language: Language) {
-        this.ipcService.ipc.send(ipcEvents.EDIT_LANGUAGE, language);
+    public editLanguage(language: Language): Observable<Language> {
+        return this.ipcService.sendData<Language>(ipcEvents.EDIT_LANGUAGE, language);
     }
 
 
-    public deleteLanguage(languageId: string): void {
-        this.ipcService.ipc.send(ipcEvents.DELETE_LANGUAGE, languageId);
+    public deleteLanguage(languageId: string): Observable<void> {
+        return this.ipcService.sendData<string, void>(ipcEvents.DELETE_LANGUAGE, languageId);
     }
 }

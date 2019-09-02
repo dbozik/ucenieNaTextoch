@@ -28,13 +28,32 @@ export class IpcService {
 
     public getData<T>(event: ipcEvents): Observable<T> {
         const result: Subject<T> = new Subject();
+        const replyEvent: string = event + '-reply';
 
-        this._ipc.on(event + '-reply', (e, args) => {
+        this._ipc.on(replyEvent, (e, args) => {
             result.next(args);
             result.complete();
+
+            this._ipc.removeAllListeners(replyEvent);
         });
 
         this._ipc.send(event);
+        return result.asObservable();
+    }
+
+
+    public sendData<T, S = T>(event: ipcEvents, data: T): Observable<S> {
+        const result: Subject<S> = new Subject();
+        const replyEvent: string = event + '-reply';
+
+        this._ipc.on(replyEvent, (e, args) => {
+            result.next(args);
+            result.complete();
+
+            this._ipc.removeAllListeners(replyEvent);
+        });
+
+        this._ipc.send(event, data);
         return result.asObservable();
     }
 }

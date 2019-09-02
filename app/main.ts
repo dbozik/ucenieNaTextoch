@@ -24,6 +24,7 @@ export default class Main {
         ipcMain.on(eventName, (event, args) => {
             getData().pipe(take(1)).subscribe((data) => {
                 event.sender.send(eventName + '-reply', data);
+                event.sender.removeAllListeners(eventName + '-reply');
             });
         });
     }
@@ -47,10 +48,11 @@ export default class Main {
         ipcMain.on('main-open-text', Main.openText);
         ipcMain.on(ipcEvents.LOGIN, Main.login);
         ipcMain.on(ipcEvents.SIGNUP, Main.signup);
+
         languageService.bindSendLanguages();
-        ipcMain.on(ipcEvents.ADD_LANGUAGE, languageService.add);
-        ipcMain.on(ipcEvents.EDIT_LANGUAGE, languageService.edit);
-        ipcMain.on(ipcEvents.DELETE_LANGUAGE, languageService.delete);
+        languageService.bindAddLanguage();
+        languageService.bindEditLanguage();
+        languageService.bindDeleteLanguage();
     }
 
     private static onWindowAllClosed() {

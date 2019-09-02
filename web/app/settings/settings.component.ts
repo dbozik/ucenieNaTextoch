@@ -87,13 +87,16 @@ export class SettingsComponent implements OnInit {
         };
 
         if (languageId === this.NEW_LANGUAGE_ID) {
-            this.languageService.addLanguage(language);
+            this.languageService.addLanguage(language).subscribe((data) => {
+                this.getLanguages();
+                this.editingId = null;
+            });
         } else {
-            this.languageService.editLanguage({...language, _id: languageId});
+            this.languageService.editLanguage({...language, _id: languageId}).subscribe((data) => {
+                this.getLanguages();
+                this.editingId = null;
+            });
         }
-
-        this.getLanguages();
-        this.editingId = null;
     }
 
 
@@ -101,7 +104,10 @@ export class SettingsComponent implements OnInit {
      * remove
      */
     public remove(languageId: string) {
-        this.languageService.deleteLanguage(languageId);
+        this.languageService.deleteLanguage(languageId).subscribe(() => {
+            this.getLanguages();
+            this.editingId = null;
+        });
     }
 
 
