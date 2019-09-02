@@ -31,8 +31,8 @@ export class LanguageService {
     /**
      * editLanguage
      */
-    public editLanguage(language: Language) {
-        this.ipcService.ipc.send(ipcEvents.EDIT_LANGUAGE, language);
+    public editLanguage(language: Language): Observable<Language> {
+        return this.ipcService.sendData<Language>(ipcEvents.EDIT_LANGUAGE, language);
     }
 
 

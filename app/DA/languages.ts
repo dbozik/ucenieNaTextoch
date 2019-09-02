@@ -57,7 +57,9 @@ export class Languages {
             (error, dbLanguage: any) => {
                 const language: Language = this.retreive(dbLanguage);
 
-                languageSource$.next(language);
+                setTimeout(() => {
+                    languageSource$.next(language);
+                }, 100);
             });
 
         this.db.languages.persistence.compactDatafile();

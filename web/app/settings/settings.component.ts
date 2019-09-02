@@ -89,11 +89,11 @@ export class SettingsComponent implements OnInit {
         if (languageId === this.NEW_LANGUAGE_ID) {
             this.languageService.addLanguage(language);
         } else {
-            this.languageService.editLanguage({...language, _id: languageId});
+            this.languageService.editLanguage({...language, _id: languageId}).subscribe((data) => {
+                this.getLanguages();
+                this.editingId = null;
+            });
         }
-
-        this.getLanguages();
-        this.editingId = null;
     }
 
 

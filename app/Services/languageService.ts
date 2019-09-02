@@ -1,7 +1,7 @@
+import { ipcMain } from 'electron';
 import { Observable } from 'rxjs';
 import { ipcEvents } from '../../web/shared/ipc-events.enum';
 import * as DA from '../DA/namespace';
-import Main from '../Main';
 import { Language } from '../Objects/Language';
 import * as Services from './namespace';
 
@@ -48,10 +48,28 @@ export class LanguageService {
 
 
     public bindSendLanguages() {
-        Main.bindSendData<Language[]>(ipcEvents.LANGUAGES, () => {
+        ipcMain.on(ipcEvents.LANGUAGES, (event, arg) => {
             const userId = Services.StateService.getInstance().userId;
 
-            return this.getList(userId);
+            (new DA.Languages()).getList(userId).subscribe((response: Language[]) => {
+                event.sender.send(ipcEvents.LANGUAGES + '-reply', response);
+            });
+        });
+    }
+
+
+    public bindEditLanguage() {
+        ipcMain.on(ipcEvents.EDIT_LANGUAGE, (event, arg: Language) => {
+            const userId = Services.StateService.getInstance().userId;
+            (new DA.Languages()).editLanguage(
+                arg._id,
+                arg.name,
+                arg.dictionary,
+                arg.wordSeparators.toString(),
+                arg.sentenceSeparators.toString()
+            ).subscribe((response: Language) => {
+                event.sender.send(ipcEvents.EDIT_LANGUAGE + '-reply', response);
+            });
         });
     }
 }
