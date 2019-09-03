@@ -7,4 +7,5 @@ export enum ipcEvents {
     ADD_LANGUAGE = 'lwt-add-language',
     EDIT_LANGUAGE = 'lwt-edit-language',
     DELETE_LANGUAGE = 'lwt-delete-language',
+    ADD_TEXT = 'lwt-add-text',
 }

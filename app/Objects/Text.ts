@@ -9,11 +9,13 @@ export class Text {
     public title: string;
     // language
     public languageId: string;
+
+    public userId?: string;
     // word list
-    public words: Objects.WordObject[];
+    public words?: Objects.WordObject[];
     // parsed text
     // sentences list
-    public sentences: string[];
+    public sentences?: string[];
 
     constructor() {
     }
