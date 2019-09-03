@@ -1,12 +1,12 @@
-<div [formGroup]="signinForm">
+<div [formGroup]="signinForm" (keyup.enter)="signin()">
     <div class="input-box">
         <label for="username">Username:</label>
-        <input formControlName="username" name="username" type="text">
+        <input formControlName="username" name="username" id="username" class="form-control" type="text" autofocus >
     </div>
 
     <div class="input-box">
         <label for="password">Password:</label>
-        <input formControlName="password" name="password" type="password">
+        <input formControlName="password" name="password" id="password" class="form-control" type="password">
     </div>
 
     <div *ngIf="wrongCredentials" style="color: red;">

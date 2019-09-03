@@ -36,7 +36,15 @@ export class SettingsComponent implements OnInit {
      */
     public getLanguages() {
         this.languageService.getLanguages().pipe(take(1)).subscribe((languages: Language[]) => {
-            this.languages = languages;
+            this.languages = languages.sort((languageA, languageB) => {
+                if (languageA.name < languageB.name) {
+                    return -1;
+                }
+                if (languageA.name > languageB.name) {
+                    return 1;
+                }
+                return 0;
+            });
             this.changeDetection.detectChanges();
         });
     }

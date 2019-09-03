@@ -69,7 +69,7 @@ export default class Main {
     private static onReady() {
         Main.closeMenu();
 
-        Main.mainWindow = new Main.BrowserWindow({width: 800, height: 600});
+        Main.mainWindow = new Main.BrowserWindow({width: 1500, height: 927});
 
         const environment: 'dev' | 'prod' = 'dev';
 
