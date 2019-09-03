@@ -3,3 +3,4 @@
  - languages - add a hint to dictionary field
  - languages - regex without backslashes
  - languages - on remove display a confirm window
+ - add text - extendible text area for longer texts

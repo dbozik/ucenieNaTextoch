@@ -1,3 +1,20 @@
-<p>
-    add-text works! {{value}}
-</p>
+<div class="container">
+    <div class="row" class="background-color">
+        <h3>Add Text</h3>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <input id="title" placeholder="Title" type="text" class="form-control">
+        </div>
+        <div class="row">
+            <select name="languages" id="languages" class="form-control">
+                <option value="" disabled selected class="form-control">Language</option>
+                <option [value]="language._id" *ngFor="let language of languages">{{language.name}}</option>
+            </select>
+        </div>
+        <div class="row">
+            <textarea class="form-control" id="text" rows="15"></textarea>
+        </div>
+    </div>
+    <button class="btn" id="addText">Add</button>
+</div>

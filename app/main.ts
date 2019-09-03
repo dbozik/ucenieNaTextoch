@@ -90,6 +90,9 @@ export default class Main {
         const mainMenuTemplate = [
             {
                 label: 'Add Text!',
+                click: () => {
+                    Main.openPage(Routes.ADD_TEXT);
+                },
             },
             {
                 label: 'Texts',

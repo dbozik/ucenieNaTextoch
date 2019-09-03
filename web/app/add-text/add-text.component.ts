@@ -1,27 +1,28 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Language } from '../../../app/Objects/Language';
+import { LanguageService } from '../services/language.service';
 
 @Component({
     selector: 'app-add-text',
     templateUrl: './add-text.component.html',
-    styleUrls: ['./add-text.component.scss']
+    styleUrls: ['./add-text.component.scss'],
+    providers: [LanguageService],
 })
 export class AddTextComponent implements OnInit {
 
-    public value: number = -2;
+    public languages: Language[];
 
     constructor(
-        public router: Router,
+        private readonly languageService: LanguageService,
+        private readonly changeDetector: ChangeDetectorRef,
     ) {
     }
 
     ngOnInit() {
-        console.log('count');
-    }
-
-
-    public mojaMetoda() {
-        this.router.navigateByUrl('');
+        this.languageService.getLanguages().subscribe((languages: Language[]) => {
+            this.languages = languages;
+            this.changeDetector.detectChanges();
+        });
     }
 
 }
