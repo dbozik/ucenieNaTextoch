@@ -4,6 +4,7 @@ import { BrowserWindow, ipcMain, Menu } from 'electron';
 import { Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
 import * as Services from '../app/Services/namespace';
+import * as Objects from '../app/Objects';
 import { ipcEvents } from '../web/shared/ipc-events.enum';
 import { Routes } from '../web/shared/routes.enum';
 
@@ -44,6 +45,8 @@ export default class Main {
         Main.application.on('activate', Main.onReady);
 
         const languageService = new Services.LanguageService();
+
+        Main.bindEvent<Objects.Text>(ipcEvents.ADD_TEXT, (new Services.TextService()).saveText)
 
         ipcMain.on('main-open-text', Main.openText);
         ipcMain.on(ipcEvents.LOGIN, Main.login);
@@ -159,6 +162,15 @@ export default class Main {
         userService.signup(arg.username, arg.password, arg.email).subscribe((success: boolean) => {
             Main.openPage(Routes.LOGIN);
         }, (error) => console.dir(error));
+    }
+
+
+    private static bindEvent<T>(eventName: ipcEvents, dbRequest: (arg: T) => Observable<T>): void {
+        ipcMain.on(eventName, (event, arg: T) => {
+            dbRequest(arg).subscribe((response: any) => {
+                event.sender.send(eventName + '-reply', response);
+            });
+        });
     }
 }
 

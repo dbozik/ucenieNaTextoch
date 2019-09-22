@@ -2,8 +2,9 @@ import { BehaviorSubject, combineLatest, forkJoin, Observable, of, ReplaySubject
 import { first, switchMap, tap } from 'rxjs/operators';
 import * as DA from '../DA/namespace';
 import { TextPart, WordObject } from '../Objects/namespace';
-import { TextObject } from '../Objects/TextObject';
+import { Text } from '../Objects/Text';
 import { ParseTextService } from './parseTextService';
+import { StateService } from './stateService';
 
 export class TextService {
 
@@ -16,8 +17,8 @@ export class TextService {
     public textParts$: Observable<TextPart[]> = this.textPartsSource$.asObservable();
     private wordObjectsSource$: BehaviorSubject<WordObject[]> = new BehaviorSubject([]);
     public wordObjects$: Observable<WordObject[]> = this.wordObjectsSource$.asObservable();
-    private textSource$: BehaviorSubject<TextObject> = new BehaviorSubject(new TextObject());
-    public text$: Observable<TextObject> = this.textSource$.asObservable();
+    private textSource$: BehaviorSubject<Text> = new BehaviorSubject(new Text());
+    public text$: Observable<Text> = this.textSource$.asObservable();
 
     public constructor() {
     }
@@ -77,24 +78,25 @@ export class TextService {
                 });
     }
 
-    public getList(): Observable<TextObject[]> {
+    public getList(): Observable<Text[]> {
         const texts = new DA.Texts();
 
         return texts.getList();
     }
 
-    public getArchivedList(): Observable<TextObject[]> {
+    public getArchivedList(): Observable<Text[]> {
         const texts = new DA.TextsArchived();
 
         return texts.getList();
     }
 
-    public saveText(text: string, title: string, userId: string, languageId: string)
-        : Observable<TextObject> {
+    public saveText(text: Text)
+        : Observable<Text> {
         const texts = new DA.Texts();
+        const userId = StateService.getInstance().userId;
 
-        return this.saveWords(text, userId, languageId).pipe(
-            switchMap(() => texts.addText(text, title, userId, languageId))
+        return this.saveWords(text.text, userId, text.languageId).pipe(
+            switchMap(() => texts.addText(text.text, text.title, userId, text.languageId))
         );
     }
 

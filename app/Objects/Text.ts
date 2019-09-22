@@ -1,4 +1,4 @@
-import * as Objects from './namespace';
+import * as Objects from '.';
 
 export class Text {
     // text
@@ -16,6 +16,10 @@ export class Text {
     // parsed text
     // sentences list
     public sentences?: string[];
+
+    public _id?: string;
+    public createdOn?: Date;
+    public textParts?: Objects.TextPart[];
 
     constructor() {
     }
