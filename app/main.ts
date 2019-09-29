@@ -1,19 +1,12 @@
-import { NgZone } from '@angular/core';
-import { Router } from '@angular/router';
-import { BrowserWindow, ipcMain, Menu } from 'electron';
+import { BrowserWindow, ipcMain } from 'electron';
 import { Observable } from 'rxjs';
-import { take } from 'rxjs/operators';
-import * as Services from '../app/Services/namespace';
+import { take, tap } from 'rxjs/operators';
+import * as Services from '../app/Services';
 import * as Objects from '../app/Objects';
 import { ipcEvents } from '../web/shared/ipc-events.enum';
 import { Routes } from '../web/shared/routes.enum';
+import { Navigation } from './navigation';
 
-interface AngularWindow extends Window {
-    router: Router;
-    ngZone: NgZone;
-}
-
-declare var window: AngularWindow;
 const PORT: number = 31411;
 
 export default class Main {
@@ -32,7 +25,8 @@ export default class Main {
 
     static main(
         app: Electron.App,
-        browserWindow: typeof BrowserWindow) {
+        browserWindow: typeof BrowserWindow,
+    ) {
         // we pass the Electron.App object and the
         // Electron.BrowserWindow into this function
         // so this class1 has no dependencies.  This
@@ -46,7 +40,7 @@ export default class Main {
 
         const languageService = new Services.LanguageService();
 
-        Main.bindEvent<Objects.Text>(ipcEvents.ADD_TEXT, (new Services.TextService()).saveText)
+        Main.bindEvent<Objects.Text>(ipcEvents.ADD_TEXT, (new Services.TextService()).saveText);
 
         ipcMain.on('main-open-text', Main.openText);
         ipcMain.on(ipcEvents.LOGIN, Main.login);
@@ -70,14 +64,16 @@ export default class Main {
     }
 
     private static onReady() {
-        Main.closeMenu();
+        const navigation = new Navigation();
 
-        Main.mainWindow = new Main.BrowserWindow({width: 1500, height: 927});
+        navigation.closeMenu();
+
+        Main.mainWindow = new Main.BrowserWindow({ width: 1500, height: 927 });
 
         const environment: 'dev' | 'prod' = 'dev';
 
         Main.mainWindow.loadFile('./dist/web/index.html');
-        Main.openPage(Routes.LOGIN);
+        navigation.openPage(Routes.LOGIN);
         // if (environment === 'dev') {
         //     Main.mainWindow.loadURL(`http://localhost:${PORT}`);
         // } else {
@@ -89,56 +85,6 @@ export default class Main {
         Main.mainWindow.on('closed', Main.onClose);
     }
 
-    private static openMenu() {
-        const mainMenuTemplate = [
-            {
-                label: 'Add Text!',
-                click: () => {
-                    Main.openPage(Routes.ADD_TEXT);
-                },
-            },
-            {
-                label: 'Texts',
-                click: () => {
-                    Main.openPage(Routes.TEXTS);
-                },
-            },
-            {
-                label: 'Vocabulary',
-            },
-            {
-                label: 'Settings',
-                click: () => {
-                    Main.openPage(Routes.SETTINGS);
-                },
-            },
-            {
-                label: 'Signout',
-                click: () => {
-                    Main.closeMenu();
-                    Main.openPage(Routes.LOGIN);
-                },
-            }
-        ];
-
-        const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
-        Menu.setApplicationMenu(mainMenu);
-    }
-
-    private static closeMenu() {
-        Menu.setApplicationMenu(null);
-    }
-
-    private static openPage(page: string): void {
-        const javascript: string = wrapFn(() => {
-            window.ngZone.run(() => {
-                window.router.navigateByUrl(`/${page}`);
-            });
-        }).replace('${page}', page);
-
-        Main.mainWindow.webContents.executeJavaScript(javascript);
-    }
-
     private static openText(event, arg) {
         Main.mainWindow.loadURL(`http://localhost:${PORT}/${Routes.READ_TEXT}/${arg}`);
     }
@@ -147,8 +93,8 @@ export default class Main {
         const userService = new Services.UserService();
         userService.signin(arg.username, arg.password).subscribe((success: boolean) => {
             if (success) {
-                Main.openMenu();
-                Main.openPage(Routes.TEXTS);
+                (new Navigation()).openMenu();
+                (new Navigation()).openPage(Routes.TEXTS);
             } else {
                 Main.mainWindow.webContents.send(ipcEvents.LOGIN_FAILED);
                 ipcMain.emit(ipcEvents.LOGIN_FAILED);
@@ -160,7 +106,7 @@ export default class Main {
         const userService = new Services.UserService();
 
         userService.signup(arg.username, arg.password, arg.email).subscribe((success: boolean) => {
-            Main.openPage(Routes.LOGIN);
+            (new Navigation()).openPage(Routes.LOGIN);
         }, (error) => console.dir(error));
     }
 
@@ -172,8 +118,4 @@ export default class Main {
             });
         });
     }
-}
-
-function wrapFn(fn: () => void): string {
-    return `(${fn.toString()})()`;
 }
