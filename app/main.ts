@@ -6,13 +6,12 @@ import * as Objects from '../app/Objects';
 import { ipcEvents } from '../web/shared/ipc-events.enum';
 import { Routes } from '../web/shared/routes.enum';
 import { Navigation } from './navigation';
+import { LwtApp } from './lwt-app';
 
 const PORT: number = 31411;
 
 export default class Main {
-    static mainWindow: Electron.BrowserWindow;
-    static application: Electron.App;
-    static BrowserWindow;
+    public static lwtApp: LwtApp;
 
     public static bindSendData<T>(eventName: ipcEvents, getData: () => Observable<T>) {
         ipcMain.on(eventName, (event, args) => {
@@ -32,11 +31,8 @@ export default class Main {
         // so this class1 has no dependencies.  This
         // makes the code easier to write tests for
 
-        Main.BrowserWindow = browserWindow;
-        Main.application = app;
-        Main.application.on('window-all-closed', Main.onWindowAllClosed);
-        Main.application.on('ready', Main.onReady);
-        Main.application.on('activate', Main.onReady);
+        Main.lwtApp = new LwtApp(app, browserWindow);
+        Main.lwtApp.init();
 
         const languageService = new Services.LanguageService();
 
@@ -52,38 +48,6 @@ export default class Main {
         languageService.bindDeleteLanguage();
     }
 
-    private static onWindowAllClosed() {
-        if (process.platform !== 'darwin') {
-            Main.application.quit();
-        }
-    }
-
-    private static onClose() {
-        // Dereference the window object.
-        Main.mainWindow = null;
-    }
-
-    private static onReady() {
-        const navigation = new Navigation();
-
-        navigation.closeMenu();
-
-        Main.mainWindow = new Main.BrowserWindow({ width: 1500, height: 927 });
-
-        const environment: 'dev' | 'prod' = 'dev';
-
-        Main.mainWindow.loadFile('./dist/web/index.html');
-        navigation.openPage(Routes.LOGIN);
-        // if (environment === 'dev') {
-        //     Main.mainWindow.loadURL(`http://localhost:${PORT}`);
-        // } else {
-        //     Main.mainWindow.loadFile('./dist/web/index.html');
-        // }
-
-        Main.mainWindow.webContents.openDevTools();
-
-        Main.mainWindow.on('closed', Main.onClose);
-    }
 
     private static openText(event, arg) {
         Main.mainWindow.loadURL(`http://localhost:${PORT}/${Routes.READ_TEXT}/${arg}`);
