@@ -12,6 +12,7 @@ const PORT: number = 31411;
 
 export default class Main {
     public static lwtApp: LwtApp;
+    public static navigation: Navigation;
 
     public static bindSendData<T>(eventName: ipcEvents, getData: () => Observable<T>) {
         ipcMain.on(eventName, (event, args) => {
@@ -33,6 +34,7 @@ export default class Main {
 
         Main.lwtApp = new LwtApp(app, browserWindow);
         Main.lwtApp.init();
+        Main.navigation = new Navigation();
 
         const languageService = new Services.LanguageService();
 
@@ -50,17 +52,17 @@ export default class Main {
 
 
     private static openText(event, arg) {
-        this.lwtApp.mainWindow.loadURL(`http://localhost:${PORT}/${Routes.READ_TEXT}/${arg}`);
+        Main.lwtApp.mainWindow.loadURL(`http://localhost:${PORT}/${Routes.READ_TEXT}/${arg}`);
     }
 
     private static login(event, arg) {
         const userService = new Services.UserService();
         userService.signin(arg.username, arg.password).subscribe((success: boolean) => {
             if (success) {
-                (new Navigation()).openMenu();
-                (new Navigation()).openPage(Routes.TEXTS);
+                Main.navigation.openMenu();
+                Main.navigation.openPage(Routes.TEXTS);
             } else {
-                this.lwtApp.mainWindow.webContents.send(ipcEvents.LOGIN_FAILED);
+                Main.lwtApp.mainWindow.webContents.send(ipcEvents.LOGIN_FAILED);
                 ipcMain.emit(ipcEvents.LOGIN_FAILED);
             }
         }, (error) => console.dir(error));
@@ -70,7 +72,7 @@ export default class Main {
         const userService = new Services.UserService();
 
         userService.signup(arg.username, arg.password, arg.email).subscribe((success: boolean) => {
-            (new Navigation()).openPage(Routes.LOGIN);
+            Main.navigation.openPage(Routes.LOGIN);
         }, (error) => console.dir(error));
     }
 

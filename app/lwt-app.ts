@@ -1,14 +1,14 @@
-import { BrowserWindow, App } from 'electron';
-import { Navigation } from './navigation';
+import { App, BrowserWindow } from 'electron';
 import { Routes } from '../web/shared/routes.enum';
+import { Navigation } from './navigation';
 
 export class LwtApp {
-    private navigation: Navigation;
     public mainWindow: BrowserWindow;
+    private navigation: Navigation;
 
     constructor(
-        public app: App,
-        public browserWindow: typeof BrowserWindow,
+        private app: App,
+        private browserWindow: typeof BrowserWindow,
     ) {
     }
 
@@ -22,7 +22,7 @@ export class LwtApp {
     }
 
 
-    private onWindowAllClosed() {
+    private onWindowAllClosed = () => {
         if (process.platform !== 'darwin') {
             this.app.quit();
         }
@@ -33,10 +33,10 @@ export class LwtApp {
         this.mainWindow = null;
     }
 
-    private onReady() {
+    private onReady = () => {
         this.navigation.closeMenu();
 
-        this.mainWindow = new this.browserWindow({ width: 1500, height: 927 });
+        this.mainWindow = new this.browserWindow({width: 1500, height: 927});
 
         const environment: 'dev' | 'prod' = 'dev';
 

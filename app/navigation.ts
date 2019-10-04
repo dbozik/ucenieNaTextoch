@@ -1,8 +1,8 @@
-import { Router } from "@angular/router";
-import { NgZone } from "@angular/core";
-import Main from "./Main";
-import { Menu } from "electron";
-import { Routes } from "../web/shared/routes.enum";
+import { NgZone } from '@angular/core';
+import { Router } from '@angular/router';
+import { Menu } from 'electron';
+import { Routes } from '../web/shared/routes.enum';
+import Main from './Main';
 
 interface AngularWindow extends Window {
     router: Router;
