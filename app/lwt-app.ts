@@ -1,10 +1,10 @@
-import { BrowserWindow, App } from "electron";
-import { Navigation } from "./navigation";
-import { Routes } from "../web/shared/routes.enum";
+import { BrowserWindow, App } from 'electron';
+import { Navigation } from './navigation';
+import { Routes } from '../web/shared/routes.enum';
 
 export class LwtApp {
     private navigation: Navigation;
-    private mainWindow: BrowserWindow;
+    public mainWindow: BrowserWindow;
 
     constructor(
         public app: App,

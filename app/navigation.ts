@@ -51,7 +51,7 @@ export class Navigation {
             });
         }).replace('${page}', page);
 
-        Main.mainWindow.webContents.executeJavaScript(javascript);
+        Main.lwtApp.mainWindow.webContents.executeJavaScript(javascript);
     }
 
 

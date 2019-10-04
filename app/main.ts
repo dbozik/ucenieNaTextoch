@@ -50,7 +50,7 @@ export default class Main {
 
 
     private static openText(event, arg) {
-        Main.mainWindow.loadURL(`http://localhost:${PORT}/${Routes.READ_TEXT}/${arg}`);
+        this.lwtApp.mainWindow.loadURL(`http://localhost:${PORT}/${Routes.READ_TEXT}/${arg}`);
     }
 
     private static login(event, arg) {
@@ -60,7 +60,7 @@ export default class Main {
                 (new Navigation()).openMenu();
                 (new Navigation()).openPage(Routes.TEXTS);
             } else {
-                Main.mainWindow.webContents.send(ipcEvents.LOGIN_FAILED);
+                this.lwtApp.mainWindow.webContents.send(ipcEvents.LOGIN_FAILED);
                 ipcMain.emit(ipcEvents.LOGIN_FAILED);
             }
         }, (error) => console.dir(error));
