@@ -5,6 +5,8 @@ import * as Services from '../app/Services';
 import * as Objects from '../app/Objects';
 import { ipcEvents } from '../web/shared/ipc-events.enum';
 import { Routes } from '../web/shared/routes.enum';
+import { RedirectHandler } from "./Handlers/redirect.handler";
+import { SendRequestHandler } from "./Handlers/send-request.handler";
 import { Navigation } from './navigation';
 import { LwtApp } from './lwt-app';
 
@@ -69,11 +71,17 @@ export default class Main {
     }
 
     private static signup(event, arg) {
-        const userService = new Services.UserService();
+        const signupRequest$ = (new Services.UserService()).signup(arg.username, arg.password, arg.email);
+        const signupChain = new SendRequestHandler(signupRequest$);
+        signupChain.next = new RedirectHandler(Routes.LOGIN);
 
-        userService.signup(arg.username, arg.password, arg.email).subscribe((success: boolean) => {
-            Main.navigation.openPage(Routes.LOGIN);
-        }, (error) => console.dir(error));
+        signupChain.run({});
+
+        // const userService = new Services.UserService();
+        //
+        // userService.signup(arg.username, arg.password, arg.email).subscribe((success: boolean) => {
+        //     Main.navigation.openPage(Routes.LOGIN);
+        // }, (error) => console.dir(error));
     }
 
 
