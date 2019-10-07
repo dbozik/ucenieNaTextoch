@@ -5,9 +5,6 @@ import * as Objects from '../app/Objects';
 import * as Services from '../app/Services';
 import { ipcEvents } from '../web/shared/ipc-events.enum';
 import { Routes } from '../web/shared/routes.enum';
-import { IpcMainHandler } from "./Handlers/ipc-main.handler";
-import { RedirectHandler } from './Handlers/redirect.handler';
-import { SendRequestHandler } from './Handlers/send-request.handler';
 import { LwtApp } from './lwt-app';
 import { Navigation } from './navigation';
 
@@ -46,7 +43,6 @@ export default class Main {
         Main.bindEvent<Objects.Text>(ipcEvents.ADD_TEXT, (new Services.TextService()).saveText);
 
         ipcMain.on('main-open-text', Main.openText);
-        ipcMain.on(ipcEvents.LOGIN, Main.login);
 
         languageService.bindSendLanguages();
         languageService.bindAddLanguage();
@@ -62,19 +58,6 @@ export default class Main {
 
     private static openText(event, arg) {
         Main.lwtApp.mainWindow.loadURL(`http://localhost:${PORT}/${Routes.READ_TEXT}/${arg}`);
-    }
-
-    private static login(event, arg) {
-        const userService = new Services.UserService();
-        userService.signin(arg.username, arg.password).subscribe((success: boolean) => {
-            if (success) {
-                Main.navigation.openMenu();
-                Main.navigation.openPage(Routes.TEXTS);
-            } else {
-                Main.lwtApp.mainWindow.webContents.send(ipcEvents.LOGIN_FAILED);
-                ipcMain.emit(ipcEvents.LOGIN_FAILED);
-            }
-        }, (error) => console.dir(error));
     }
 
 

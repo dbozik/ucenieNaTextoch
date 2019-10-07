@@ -13,6 +13,11 @@ export class SendRequestHandler<T> extends BaseHandler<T> {
             if (this.next) {
                 this.next.run(dbResult);
             }
-        }, (error) => console.dir(error));
+        }, (error) => {
+            console.dir(error);
+            if (this.error) {
+                this.error.run(error);
+            }
+        });
     }
 }

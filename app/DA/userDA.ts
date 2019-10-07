@@ -29,10 +29,10 @@ export class UserDA {
     }
 
 
-    public get(name, password): Observable<User> {
+    public get(user: User): Observable<User> {
         const userSource$: ReplaySubject<User> = new ReplaySubject(null);
 
-        this.db.users.findOne({name, password}, (error, response: User) => {
+        this.db.users.findOne({name: user.username, password: user.password}, (error, response: User) => {
             userSource$.next(response);
             userSource$.complete();
         });
