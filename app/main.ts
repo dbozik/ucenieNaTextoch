@@ -40,7 +40,7 @@ export default class Main {
 
         const languageService = new Services.LanguageService();
 
-        Main.bindEvent<Objects.Text>(ipcEvents.ADD_TEXT, (new Services.TextService()).saveText);
+        // Main.bindEvent<Objects.Text>(ipcEvents.ADD_TEXT, (new Services.TextService()).saveText);
 
         ipcMain.on('main-open-text', Main.openText);
 
@@ -53,6 +53,7 @@ export default class Main {
 
     private static loadServices(): void {
         (new Services.UserService()).init();
+        (new Services.TextService()).init();
     }
 
 
