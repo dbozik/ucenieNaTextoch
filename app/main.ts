@@ -39,19 +39,24 @@ export default class Main {
         Main.lwtApp.init();
         Main.navigation = new Navigation();
 
+        Main.loadServices();
+
         const languageService = new Services.LanguageService();
 
         Main.bindEvent<Objects.Text>(ipcEvents.ADD_TEXT, (new Services.TextService()).saveText);
 
         ipcMain.on('main-open-text', Main.openText);
         ipcMain.on(ipcEvents.LOGIN, Main.login);
-        // ipcMain.on(ipcEvents.SIGNUP, Main.signup);
-        Main.signup();
 
         languageService.bindSendLanguages();
         languageService.bindAddLanguage();
         languageService.bindEditLanguage();
         languageService.bindDeleteLanguage();
+    }
+
+
+    private static loadServices(): void {
+        (new Services.UserService()).init();
     }
 
 
@@ -70,24 +75,6 @@ export default class Main {
                 ipcMain.emit(ipcEvents.LOGIN_FAILED);
             }
         }, (error) => console.dir(error));
-    }
-
-    private static signup() {
-        const chain = new IpcMainHandler(ipcEvents.SIGNUP);
-
-        const signupRequest$ = (new Services.UserService()).signup;
-        const sendRequestHandler = new SendRequestHandler(signupRequest$);
-        chain.next = sendRequestHandler;
-
-        sendRequestHandler.next = new RedirectHandler(Routes.LOGIN);
-
-        chain.run({});
-
-        // const userService = new Services.UserService();
-        //
-        // userService.signup(arg.username, arg.password, arg.email).subscribe((success: boolean) => {
-        //     Main.navigation.openPage(Routes.LOGIN);
-        // }, (error) => console.dir(error));
     }
 
 

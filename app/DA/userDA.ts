@@ -2,21 +2,21 @@ import { Observable, ReplaySubject } from 'rxjs';
 import { User } from '../Objects/User';
 import { Database } from './database';
 
-export class user {
+export class UserDA {
     private db: Database = new Database();
 
     public constructor() {
     }
 
-    public addUser(name: string, password: string, email: string)
-        : Observable<User> {
+
+    public addUser = (user: User): Observable<User> => {
         const userSource: ReplaySubject<User> = new ReplaySubject(1);
 
         const newUser: User = {
             createdOn: new Date(),
-            name: name,
-            password: password,
-            email: email,
+            name: user.username,
+            password: user.password,
+            email: user.email,
         };
 
         this.db.users.insert(newUser,
@@ -27,6 +27,7 @@ export class user {
 
         return userSource.asObservable();
     }
+
 
     public get(name, password): Observable<User> {
         const userSource$: ReplaySubject<User> = new ReplaySubject(null);
