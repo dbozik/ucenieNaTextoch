@@ -1,14 +1,15 @@
 import { BrowserWindow, ipcMain } from 'electron';
 import { Observable } from 'rxjs';
-import { take, tap } from 'rxjs/operators';
-import * as Services from '../app/Services';
+import { take } from 'rxjs/operators';
 import * as Objects from '../app/Objects';
+import * as Services from '../app/Services';
 import { ipcEvents } from '../web/shared/ipc-events.enum';
 import { Routes } from '../web/shared/routes.enum';
-import { RedirectHandler } from "./Handlers/redirect.handler";
-import { SendRequestHandler } from "./Handlers/send-request.handler";
-import { Navigation } from './navigation';
+import { IpcMainHandler } from "./Handlers/ipc-main.handler";
+import { RedirectHandler } from './Handlers/redirect.handler';
+import { SendRequestHandler } from './Handlers/send-request.handler';
 import { LwtApp } from './lwt-app';
+import { Navigation } from './navigation';
 
 const PORT: number = 31411;
 
@@ -44,7 +45,8 @@ export default class Main {
 
         ipcMain.on('main-open-text', Main.openText);
         ipcMain.on(ipcEvents.LOGIN, Main.login);
-        ipcMain.on(ipcEvents.SIGNUP, Main.signup);
+        // ipcMain.on(ipcEvents.SIGNUP, Main.signup);
+        Main.signup();
 
         languageService.bindSendLanguages();
         languageService.bindAddLanguage();
@@ -70,12 +72,16 @@ export default class Main {
         }, (error) => console.dir(error));
     }
 
-    private static signup(event, arg) {
-        const signupRequest$ = (new Services.UserService()).signup(arg.username, arg.password, arg.email);
-        const signupChain = new SendRequestHandler(signupRequest$);
-        signupChain.next = new RedirectHandler(Routes.LOGIN);
+    private static signup() {
+        const chain = new IpcMainHandler(ipcEvents.SIGNUP);
 
-        signupChain.run({});
+        const signupRequest$ = (new Services.UserService()).signup;
+        const sendRequestHandler = new SendRequestHandler(signupRequest$);
+        chain.next = sendRequestHandler;
+
+        sendRequestHandler.next = new RedirectHandler(Routes.LOGIN);
+
+        chain.run({});
 
         // const userService = new Services.UserService();
         //

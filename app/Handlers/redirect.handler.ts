@@ -1,5 +1,5 @@
 import { Navigation } from '../navigation';
-import { BaseHandler } from './handler.interface';
+import { BaseHandler } from './base-handler';
 
 export class RedirectHandler<T> extends BaseHandler<T> {
 

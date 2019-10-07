@@ -27,7 +27,7 @@ export class UserService {
     /**
      * signup
      */
-    public signup(name: string, password: string, email: string): Observable<any> {
-        return this.userDA.addUser(name, password, email);
+    public signup = (args: User): Observable<any> => {
+        return this.userDA.addUser(args.username, args.password, args.email);
     }
 }
