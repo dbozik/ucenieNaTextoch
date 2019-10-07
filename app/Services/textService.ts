@@ -164,7 +164,6 @@ export class TextService {
 
 
     public saveText1(): void {
-        // const texts = new DA.Texts();
         const userId = StateService.getInstance().userId;
 
         const saveText$ = (text: Text) => this.saveWords(text.text, userId, text.languageId).pipe(
@@ -173,11 +172,6 @@ export class TextService {
 
         const getRequestHandler = new GetRequestHandler(ipcEvents.ADD_TEXT, saveText$);
         getRequestHandler.run({});
-
-        //
-        // return this.saveWords(text.text, userId, text.languageId).pipe(
-        //     switchMap(() => texts.addText(text.text, text.title, userId, text.languageId))
-        // );
     }
 
     private saveWords(text: string, userId: string, languageId: string): Observable<boolean> {

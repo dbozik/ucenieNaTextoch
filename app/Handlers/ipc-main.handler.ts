@@ -5,8 +5,8 @@ import { BaseHandler } from './base-handler';
 export class IpcMainHandler<T> extends BaseHandler<T> {
     public run: (payload: T) => void = (payload => {
         ipcMain.on(this.eventName, (event, data: any) => {
-            if (this.next) {
-                this.next.run(data);
+            if (this._next) {
+                this._next.run(data);
             }
         });
     });

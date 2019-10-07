@@ -10,13 +10,13 @@ export class SendRequestHandler<T> extends BaseHandler<T> {
 
     public run = (payload: T) => {
         this.dbRequest(payload).subscribe((dbResult: T) => {
-            if (this.next) {
-                this.next.run(dbResult);
+            if (this._next) {
+                this._next.run(dbResult);
             }
         }, (error) => {
             console.dir(error);
-            if (this.error) {
-                this.error.run(error);
+            if (this._error) {
+                this._error.run(error);
             }
         });
     }

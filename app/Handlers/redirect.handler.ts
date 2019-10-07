@@ -12,8 +12,8 @@ export class RedirectHandler<T> extends BaseHandler<T> {
     public run = (payload: T) => {
         (new Navigation()).openPage(this.redirectUrl);
 
-        if (this.next) {
-            this.next.run(payload);
+        if (this._next) {
+            this._next.run(payload);
         }
     }
 

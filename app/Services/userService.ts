@@ -23,14 +23,17 @@ export class UserService {
     private signup(): void {
         const signupRequest$ = this.userDA.addUser;
 
-        const ipcMainHandler = new IpcMainHandler(ipcEvents.SIGNUP);
-        const sendRequestHandler = new SendRequestHandler(signupRequest$);
-        const redirectHandler = new RedirectHandler(Routes.LOGIN);
+        const signupChain = new IpcMainHandler(ipcEvents.SIGNUP);
+        signupChain
+            .next(
+                new SendRequestHandler(signupRequest$)
+            )
+            .next(
+                new RedirectHandler(Routes.LOGIN)
+            );
 
-        ipcMainHandler.next = sendRequestHandler;
-        sendRequestHandler.next = redirectHandler;
+        signupChain.run({});
 
-        ipcMainHandler.run({});
     }
 
 
@@ -47,17 +50,21 @@ export class UserService {
             );
         };
 
-        const ipcMainHandler = new IpcMainHandler(ipcEvents.LOGIN);
-        const sendRequestHandler = new SendRequestHandler(signinRequest$);
-        const openMenuHandler = new MethodHandler<any>(() => (new Navigation().openMenu()));
-        const redirectHandler = new RedirectHandler(Routes.TEXTS);
-        const errorHandler = new MethodHandler<any>(() => LwtApp.getInstance().mainWindow.webContents.send(ipcEvents.LOGIN_FAILED));
+        const sendRequest = new SendRequestHandler(signinRequest$);
+        sendRequest.error(
+            new MethodHandler<any>(() => LwtApp.getInstance().mainWindow.webContents.send(ipcEvents.LOGIN_FAILED))
+        );
 
-        ipcMainHandler.next = sendRequestHandler;
-        sendRequestHandler.next = openMenuHandler;
-        openMenuHandler.next = redirectHandler;
-        sendRequestHandler.error = errorHandler;
+        const signinChain = new IpcMainHandler(ipcEvents.LOGIN);
 
-        ipcMainHandler.run({});
+        signinChain.next(
+            sendRequest
+        ).next(
+            new MethodHandler<any>(() => (new Navigation().openMenu()))
+        ).next(
+            new RedirectHandler(Routes.TEXTS)
+        );
+
+        signinChain.run({});
     }
 }

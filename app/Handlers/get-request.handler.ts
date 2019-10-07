@@ -16,8 +16,8 @@ export class GetRequestHandler<T = any> extends BaseHandler<T> {
             this.dbRequest(data).subscribe((response) => {
                 event.sender.send(this.eventName + '-reply', response);
 
-                if (this.next) {
-                    this.next.run(response);
+                if (this._next) {
+                    this._next.run(response);
                 }
             });
         });

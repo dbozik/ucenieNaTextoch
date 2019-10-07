@@ -11,8 +11,8 @@ export class MethodHandler<T> extends BaseHandler<T> {
     public run = (payload: T): void => {
         const result = this.method(payload);
 
-        if (this.next) {
-            this.next.run(result);
+        if (this._next) {
+            this._next.run(result);
         }
     }
 }
