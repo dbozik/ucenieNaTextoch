@@ -1,8 +1,11 @@
 import { BehaviorSubject, combineLatest, forkJoin, Observable, of, ReplaySubject, Subject } from 'rxjs';
 import { first, switchMap, tap } from 'rxjs/operators';
 import { ipcEvents } from '../../web/shared/ipc-events.enum';
+import { Routes } from "../../web/shared/routes.enum";
 import * as DA from '../DA';
 import { GetRequestHandler } from '../Handlers/get-request.handler';
+import { MethodHandler } from "../Handlers/method.handler";
+import { Navigation } from "../navigation";
 import { TextPart, WordObject } from '../Objects/namespace';
 import { Text } from '../Objects/Text';
 import { ParseTextService } from './parseTextService';
@@ -165,6 +168,10 @@ export class TextService {
         };
 
         const getRequestHandler = new GetRequestHandler(ipcEvents.ADD_TEXT, saveText$);
+        getRequestHandler
+            .next(
+                new MethodHandler((text: Text) => (new Navigation()).openPage(`${Routes.READ_TEXT}/${text._id}`))
+            );
         getRequestHandler.run({});
     }
 

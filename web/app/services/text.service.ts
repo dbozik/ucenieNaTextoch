@@ -12,8 +12,6 @@ export class TextService {
     }
 
     public add(text: Text): Observable<Text> {
-        console.table(text);
-
         return this.ipcService.sendData(ipcEvents.ADD_TEXT, text);
     }
 }

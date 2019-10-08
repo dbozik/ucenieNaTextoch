@@ -1,7 +1,9 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Router } from "@angular/router";
 import { Language } from '../../../app/Objects/Language';
 import { Text } from '../../../app/Objects/Text';
+import { Routes } from "../../shared/routes.enum";
 import { LanguageService } from '../services/language.service';
 import { TextService } from '../services/text.service';
 
@@ -22,6 +24,7 @@ export class AddTextComponent implements OnInit {
         private readonly languageService: LanguageService,
         private readonly changeDetector: ChangeDetectorRef,
         private readonly textService: TextService,
+        private readonly router: Router,
     ) {
     }
 
