@@ -1,9 +1,8 @@
 import { BehaviorSubject, combineLatest, forkJoin, Observable, of, ReplaySubject, Subject } from 'rxjs';
 import { first, switchMap, tap } from 'rxjs/operators';
-import { ipcEvents } from "../../web/shared/ipc-events.enum";
-import * as DA from '../DA/namespace';
-import { GetRequestHandler } from "../Handlers/get-request.handler";
-import { MethodHandler } from "../Handlers/method.handler";
+import { ipcEvents } from '../../web/shared/ipc-events.enum';
+import * as DA from '../DA';
+import { GetRequestHandler } from '../Handlers/get-request.handler';
 import { TextPart, WordObject } from '../Objects/namespace';
 import { Text } from '../Objects/Text';
 import { ParseTextService } from './parseTextService';
@@ -82,7 +81,7 @@ export class TextService {
     }
 
     public init(): void {
-        this.saveText1();
+        this.saveText();
     }
 
     public getList(): Observable<Text[]> {
@@ -97,15 +96,6 @@ export class TextService {
         return texts.getList();
     }
 
-    public saveText(text: Text)
-        : Observable<Text> {
-        const texts = new DA.Texts();
-        const userId = StateService.getInstance().userId;
-
-        return this.saveWords(text.text, userId, text.languageId).pipe(
-            switchMap(() => texts.addText(text.text, text.title, userId, text.languageId))
-        );
-    }
 
     public parseText(text: string, userId: number, languageId: number): any {
         const wordsDA = new DA.Words();
@@ -163,18 +153,22 @@ export class TextService {
     }
 
 
-    public saveText1(): void {
-        const userId = StateService.getInstance().userId;
+    private saveText(): void {
+        const saveText$ = (text: Text) => {
+            const userId = StateService.getInstance().userId;
 
-        const saveText$ = (text: Text) => this.saveWords(text.text, userId, text.languageId).pipe(
-            switchMap(() => this.textsDA.addText(text.text, text.title, userId, text.languageId))
-        );
+            return this.saveWords(text.text, userId, text.languageId).pipe(
+                switchMap(() => {
+                    return this.textsDA.addText(text.text, text.title, userId, text.languageId);
+                })
+            );
+        };
 
         const getRequestHandler = new GetRequestHandler(ipcEvents.ADD_TEXT, saveText$);
         getRequestHandler.run({});
     }
 
-    private saveWords(text: string, userId: string, languageId: string): Observable<boolean> {
+    private saveWords = (text: string, userId: string, languageId: string): Observable<boolean> => {
         const wordsDA = new DA.Words();
 
         const sentences = text.split(/[.?!]+/)
@@ -203,7 +197,7 @@ export class TextService {
             const getWord$ = wordsDA.get(wordObject.word).pipe(
                 switchMap(wordObjectDb => {
                     if (!wordObjectDb) {
-                        return wordsDA.add(wordObject.word, wordObject.sentence, '1', '1');
+                        return wordsDA.add(wordObject.word, wordObject.sentence, languageId, userId);
                     } else {
                         return of(wordObjectDb);
                     }
