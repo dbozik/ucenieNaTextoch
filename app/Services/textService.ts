@@ -1,13 +1,12 @@
 import { BehaviorSubject, combineLatest, forkJoin, Observable, of, ReplaySubject, Subject } from 'rxjs';
 import { first, switchMap, tap } from 'rxjs/operators';
 import { ipcEvents } from '../../web/shared/ipc-events.enum';
-import { Routes } from "../../web/shared/routes.enum";
+import { Routes } from '../../web/shared/routes.enum';
 import * as DA from '../DA';
 import { GetRequestHandler } from '../Handlers/get-request.handler';
-import { MethodHandler } from "../Handlers/method.handler";
-import { Navigation } from "../navigation";
-import { TextPart, WordObject } from '../Objects/namespace';
-import { Text } from '../Objects/Text';
+import { MethodHandler } from '../Handlers/method.handler';
+import { Navigation } from '../navigation';
+import { Text, TextPart, WordObject } from '../Objects';
 import { ParseTextService } from './parseTextService';
 import { StateService } from './stateService';
 
@@ -85,6 +84,7 @@ export class TextService {
 
     public init(): void {
         this.saveText();
+        this.getText();
     }
 
     public getList(): Observable<Text[]> {
@@ -214,6 +214,14 @@ export class TextService {
         });
 
         return forkJoin(getWords$).pipe(switchMap(() => of(true)));
+    }
+
+
+    private getText(): void {
+        const getText$ = (textId: string) => this.textsDA.get(textId);
+
+        const getTextChain = new GetRequestHandler(ipcEvents.GET_TEXT, getText$);
+        getTextChain.run({});
     }
 
     private uniqBy(array: any[], key: string): any[] {
