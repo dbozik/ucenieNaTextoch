@@ -1,3 +1,39 @@
-<p>
-  read-text works!
-</p>
+<ng-container *ngIf="text">
+    <div class="row background-color" style="padding-left:10px;font-weight:bold;">
+        <h3>{{text.title ? text.title : text.text.slice(0, 10) + '...'}}</h3>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-6 text-area bordered">
+            {{text.text}}
+            <!--<span :style="getColor(textPart.level)" class="popup text-part"
+                  v-bind:title="textPart.type === 'word' ? textPart.translation : ''"
+                  v-for="textPart in textParts" v-on:click="clickWord(textPart.content, $event)">
+              {{textPart.content}}
+                <div class="popuptext" v-on:click="clickPopup($event)">
+                <div class="font-weight-bold font-size-1_5">
+                  {{textPart.content}}
+                </div>
+                <div>
+                  <button class="minus-button" v-on:click="decreaseLevel(textPart),clickStopPropagation($event)">-</button>
+                  <button class="plus-button" v-on:click="increaseLevel(textPart),clickStopPropagation($event)">+</button>
+                </div>
+                <div>Translation:</div>
+                <div><input type="text" v-model='textPart.translation'
+                            v-on:click="clickStopPropagation($event)"
+                ></div>
+                <div>Example sentence:</div>
+                <div><input type="text" v-model="textPart.exampleSentence"
+                            v-on:click="clickStopPropagation($event)"
+                ></div>
+                <div>
+                  <button v-on:click="updateTranslation(textPart),clickStopPropagation($event)">Submit</button>
+                </div>
+              </div>
+            </span>-->
+        </div>
+        <div class="col-sm-6">
+            <webview class="translate-box bordered" id="translateWindow" [attr.src]="translateLink()"></webview>
+        </div>
+    </div>
+</ng-container>

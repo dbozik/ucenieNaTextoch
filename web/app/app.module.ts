@@ -11,6 +11,7 @@ import { SettingsComponent } from './settings/settings.component';
 import { SignupComponent } from './signup/signup.component';
 import { TextsComponent } from './texts/texts.component';
 import { ReadTextComponent } from './read-text/read-text.component';
+import { WebviewDirective } from './webview.directive';
 
 @NgModule({
     declarations: [
@@ -20,7 +21,8 @@ import { ReadTextComponent } from './read-text/read-text.component';
         SignupComponent,
         SettingsComponent,
         TextsComponent,
-        ReadTextComponent
+        ReadTextComponent,
+        WebviewDirective,
     ],
     imports: [
         BrowserModule,

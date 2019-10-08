@@ -1,6 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { TextService } from '../services/text.service';
+import { Text } from '../../../app/Objects';
 
 @Component({
     selector: 'app-read-text',
@@ -9,22 +12,27 @@ import { TextService } from '../services/text.service';
     providers: [TextService],
 })
 export class ReadTextComponent implements OnInit {
+    public text: Text;
 
     constructor(
         private readonly route: ActivatedRoute,
         private readonly textService: TextService,
+        private readonly changeDetectorRef: ChangeDetectorRef,
     ) {
     }
 
     ngOnInit() {
-        console.log('read text');
-        console.dir(this.route.snapshot.params);
         const textId = this.route.snapshot.params.id;
 
-        this.textService.get(textId).subscribe((result) => {
-            console.log('from main');
-            console.dir(result);
+        this.textService.get(textId).subscribe((result: Text) => {
+            this.text = result;
+            this.changeDetectorRef.detectChanges();
         });
+    }
+
+
+    public translateLink(): string {
+        return 'https://translate.google.com/?sl=de&tl=en#de/en/jemandem';
     }
 
 }
