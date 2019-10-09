@@ -1,5 +1,5 @@
 <ng-container *ngIf="text">
-    <div class="row background-color" style="padding-left:10px;font-weight:bold;">
+    <div class="row text-title text-center">
         <h3>{{text.title ? text.title : text.text.slice(0, 10) + '...'}}</h3>
     </div>
 
@@ -32,8 +32,9 @@
               </div>
             </span>-->
         </div>
-        <div class="col-sm-6">
-            <webview class="translate-box bordered" id="translateWindow" [attr.src]="translateLink()"></webview>
+
+        <div class="col-sm-5">
+            <webview class="translate-box bordered" [attr.src]="translateLink()"></webview>
         </div>
     </div>
 </ng-container>

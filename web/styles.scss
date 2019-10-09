@@ -23,12 +23,8 @@ body {
 }
 
 .translate-box {
-    display: inline-flex;
     width: 45vw;
     height: 90vh;
-    position: fixed;
-    top: 38px;
-    left: 50vw;
 }
 
 .input-box {
@@ -49,6 +45,20 @@ body {
 
 .wordColor {
     background-color: red;
+}
+
+.color-alert {
+    color: red;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.content-center {
+    align-content: center;
+    margin-right: auto;
+    margin-left: auto;
 }
 
 /* Popup container */

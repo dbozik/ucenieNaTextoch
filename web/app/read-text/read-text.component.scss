@@ -1,0 +1,27 @@
+.text-title {
+    padding-left: 10px;
+    font-weight: bold;
+    text-align: center;
+
+    h3 {
+        margin-right: auto;
+        margin-left: auto;
+        margin-bottom: 20px;
+    }
+}
+
+.bordered {
+    margin-left: 10px;
+}
+
+$min-text-height: 80vh;
+
+.text-area {
+    min-height: $min-text-height;
+    font-size: 2em;
+    line-height: 2em;
+}
+
+.translate-box {
+    max-height: $min-text-height;
+}
