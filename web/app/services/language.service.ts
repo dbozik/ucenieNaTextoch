@@ -13,6 +13,11 @@ export class LanguageService {
     }
 
 
+    public getLanguage(languageId: string): Observable<Language> {
+        return this.ipcService.sendData(ipcEvents.GET_LANGUAGE, languageId);
+    }
+
+
     /**
      * getLanguages
      */
