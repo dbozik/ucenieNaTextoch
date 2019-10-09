@@ -1,4 +1,5 @@
-import { TextPart } from '../Objects/TextPart';
+import { TextPart, WordObject } from "../Objects";
+import * as Objects from '../Objects';
 
 export class ParseTextService {
     public constructor() {
@@ -14,9 +15,9 @@ export class ParseTextService {
             .filter(sentence => sentence !== '');
     }
 
-    public static splitToParts(text: string): TextPart[] {
+    public static splitToParts(text: string): Objects.TextPart[] {
         const justWords = ParseTextService.splitToWordsCase(text);
-        const textParts: TextPart[] = [];
+        const textParts: Objects.TextPart[] = [];
 
         // iterate through words
         justWords.forEach(word => {
@@ -51,6 +52,31 @@ export class ParseTextService {
 
         return textParts.filter(word => word.content !== '');
     }
+
+
+    public static extractWords(textParts: Objects.TextPart[]): string[] {
+        return textParts.filter(textPart => textPart.type === 'word')
+            .map(textPart => textPart.content.toLowerCase())
+            .filter((word, index, list) => list.indexOf(word) === index);
+    }
+
+
+    public static completeTextParts(textParts: TextPart[], wordObjects: WordObject[]): TextPart[] {
+        const result: TextPart[] = JSON.parse(JSON.stringify(textParts));
+
+        wordObjects.forEach(wordObject => {
+            result.filter(textPart => textPart.content.toLowerCase() === wordObject.word)
+                .forEach(textPart => {
+                    textPart.wordId = wordObject._id;
+                    textPart.translation = wordObject.translation;
+                    textPart.level = wordObject.level;
+                    textPart.exampleSentence = wordObject.exampleSentence;
+                });
+        });
+
+        return result;
+    }
+
 
     private static splitToWordsCase(text: string): string[] {
         return text.split(/[\s,.?!;:_()\[\]/\\"-]+/)

@@ -17,7 +17,7 @@ test('lwtApp: init runs correct on methods', () => {
     expect(onMethod).toHaveBeenCalledTimes(3);
 });
 
-test('lwtApp: onReady event opens index.html', () => {
+xtest('lwtApp: onReady event opens index.html', () => {
     lwtApp = new LwtApp({on: (event, fn) => {
             if (event === 'ready') {
                 fn();

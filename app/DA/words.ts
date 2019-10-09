@@ -51,6 +51,19 @@ export class Words {
         return wordSource$.asObservable();
     }
 
+
+    public getList(words: string[]): Observable<WordObject[]> {
+        const wordsSource$: ReplaySubject<WordObject[]> = new ReplaySubject(1);
+
+        this.db.words.find({word: {$in: words}}, (error, foundWords: WordObject[]) => {
+            wordsSource$.next(foundWords);
+            wordsSource$.complete();
+        });
+
+        return wordsSource$.asObservable();
+    }
+
+
     public updateTranslation(id: string, translation: string): void {
         const wordSource$: ReplaySubject<WordObject> = new ReplaySubject(1);
 

@@ -1,5 +1,5 @@
-import { BehaviorSubject, combineLatest, forkJoin, Observable, of, ReplaySubject, Subject } from 'rxjs';
-import { first, switchMap, tap } from 'rxjs/operators';
+import { BehaviorSubject, forkJoin, Observable, of, ReplaySubject, Subject } from 'rxjs';
+import { map, switchMap, tap } from 'rxjs/operators';
 import { ipcEvents } from '../../web/shared/ipc-events.enum';
 import { Routes } from '../../web/shared/routes.enum';
 import * as DA from '../DA';
@@ -18,10 +18,7 @@ export class TextService {
     private wordsDA = new DA.Words();
     private textParts: TextPart[] = [];
     private wordObjects: WordObject[] = [];
-    private textPartsSource$: BehaviorSubject<TextPart[]> = new BehaviorSubject([]);
-    public textParts$: Observable<TextPart[]> = this.textPartsSource$.asObservable();
-    private wordObjectsSource$: BehaviorSubject<WordObject[]> = new BehaviorSubject([]);
-    public wordObjects$: Observable<WordObject[]> = this.wordObjectsSource$.asObservable();
+
     private textSource$: BehaviorSubject<Text> = new BehaviorSubject(new Text());
     public text$: Observable<Text> = this.textSource$.asObservable();
 
@@ -34,60 +31,25 @@ export class TextService {
         this._textId = textId;
 
         // get textParts
-        this.textsDA.get(this._textId).subscribe(textDA => {
-            this.textSource$.next(textDA);
-            this.textParts = ParseTextService.splitToParts(textDA.text);
+        this.getText$(this._textId).subscribe(textDA => {
+            const textParts = ParseTextService.splitToParts(textDA.text);
+            const words = ParseTextService.extractWords(textParts);
 
-            this.textPartsSource$.next(this.textParts);
-        });
+            this.wordsDA.getList(words).subscribe((wordObjects: WordObject[]) => {
+                textDA.wordObjects = wordObjects;
+                textDA.textParts = ParseTextService.completeTextParts(textParts, wordObjects);
 
-        // get wordObjects
-        this.textParts$.subscribe(textParts => {
-            const words = textParts.filter(textPart => textPart.type === 'word')
-                .map(textPart => textPart.content.toLowerCase())
-                .filter((word, index, list) => list.indexOf(word) === index);
-
-            const getWordObjects$: Observable<WordObject>[] = [];
-
-            words.forEach(word => {
-                const getWordObject$ = this.wordsDA.get(word).pipe(
-                    tap(wordObject => this.wordObjects.push(wordObject))
-                );
-                getWordObjects$.push(getWordObject$);
+                this.textSource$.next(textDA);
             });
-
-            combineLatest(getWordObjects$).subscribe(() =>
-                this.wordObjectsSource$.next(this.wordObjects)
-            );
         });
-
-        // append wordIds to textParts
-        combineLatest(this.wordObjects$, this.textParts$).pipe(
-            first(([wordObjects, textParts]: [WordObject[], TextPart[]]) => {
-                return wordObjects.length > 0 && textParts.length > 0;
-            })
-        )
-            .subscribe(
-                ([wordObjects, textParts]: [WordObject[], TextPart[]]) => {
-                    wordObjects.forEach(wordObject => {
-                        textParts.filter(textPart =>
-                            textPart.content.toLowerCase() === wordObject.word)
-                            .forEach(textPart => {
-                                textPart.wordId = wordObject._id;
-                                textPart.translation = wordObject.translation;
-                                textPart.level = wordObject.level;
-                                textPart.exampleSentence = wordObject.exampleSentence;
-                            });
-                    });
-                    this.textPartsSource$.next(textParts);
-                });
     }
 
     public init(): void {
-        this.saveText();
-        this.getText();
-        this.getTexts();
-        this.openText();
+        this.processSaveText();
+        this.processGetText();
+        this.processGetTextParsed();
+        this.processGetTexts();
+        this.processOpenText();
     }
 
 
@@ -126,8 +88,8 @@ export class TextService {
         this.textParts.filter(textPart => textPart.wordId === wordId)
             .forEach(textPart => textPart.translation = translation);
 
-        this.textPartsSource$.next(this.textParts);
-        this.wordObjectsSource$.next(this.wordObjects);
+        // this.textPartsSource$.next(this.textParts);
+        // this.wordObjectsSource$.next(this.wordObjects);
     }
 
     public updateLevel(wordId: string, level: number): void {
@@ -136,8 +98,8 @@ export class TextService {
         this.textParts.filter(textPart => textPart.wordId === wordId)
             .forEach(textPart => textPart.level = level);
 
-        this.textPartsSource$.next(this.textParts);
-        this.wordObjectsSource$.next(this.wordObjects);
+        // this.textPartsSource$.next(this.textParts);
+        // this.wordObjectsSource$.next(this.wordObjects);
     }
 
     public archive(textId: string): Observable<boolean> {
@@ -153,8 +115,32 @@ export class TextService {
         return resultSource$.asObservable();
     }
 
+    private getText$ = (textId: string) => this.textsDA.get(textId);
 
-    private saveText(): void {
+
+    private loadTextParsed$ = (textId: string): Observable<Text> => {
+        let textParts: TextPart[] = [];
+        let text: Text;
+
+        return this.getText$(this._textId).pipe(
+            switchMap((textDA: Text) => {
+                text = textDA;
+                textParts = ParseTextService.splitToParts(text.text);
+                const words = ParseTextService.extractWords(textParts);
+
+                return this.wordsDA.getList(words);
+            }),
+            map((wordObjects: WordObject[]) => {
+                text.wordObjects = wordObjects;
+                text.textParts = ParseTextService.completeTextParts(textParts, wordObjects);
+
+                return text;
+            }),
+        );
+    }
+
+
+    private processSaveText(): void {
         const saveText$ = (text: Text) => {
             const userId = StateService.getInstance().userId;
 
@@ -215,15 +201,13 @@ export class TextService {
     }
 
 
-    private getText(): void {
-        const getText$ = (textId: string) => this.textsDA.get(textId);
-
-        const getTextChain = new GetRequestHandler(ipcEvents.GET_TEXT, getText$);
+    private processGetText(): void {
+        const getTextChain = new GetRequestHandler(ipcEvents.GET_TEXT, this.getText$);
         getTextChain.run({});
     }
 
 
-    private getTexts(): void {
+    private processGetTexts(): void {
         const getTexts$ = (languageId: string) => {
             const userId = StateService.getInstance().userId;
 
@@ -235,7 +219,7 @@ export class TextService {
     }
 
 
-    private openText(): void {
+    private processOpenText(): void {
         const openTextChain = new IpcMainHandler(ipcEvents.OPEN_TEXT);
         openTextChain
             .next(
@@ -243,6 +227,13 @@ export class TextService {
             );
         openTextChain.run({});
     }
+
+
+    private processGetTextParsed(): void {
+        const getTextParsedChain = new GetRequestHandler(ipcEvents.GET_TEXT_PARSED, this.loadTextParsed$);
+        getTextParsedChain.run({});
+    }
+
 
     private uniqBy(array: any[], key: string): any[] {
         const seen = new Set();

@@ -4,3 +4,4 @@
  - languages - regex without backslashes
  - languages - on remove display a confirm window
  - add text - extendible text area for longer texts
+ - read text - select an extension - save a link to some word in the selection - for parsing
