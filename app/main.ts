@@ -1,10 +1,7 @@
-import { BrowserWindow, ipcMain } from 'electron';
+import { BrowserWindow } from 'electron';
 import * as Services from '../app/Services';
-import { Routes } from '../web/shared/routes.enum';
 import { LwtApp } from './lwt-app';
 import { Navigation } from './navigation';
-
-const PORT: number = 31411;
 
 export default class Main {
     public static lwtApp: LwtApp;
@@ -27,8 +24,6 @@ export default class Main {
 
         const languageService = new Services.LanguageService();
 
-        ipcMain.on('main-open-text', Main.openText);
-
         languageService.bindSendLanguages();
         languageService.bindAddLanguage();
         languageService.bindEditLanguage();
@@ -40,10 +35,5 @@ export default class Main {
         (new Services.UserService()).init();
         (new Services.TextService()).init();
         (new Services.LanguageService()).init();
-    }
-
-
-    private static openText(event, arg) {
-        Main.lwtApp.mainWindow.loadURL(`http://localhost:${PORT}/${Routes.READ_TEXT}/${arg}`);
     }
 }

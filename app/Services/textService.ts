@@ -4,6 +4,7 @@ import { ipcEvents } from '../../web/shared/ipc-events.enum';
 import { Routes } from '../../web/shared/routes.enum';
 import * as DA from '../DA';
 import { GetRequestHandler } from '../Handlers/get-request.handler';
+import { IpcMainHandler } from '../Handlers/ipc-main.handler';
 import { MethodHandler } from '../Handlers/method.handler';
 import { Navigation } from '../navigation';
 import { Text, TextPart, WordObject } from '../Objects';
@@ -85,13 +86,10 @@ export class TextService {
     public init(): void {
         this.saveText();
         this.getText();
+        this.getTexts();
+        this.openText();
     }
 
-    public getList(): Observable<Text[]> {
-        const texts = new DA.Texts();
-
-        return texts.getList();
-    }
 
     public getArchivedList(): Observable<Text[]> {
         const texts = new DA.TextsArchived();
@@ -222,6 +220,28 @@ export class TextService {
 
         const getTextChain = new GetRequestHandler(ipcEvents.GET_TEXT, getText$);
         getTextChain.run({});
+    }
+
+
+    private getTexts(): void {
+        const getTexts$ = (languageId: string) => {
+            const userId = StateService.getInstance().userId;
+
+            return this.textsDA.getList(userId, languageId);
+        };
+
+        const getTextsChain = new GetRequestHandler(ipcEvents.GET_TEXTS, getTexts$);
+        getTextsChain.run({});
+    }
+
+
+    private openText(): void {
+        const openTextChain = new IpcMainHandler(ipcEvents.OPEN_TEXT);
+        openTextChain
+            .next(
+                new MethodHandler<any>((textId: string) => (new Navigation()).openPage(`${Routes.READ_TEXT}/${textId}`))
+            );
+        openTextChain.run({});
     }
 
     private uniqBy(array: any[], key: string): any[] {

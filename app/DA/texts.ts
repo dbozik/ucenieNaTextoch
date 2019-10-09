@@ -39,10 +39,10 @@ export class Texts {
         return textSource$.asObservable();
     }
 
-    public getList(): Observable<Text[]> {
+    public getList(userId: string, languageId: string): Observable<Text[]> {
         const textSource$: ReplaySubject<Text[]> = new ReplaySubject(1);
 
-        this.db.texts.find({}, (error, texts: Text[]) => {
+        this.db.texts.find({userId, languageId}, (error, texts: Text[]) => {
             textSource$.next(texts);
         });
 

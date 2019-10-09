@@ -10,4 +10,6 @@ export enum ipcEvents {
     DELETE_LANGUAGE = 'lwt-delete-language',
     ADD_TEXT = 'lwt-add-text',
     GET_TEXT = 'lwt-get-text',
+    GET_TEXTS = 'lwt-get-texts',
+    OPEN_TEXT = 'lwt-open-text',
 }
