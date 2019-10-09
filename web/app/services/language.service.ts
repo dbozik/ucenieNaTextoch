@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Language } from '../../../app/Objects/Language';
 import { ipcEvents } from '../../shared/ipc-events.enum';
 import { IpcService } from '../add-text/ipc.service';
@@ -12,11 +13,28 @@ export class LanguageService {
     }
 
 
+    public getLanguage(languageId: string): Observable<Language> {
+        return this.ipcService.sendData(ipcEvents.GET_LANGUAGE, languageId);
+    }
+
+
     /**
      * getLanguages
      */
     public getLanguages(): Observable<Language[]> {
-        return this.ipcService.getData<Language[]>(ipcEvents.LANGUAGES);
+        return this.ipcService.getData<Language[]>(ipcEvents.LANGUAGES).pipe(
+            map((languages: Language[]) => {
+                return languages.sort((languageA, languageB) => {
+                    if (languageA.name < languageB.name) {
+                        return -1;
+                    }
+                    if (languageA.name > languageB.name) {
+                        return 1;
+                    }
+                    return 0;
+                });
+            })
+        );
     }
 
 

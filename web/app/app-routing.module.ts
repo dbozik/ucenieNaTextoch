@@ -3,8 +3,10 @@ import { RouterModule, Routes } from '@angular/router';
 import { Routes as AppRoutes } from '../shared/routes.enum';
 import { AddTextComponent } from './add-text/add-text.component';
 import { LoginComponent } from './login/login.component';
+import { ReadTextComponent } from './read-text/read-text.component';
 import { SettingsComponent } from './settings/settings.component';
 import { SignupComponent } from './signup/signup.component';
+import { TextsComponent } from './texts/texts.component';
 
 const routes: Routes = [
     {
@@ -16,8 +18,16 @@ const routes: Routes = [
         component: SignupComponent,
     },
     {
-        path: AppRoutes.TEXTS,
+        path: AppRoutes.ADD_TEXT,
         component: AddTextComponent,
+    },
+    {
+        path: `${AppRoutes.READ_TEXT}/:id`,
+        component: ReadTextComponent,
+    },
+    {
+        path: AppRoutes.TEXTS,
+        component: TextsComponent,
     },
     {
         path: AppRoutes.SETTINGS,

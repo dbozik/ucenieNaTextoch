@@ -1,5 +1,5 @@
 import { Observable, ReplaySubject } from 'rxjs';
-import { TextObject } from '../Objects/TextObject';
+import { Text } from '../Objects/Text';
 import { Database } from './database';
 
 export class TextsArchived {
@@ -8,9 +8,9 @@ export class TextsArchived {
     public constructor() {
     }
 
-    public addText(text: TextObject)
-        : Observable<TextObject> {
-        const textSource$: ReplaySubject<TextObject> = new ReplaySubject(1);
+    public addText(text: Text)
+        : Observable<Text> {
+        const textSource$: ReplaySubject<Text> = new ReplaySubject(1);
 
         this.db.textsArchived.insert(
             {
@@ -28,20 +28,20 @@ export class TextsArchived {
         return textSource$.asObservable();
     }
 
-    public get(textId: string): Observable<TextObject> {
-        const textSource$: ReplaySubject<TextObject> = new ReplaySubject(1);
+    public get(textId: string): Observable<Text> {
+        const textSource$: ReplaySubject<Text> = new ReplaySubject(1);
 
-        this.db.textsArchived.findOne({_id: textId}, (error, text: TextObject) => {
+        this.db.textsArchived.findOne({_id: textId}, (error, text: Text) => {
             textSource$.next(text);
         });
 
         return textSource$.asObservable();
     }
 
-    public getList(): Observable<TextObject[]> {
-        const textSource$: ReplaySubject<TextObject[]> = new ReplaySubject(1);
+    public getList(): Observable<Text[]> {
+        const textSource$: ReplaySubject<Text[]> = new ReplaySubject(1);
 
-        this.db.textsArchived.find({}, (error, texts: TextObject[]) => {
+        this.db.textsArchived.find({}, (error, texts: Text[]) => {
             textSource$.next(texts);
         });
 

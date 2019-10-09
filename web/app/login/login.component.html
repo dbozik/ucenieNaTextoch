@@ -1,21 +1,21 @@
-<div [formGroup]="signinForm">
+<div [formGroup]="signinForm" (keyup.enter)="signin()" class="signin-form">
     <div class="input-box">
         <label for="username">Username:</label>
-        <input formControlName="username" name="username" type="text">
+        <input formControlName="username" name="username" id="username" class="form-control" type="text" autofocus >
     </div>
 
     <div class="input-box">
         <label for="password">Password:</label>
-        <input formControlName="password" name="password" type="password">
+        <input formControlName="password" name="password" id="password" class="form-control" type="password">
     </div>
 
-    <div *ngIf="wrongCredentials" style="color: red;">
+    <div *ngIf="wrongCredentials" class="color-alert">
         Wrong credentials
     </div>
 
     <div class="input-box">
-        <button (click)="signin()" [disabled]="signinForm.invalid">Signin</button>
-        <button (click)="onSignup()">Signup</button>
-        <button (click)="forgottenPassword()">Forgotten password</button>
+        <button (click)="signin()" [disabled]="signinForm.invalid" class="btn btn-primary">Signin</button>
+        <button (click)="onSignup()" class="btn btn-primary">Signup</button>
+        <button (click)="forgottenPassword()" class="btn btn-primary">Forgotten password</button>
     </div>
 </div>

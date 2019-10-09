@@ -7,3 +7,6 @@ out/
 *.js
 
 data
+
+!.gitignore
+!jest.config.js

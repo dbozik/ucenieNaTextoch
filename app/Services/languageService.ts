@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import * as Services from '.';
 import { ipcEvents } from '../../web/shared/ipc-events.enum';
 import * as DA from '../DA/namespace';
+import { GetRequestHandler } from "../Handlers/get-request.handler";
 import { Language } from '../Objects/Language';
 
 export class LanguageService {
@@ -10,6 +11,12 @@ export class LanguageService {
 
     public constructor() {
     }
+
+
+    public init(): void {
+        this.getLanguage();
+    }
+
 
     public getList(userId: string): Observable<Language[]> {
         return this.languageDA.getList(userId);
@@ -71,6 +78,14 @@ export class LanguageService {
         this.bindEvent<string>(ipcEvents.DELETE_LANGUAGE, (arg: string) => {
             return (new DA.Languages()).delete(arg);
         });
+    }
+
+
+    private getLanguage(): void {
+        const getLanguage$ = (languageId: string) => this.languageDA.get(languageId);
+
+        const getLanguageChain = new GetRequestHandler(ipcEvents.GET_LANGUAGE, getLanguage$);
+        getLanguageChain.run({});
     }
 
 

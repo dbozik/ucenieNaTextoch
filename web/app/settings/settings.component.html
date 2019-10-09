@@ -1,4 +1,6 @@
-<h1>Languages</h1>
+<div class="text-center">
+    <h1>Languages</h1>
+</div>
 
 <table class="table table-striped">
     <thead>
@@ -19,8 +21,8 @@
             <td>{{language.wordSeparators}}</td>
             <td>{{language.sentenceSeparators}}</td>
             <td>
-                <button (click)="edit(language._id)" [disabled]="editingId" class="btn btn-default">Edit</button>
-                <button (click)="remove(language._id)" [disabled]="editingId" class="btn btn-default">Remove</button>
+                <button (click)="edit(language._id)" [disabled]="editingId" class="btn btn-primary">Edit</button>
+                <button (click)="remove(language._id)" [disabled]="editingId" class="btn btn-primary">Remove</button>
             </td>
         </ng-container>
 
@@ -30,8 +32,8 @@
             <td><input class="form-control" formControlName="wordSeparators" type="text"></td>
             <td><input class="form-control" formControlName="sentenceSeparators" type="text"></td>
             <td>
-                <button (click)="save(language._id)" class="btn btn-default">Save</button>
-                <button (click)="cancel()" class="btn btn-default">Cancel</button>
+                <button (click)="save(language._id)" class="btn btn-primary">Save</button>
+                <button (click)="cancel()" class="btn btn-primary">Cancel</button>
             </td>
         </ng-container>
     </tr>
