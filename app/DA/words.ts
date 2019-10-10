@@ -29,6 +29,19 @@ export class Words {
         return wordSource$.asObservable();
     }
 
+
+    public saveMultiple(words: WordObject[]): Observable<WordObject[]> {
+        const wordsSource$: ReplaySubject<WordObject[]> = new ReplaySubject(1);
+
+        this.db.words.insert(words, (error, dbWords) => {
+            wordsSource$.next(dbWords);
+            wordsSource$.complete();
+        });
+
+        return wordsSource$.asObservable();
+    }
+
+
     public get(word: string): Observable<WordObject> {
         const wordSource$: ReplaySubject<WordObject> = new ReplaySubject(1);
 

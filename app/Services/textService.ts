@@ -1,5 +1,6 @@
-import { BehaviorSubject, forkJoin, Observable, of, ReplaySubject, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject, Subject } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
+import { ParseTextService, StateService, WordService } from '.';
 import { ipcEvents } from '../../web/shared/ipc-events.enum';
 import { Routes } from '../../web/shared/routes.enum';
 import * as DA from '../DA';
@@ -8,8 +9,6 @@ import { IpcMainHandler } from '../Handlers/ipc-main.handler';
 import { MethodHandler } from '../Handlers/method.handler';
 import { Navigation } from '../navigation';
 import { Language, Text, TextPart, WordObject } from '../Objects';
-import { ParseTextService } from './parseTextService';
-import { StateService } from './stateService';
 
 export class TextService {
 
@@ -150,7 +149,7 @@ export class TextService {
         const saveText$ = (text: Text) => {
             const userId = StateService.getInstance().userId;
 
-            return this.saveWords(text.text, userId, text.languageId).pipe(
+            return (new WordService()).saveWords(text.text, userId, text.languageId).pipe(
                 switchMap(() => {
                     return this.textsDA.addText(text.text, text.title, userId, text.languageId);
                 })
@@ -163,47 +162,6 @@ export class TextService {
                 new MethodHandler((text: Text) => (new Navigation()).openPage(`${Routes.READ_TEXT}/${text._id}`))
             );
         getRequestHandler.run({});
-    }
-
-    private saveWords = (text: string, userId: string, languageId: string): Observable<boolean> => {
-        const wordsDA = new DA.Words();
-
-        const sentences = text.split(/[.?!]+/)
-            .filter(sentence => sentence !== '');
-
-        let wordObjects = [];
-
-        sentences.forEach(sentence => {
-            const words = sentence.split(/[\s,.?!;:_()\[\]/\\"-]+/)
-                .filter(word => word !== '')
-                .map(word => word.toLowerCase());
-
-            words.forEach(word => {
-                wordObjects.push({
-                    word: word,
-                    sentence: sentence,
-                });
-            });
-        });
-
-        wordObjects = this.uniqBy(wordObjects, 'word');
-
-        const getWords$: Observable<WordObject>[] = [];
-
-        wordObjects.forEach(wordObject => {
-            const getWord$ = wordsDA.get(wordObject.word).pipe(
-                switchMap(wordObjectDb => {
-                    if (!wordObjectDb) {
-                        return wordsDA.add(wordObject.word, wordObject.sentence, languageId, userId);
-                    } else {
-                        return of(wordObjectDb);
-                    }
-                })
-            );
-            getWords$.push(getWord$);
-        });
-
-        return forkJoin(getWords$).pipe(switchMap(() => of(true)));
     }
 
 
