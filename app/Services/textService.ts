@@ -122,7 +122,7 @@ export class TextService {
         let textParts: TextPart[] = [];
         let text: Text;
 
-        return this.getText$(this._textId).pipe(
+        return this.getText$(textId).pipe(
             switchMap((textDA: Text) => {
                 text = textDA;
                 textParts = ParseTextService.splitToParts(text.text);

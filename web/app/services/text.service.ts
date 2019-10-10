@@ -21,6 +21,11 @@ export class TextService {
     }
 
 
+    public getParsed(textId: string): Observable<Text> {
+        return this.ipcService.sendData(ipcEvents.GET_TEXT_PARSED, textId);
+    }
+
+
     public getTexts(languageId: string): Observable<Text[]> {
         return this.ipcService.sendData(ipcEvents.GET_TEXTS, languageId);
     }
