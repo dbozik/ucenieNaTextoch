@@ -18,8 +18,8 @@
         <ng-container *ngIf="!editingId || editingId !== language._id">
             <td>{{language.name}}</td>
             <td>{{language.dictionary}}</td>
-            <td>{{language.wordSeparators}}</td>
-            <td>{{language.sentenceSeparators}}</td>
+            <td class="separators">{{language.wordSeparators}}</td>
+            <td class="separators">{{language.sentenceSeparators}}</td>
             <td>
                 <button (click)="edit(language._id)" [disabled]="editingId" class="btn btn-primary">Edit</button>
                 <button (click)="remove(language._id)" [disabled]="editingId" class="btn btn-primary">Remove</button>
@@ -29,8 +29,8 @@
         <ng-container *ngIf="editingId && editingId === language._id" [formGroup]="languageForm">
             <td><input class="form-control" formControlName="name" type="text"></td>
             <td><input class="form-control" formControlName="dictionary" type="text"></td>
-            <td><input class="form-control" formControlName="wordSeparators" type="text"></td>
-            <td><input class="form-control" formControlName="sentenceSeparators" type="text"></td>
+            <td class="separators"><input class="form-control" formControlName="wordSeparators" type="text"></td>
+            <td class="separators"><input class="form-control" formControlName="sentenceSeparators" type="text"></td>
             <td>
                 <button (click)="save(language._id)" class="btn btn-primary">Save</button>
                 <button (click)="cancel()" class="btn btn-primary">Cancel</button>

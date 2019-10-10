@@ -6,3 +6,4 @@
  - add text - extendible text area for longer texts
  - read text - select an extension - save a link to some word in the selection - for parsing
  - read text - include paragraphs and stuff like that
+ - add text - words are not updated immediately

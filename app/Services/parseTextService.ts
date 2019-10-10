@@ -1,7 +1,12 @@
 import { Text, TextPart, WordObject } from '../Objects';
 
 export class ParseTextService {
-    public constructor(private readonly wordSeparators: RegExp) {
+    private wordSeparatorsRegex: RegExp;
+    private sentenceSeparatorsRegex: RegExp;
+
+    public constructor(private wordSeparators: string, private sentenceSeparators: string) {
+        this.wordSeparatorsRegex = new RegExp(`[${wordSeparators.replace(']', '\\]')}]+`);
+        this.sentenceSeparatorsRegex = new RegExp(`[${sentenceSeparators.replace(']', '\\]')}]+`);
     }
 
     public splitToWords(text: string): string[] {
@@ -10,7 +15,7 @@ export class ParseTextService {
     }
 
     public splitToSentences(text: string): string[] {
-        return text.split(/[.?!]+/)
+        return text.split(this.sentenceSeparatorsRegex)
             .filter(sentence => sentence !== '');
     }
 
@@ -97,7 +102,7 @@ export class ParseTextService {
 
 
     private splitToWordsCase(text: string): string[] {
-        return text.split(/[\s,.?!;:_()\[\]/\\"-]+/)
+        return text.split(this.wordSeparatorsRegex)
             .filter(word => word !== '');
     }
 
@@ -112,13 +117,13 @@ export class ParseTextService {
 
 
     private sentencesFromText(text: Text): string[] {
-        return text.text.split(/[.?!]+/)
+        return text.text.split(this.sentenceSeparatorsRegex)
             .filter(sentence => sentence !== '');
     }
 
 
     private wordsFromSentence(sentence: string): string[] {
-        return sentence.split(/[\s,.?!;:_()\[\]/\\"-]+/)
+        return sentence.split(this.wordSeparatorsRegex)
             .filter(word => word !== '')
             .map(word => word.toLowerCase());
     }

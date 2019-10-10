@@ -139,7 +139,7 @@ export class TextService {
                 return (new DA.Languages()).get(text.languageId);
             }),
             switchMap((language: Language) => {
-                parseTextService = new ParseTextService(language.wordSeparators as RegExp);
+                parseTextService = new ParseTextService(language.wordSeparators, language.sentenceSeparators);
                 textParts = parseTextService.splitToParts(text.text);
                 const words = parseTextService.extractWords(textParts);
 
@@ -160,7 +160,7 @@ export class TextService {
 
         return (new DA.Languages()).get(text.languageId).pipe(
             switchMap((language: Language) => {
-                const parseTextService = new ParseTextService(language.wordSeparators as RegExp);
+                const parseTextService = new ParseTextService(language.wordSeparators, language.sentenceSeparators);
                 const words = parseTextService.getWords(text, userId);
 
                 return (new WordService()).saveWords(words);

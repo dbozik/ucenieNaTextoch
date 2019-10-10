@@ -50,8 +50,8 @@ export class SettingsComponent implements OnInit {
             _id: this.NEW_LANGUAGE_ID,
             name: '',
             dictionary: 'https://translate.google.com/?sl=de&tl=en#de/en/{word}',
-            wordSeparators: new RegExp('/[.?!]+/'),
-            sentenceSeparators: new RegExp('/[\s,.?!;:_()\[\]\/\\"-]+/'),
+            wordSeparators: ' ,.?!;:_()[]/"\'-',
+            sentenceSeparators: '.?!',
             userId: '',
         };
 
@@ -82,8 +82,8 @@ export class SettingsComponent implements OnInit {
         const language: Language = {
             name: this.languageForm.get('name').value,
             dictionary: this.languageForm.get('dictionary').value,
-            wordSeparators: this.languageForm.get('wordSeparators').value.toString(),
-            sentenceSeparators: this.languageForm.get('sentenceSeparators').value.toString(),
+            wordSeparators: this.languageForm.get('wordSeparators').value,
+            sentenceSeparators: this.languageForm.get('sentenceSeparators').value,
         };
 
         if (languageId === this.NEW_LANGUAGE_ID) {

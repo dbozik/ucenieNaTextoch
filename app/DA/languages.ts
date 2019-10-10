@@ -13,8 +13,8 @@ export class Languages {
             _id: dbLanguage._id,
             name: dbLanguage.name,
             dictionary: dbLanguage.dictionary,
-            wordSeparators: new RegExp(dbLanguage.wordSeparators),
-            sentenceSeparators: new RegExp(dbLanguage.sentenceSeparators),
+            wordSeparators: dbLanguage.wordSeparators,
+            sentenceSeparators: dbLanguage.sentenceSeparators,
             userId: dbLanguage.userId,
         };
     }
@@ -34,8 +34,8 @@ export class Languages {
                         _id: dbLanguage._id,
                         name: dbLanguage.name,
                         dictionary: dbLanguage.dictionary,
-                        wordSeparators: new RegExp(dbLanguage.wordSeparators),
-                        sentenceSeparators: new RegExp(dbLanguage.sentenceSeparators),
+                        wordSeparators: dbLanguage.wordSeparators,
+                        sentenceSeparators: dbLanguage.sentenceSeparators,
                         userId: dbLanguage.userId,
                     };
 
