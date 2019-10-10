@@ -1,5 +1,5 @@
 import { BehaviorSubject, forkJoin, Observable, of, ReplaySubject, Subject } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import { ipcEvents } from '../../web/shared/ipc-events.enum';
 import { Routes } from '../../web/shared/routes.enum';
 import * as DA from '../DA';
@@ -7,7 +7,7 @@ import { GetRequestHandler } from '../Handlers/get-request.handler';
 import { IpcMainHandler } from '../Handlers/ipc-main.handler';
 import { MethodHandler } from '../Handlers/method.handler';
 import { Navigation } from '../navigation';
-import { Text, TextPart, WordObject } from '../Objects';
+import { Language, Text, TextPart, WordObject } from '../Objects';
 import { ParseTextService } from './parseTextService';
 import { StateService } from './stateService';
 
@@ -31,17 +31,17 @@ export class TextService {
         this._textId = textId;
 
         // get textParts
-        this.getText$(this._textId).subscribe(textDA => {
-            const textParts = ParseTextService.splitToParts(textDA.text);
-            const words = ParseTextService.extractWords(textParts);
-
-            this.wordsDA.getList(words).subscribe((wordObjects: WordObject[]) => {
-                textDA.wordObjects = wordObjects;
-                textDA.textParts = ParseTextService.completeTextParts(textParts, wordObjects);
-
-                this.textSource$.next(textDA);
-            });
-        });
+        // this.getText$(this._textId).subscribe(textDA => {
+        //     const textParts = ParseTextService.splitToParts(textDA.text);
+        //     const words = ParseTextService.extractWords(textParts);
+        //
+        //     this.wordsDA.getList(words).subscribe((wordObjects: WordObject[]) => {
+        //         textDA.wordObjects = wordObjects;
+        //         textDA.textParts = ParseTextService.completeTextParts(textParts, wordObjects);
+        //
+        //         this.textSource$.next(textDA);
+        //     });
+        // });
     }
 
     public init(): void {
@@ -61,25 +61,25 @@ export class TextService {
 
 
     public parseText(text: string, userId: number, languageId: number): any {
-        const wordsDA = new DA.Words();
-
-        const words = ParseTextService.splitToWords(text);
-        const textParts = ParseTextService.splitToParts(text);
-
-        const wordObjects: WordObject[] = [];
-        const getWords$: Observable<WordObject>[] = [];
-
-        words.forEach(word => {
-            const getWord$ = wordsDA.get(word).pipe(
-                tap(wordObject => wordObjects.push(wordObject)),
-            );
-
-            getWords$.push(getWord$);
-        });
-
-        forkJoin(getWords$).subscribe(() => {
-
-        });
+        // const wordsDA = new DA.Words();
+        //
+        // const words = ParseTextService.splitToWords(text);
+        // const textParts = ParseTextService.splitToParts(text);
+        //
+        // const wordObjects: WordObject[] = [];
+        // const getWords$: Observable<WordObject>[] = [];
+        //
+        // words.forEach(word => {
+        //     const getWord$ = wordsDA.get(word).pipe(
+        //         tap(wordObject => wordObjects.push(wordObject)),
+        //     );
+        //
+        //     getWords$.push(getWord$);
+        // });
+        //
+        // forkJoin(getWords$).subscribe(() => {
+        //
+        // });
     }
 
     public updateTranslation(wordId: string, translation: string): void {
@@ -121,18 +121,24 @@ export class TextService {
     private loadTextParsed$ = (textId: string): Observable<Text> => {
         let textParts: TextPart[] = [];
         let text: Text;
+        let parseTextService: ParseTextService;
 
         return this.getText$(textId).pipe(
             switchMap((textDA: Text) => {
                 text = textDA;
-                textParts = ParseTextService.splitToParts(text.text);
-                const words = ParseTextService.extractWords(textParts);
+
+                return (new DA.Languages()).get(text.languageId);
+            }),
+            switchMap((language: Language) => {
+                parseTextService = new ParseTextService(language.wordSeparators as RegExp);
+                textParts = parseTextService.splitToParts(text.text);
+                const words = parseTextService.extractWords(textParts);
 
                 return this.wordsDA.getList(words);
             }),
             map((wordObjects: WordObject[]) => {
                 text.wordObjects = wordObjects;
-                text.textParts = ParseTextService.completeTextParts(textParts, wordObjects);
+                text.textParts = parseTextService.completeTextParts(textParts, wordObjects);
 
                 return text;
             }),
