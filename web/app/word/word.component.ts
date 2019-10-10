@@ -25,6 +25,11 @@ export class WordComponent implements OnChanges {
     }
 
 
+    public hasLineBreak(content: string): boolean {
+        return content.includes('\n');
+    }
+
+
     private getColor(level: number): string {
         if (typeof level === 'undefined') {
             return '';

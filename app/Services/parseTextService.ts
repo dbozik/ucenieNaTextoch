@@ -5,8 +5,8 @@ export class ParseTextService {
     private sentenceSeparatorsRegex: RegExp;
 
     public constructor(private wordSeparators: string, private sentenceSeparators: string) {
-        this.wordSeparatorsRegex = new RegExp(`[${wordSeparators.replace(']', '\\]')}]+`);
-        this.sentenceSeparatorsRegex = new RegExp(`[${sentenceSeparators.replace(']', '\\]')}]+`);
+        this.wordSeparatorsRegex = new RegExp(`[\\n${wordSeparators.replace(']', '\\]')}]+`);
+        this.sentenceSeparatorsRegex = new RegExp(`[\\n${sentenceSeparators.replace(']', '\\]')}]+`);
     }
 
     public splitToWords(text: string): string[] {
