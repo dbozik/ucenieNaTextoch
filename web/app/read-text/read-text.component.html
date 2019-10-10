@@ -5,7 +5,7 @@
 
     <div class="row">
         <div class="col-sm-6 text-area bordered">
-            {{text.text}}
+            <app-word *ngFor="let textPart of text.textParts" [textPart]="textPart"></app-word>
             <!--<span :style="getColor(textPart.level)" class="popup text-part"
                   v-bind:title="textPart.type === 'word' ? textPart.translation : ''"
                   v-for="textPart in textParts" v-on:click="clickWord(textPart.content, $event)">

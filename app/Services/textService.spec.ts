@@ -58,7 +58,7 @@ test('textService tests mocking', () => {
     const textsDAGet = jest.spyOn((new DA.Texts()), 'get').mockReturnValue(of(text));
 
     const textId = Math.random().toString();
-    textService.getTextMock(textId).subscribe();
+    // textService.getTextMock(textId).subscribe();
 
     expect(textsDAGet).toHaveBeenCalledWith(textId);
 });

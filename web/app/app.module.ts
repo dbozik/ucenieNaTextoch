@@ -12,6 +12,7 @@ import { SignupComponent } from './signup/signup.component';
 import { TextsComponent } from './texts/texts.component';
 import { ReadTextComponent } from './read-text/read-text.component';
 import { WebviewDirective } from './webview.directive';
+import { WordComponent } from './word/word.component';
 
 @NgModule({
     declarations: [
@@ -23,6 +24,7 @@ import { WebviewDirective } from './webview.directive';
         TextsComponent,
         ReadTextComponent,
         WebviewDirective,
+        WordComponent,
     ],
     imports: [
         BrowserModule,

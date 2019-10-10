@@ -92,14 +92,14 @@ textsService.text$.subscribe(text => {
     app.text = text.text;
 });
 
-textsService.textParts$.subscribe(textParts => {
-    if (textParts.some(textPart => textPart.hasOwnProperty('translation'))) {
-        app.textParts = textParts;
-    }
-});
-textsService.wordObjects$.subscribe(wordObjects => {
-    app.wordObjects = wordObjects;
-});
+// textsService.textParts$.subscribe(textParts => {
+//     if (textParts.some(textPart => textPart.hasOwnProperty('translation'))) {
+//         app.textParts = textParts;
+//     }
+// });
+// textsService.wordObjects$.subscribe(wordObjects => {
+//     app.wordObjects = wordObjects;
+// });
 
 function clickWord(word: string): void {
     app.translateWord = word;
