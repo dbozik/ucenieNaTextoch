@@ -1,5 +1,4 @@
-import { TextPart, WordObject } from '../Objects';
-import * as Objects from '../Objects';
+import { Text, TextPart, WordObject } from '../Objects';
 
 export class ParseTextService {
     public constructor(private readonly wordSeparators: RegExp) {
@@ -15,9 +14,9 @@ export class ParseTextService {
             .filter(sentence => sentence !== '');
     }
 
-    public splitToParts(text: string): Objects.TextPart[] {
+    public splitToParts(text: string): TextPart[] {
         const justWords = this.splitToWordsCase(text);
-        const textParts: Objects.TextPart[] = [];
+        const textParts: TextPart[] = [];
 
         // iterate through words
         justWords.forEach(word => {
@@ -54,7 +53,7 @@ export class ParseTextService {
     }
 
 
-    public extractWords(textParts: Objects.TextPart[]): string[] {
+    public extractWords(textParts: TextPart[]): string[] {
         return textParts.filter(textPart => textPart.type === 'word')
             .map(textPart => textPart.content.toLowerCase())
             .filter((word, index, list) => list.indexOf(word) === index);
@@ -78,8 +77,49 @@ export class ParseTextService {
     }
 
 
+    public getWords(text: Text, userId: string): WordObject[] {
+        const wordObjects: WordObject[] = [];
+
+        this.sentencesFromText(text).forEach(sentence => {
+            this.wordsFromSentence(sentence).forEach(word => {
+                wordObjects.push({
+                    word,
+                    exampleSentence: sentence,
+                    languageId: text.languageId,
+                    userId,
+                    level: 0,
+                });
+            });
+        });
+
+        return this.uniqBy(wordObjects, 'word');
+    }
+
+
     private splitToWordsCase(text: string): string[] {
         return text.split(/[\s,.?!;:_()\[\]/\\"-]+/)
             .filter(word => word !== '');
+    }
+
+
+    private uniqBy(array: any[], key: string): any[] {
+        const seen = new Set();
+        return array.filter(item => {
+            const property = item[key]; // key(item);
+            return seen.has(property) ? false : seen.add(property);
+        });
+    }
+
+
+    private sentencesFromText(text: Text): string[] {
+        return text.text.split(/[.?!]+/)
+            .filter(sentence => sentence !== '');
+    }
+
+
+    private wordsFromSentence(sentence: string): string[] {
+        return sentence.split(/[\s,.?!;:_()\[\]/\\"-]+/)
+            .filter(word => word !== '')
+            .map(word => word.toLowerCase());
     }
 }

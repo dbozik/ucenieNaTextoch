@@ -28,19 +28,6 @@ export class TextService {
 
     public set textId(textId: string) {
         this._textId = textId;
-
-        // get textParts
-        // this.getText$(this._textId).subscribe(textDA => {
-        //     const textParts = ParseTextService.splitToParts(textDA.text);
-        //     const words = ParseTextService.extractWords(textParts);
-        //
-        //     this.wordsDA.getList(words).subscribe((wordObjects: WordObject[]) => {
-        //         textDA.wordObjects = wordObjects;
-        //         textDA.textParts = ParseTextService.completeTextParts(textParts, wordObjects);
-        //
-        //         this.textSource$.next(textDA);
-        //     });
-        // });
     }
 
     public init(): void {
@@ -58,28 +45,6 @@ export class TextService {
         return texts.getList();
     }
 
-
-    public parseText(text: string, userId: number, languageId: number): any {
-        // const wordsDA = new DA.Words();
-        //
-        // const words = ParseTextService.splitToWords(text);
-        // const textParts = ParseTextService.splitToParts(text);
-        //
-        // const wordObjects: WordObject[] = [];
-        // const getWords$: Observable<WordObject>[] = [];
-        //
-        // words.forEach(word => {
-        //     const getWord$ = wordsDA.get(word).pipe(
-        //         tap(wordObject => wordObjects.push(wordObject)),
-        //     );
-        //
-        //     getWords$.push(getWord$);
-        // });
-        //
-        // forkJoin(getWords$).subscribe(() => {
-        //
-        // });
-    }
 
     public updateTranslation(wordId: string, translation: string): void {
         this.wordObjects.find(wordObject => wordObject._id === wordId).translation = translation;
@@ -114,49 +79,9 @@ export class TextService {
         return resultSource$.asObservable();
     }
 
-    private getText$ = (textId: string) => this.textsDA.get(textId);
-
-
-    private loadTextParsed$ = (textId: string): Observable<Text> => {
-        let textParts: TextPart[] = [];
-        let text: Text;
-        let parseTextService: ParseTextService;
-
-        return this.getText$(textId).pipe(
-            switchMap((textDA: Text) => {
-                text = textDA;
-
-                return (new DA.Languages()).get(text.languageId);
-            }),
-            switchMap((language: Language) => {
-                parseTextService = new ParseTextService(language.wordSeparators as RegExp);
-                textParts = parseTextService.splitToParts(text.text);
-                const words = parseTextService.extractWords(textParts);
-
-                return this.wordsDA.getList(words);
-            }),
-            map((wordObjects: WordObject[]) => {
-                text.wordObjects = wordObjects;
-                text.textParts = parseTextService.completeTextParts(textParts, wordObjects);
-
-                return text;
-            }),
-        );
-    }
-
 
     private processSaveText(): void {
-        const saveText$ = (text: Text) => {
-            const userId = StateService.getInstance().userId;
-
-            return (new WordService()).saveWords(text.text, userId, text.languageId).pipe(
-                switchMap(() => {
-                    return this.textsDA.addText(text.text, text.title, userId, text.languageId);
-                })
-            );
-        };
-
-        const getRequestHandler = new GetRequestHandler(ipcEvents.ADD_TEXT, saveText$);
+        const getRequestHandler = new GetRequestHandler(ipcEvents.ADD_TEXT, this.saveText$);
         getRequestHandler
             .next(
                 new MethodHandler((text: Text) => (new Navigation()).openPage(`${Routes.READ_TEXT}/${text._id}`))
@@ -199,11 +124,50 @@ export class TextService {
     }
 
 
-    private uniqBy(array: any[], key: string): any[] {
-        const seen = new Set();
-        return array.filter(item => {
-            const property = item[key]; // key(item);
-            return seen.has(property) ? false : seen.add(property);
-        });
+    private getText$ = (textId: string) => this.textsDA.get(textId);
+
+
+    private loadTextParsed$ = (textId: string): Observable<Text> => {
+        let textParts: TextPart[] = [];
+        let text: Text;
+        let parseTextService: ParseTextService;
+
+        return this.getText$(textId).pipe(
+            switchMap((textDA: Text) => {
+                text = textDA;
+
+                return (new DA.Languages()).get(text.languageId);
+            }),
+            switchMap((language: Language) => {
+                parseTextService = new ParseTextService(language.wordSeparators as RegExp);
+                textParts = parseTextService.splitToParts(text.text);
+                const words = parseTextService.extractWords(textParts);
+
+                return this.wordsDA.getList(words);
+            }),
+            map((wordObjects: WordObject[]) => {
+                text.wordObjects = wordObjects;
+                text.textParts = parseTextService.completeTextParts(textParts, wordObjects);
+
+                return text;
+            }),
+        );
+    }
+
+
+    private saveText$ = (text: Text) => {
+        const userId = StateService.getInstance().userId;
+
+        return (new DA.Languages()).get(text.languageId).pipe(
+            switchMap((language: Language) => {
+                const parseTextService = new ParseTextService(language.wordSeparators as RegExp);
+                const words = parseTextService.getWords(text, userId);
+
+                return (new WordService()).saveWords(words);
+            }),
+            switchMap(() => {
+                return this.textsDA.addText(text.text, text.title, userId, text.languageId);
+            })
+        );
     }
 }
