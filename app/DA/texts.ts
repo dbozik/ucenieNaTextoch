@@ -12,18 +12,21 @@ export class Texts {
         : Observable<Text> {
         const textSource$: ReplaySubject<Text> = new ReplaySubject(1);
 
-        this.db.texts.insert(
-            {
-                createdOn: new Date(),
-                userId: userId,
-                languageId: languageId,
-                text: text,
-                title: title
-            },
-            (error, dbText) => {
-                textSource$.next(dbText);
-                textSource$.complete();
-            });
+        setTimeout(() => {
+            this.db.texts.insert(
+                {
+                    createdOn: new Date(),
+                    userId: userId,
+                    languageId: languageId,
+                    text: text,
+                    title: title
+                },
+                (error, dbText) => {
+                    textSource$.next(dbText);
+                    textSource$.complete();
+                });
+        }, 100);
+        this.db.texts.persistence.compactDatafile();
 
         return textSource$.asObservable();
     }

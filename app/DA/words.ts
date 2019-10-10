@@ -33,10 +33,13 @@ export class Words {
     public saveMultiple(words: WordObject[]): Observable<WordObject[]> {
         const wordsSource$: ReplaySubject<WordObject[]> = new ReplaySubject(1);
 
-        this.db.words.insert(words, (error, dbWords) => {
-            wordsSource$.next(dbWords);
-            wordsSource$.complete();
-        });
+        setTimeout(() => {
+            this.db.words.insert(words, (error, dbWords) => {
+                wordsSource$.next(dbWords);
+                wordsSource$.complete();
+            });
+        }, 100);
+        this.db.words.persistence.compactDatafile();
 
         return wordsSource$.asObservable();
     }
