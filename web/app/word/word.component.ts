@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnChanges } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges } from '@angular/core';
 import { TextPart } from '../../../app/Objects';
 
 @Component({
@@ -12,10 +12,17 @@ export class WordComponent implements OnChanges {
     @Input()
     public textPart: TextPart;
 
+    public popupShowed: boolean = false;
+
     public color: string;
     public title: string;
 
     private colorMaxLevel = 10000;
+
+    constructor(
+        private readonly changeDetection: ChangeDetectorRef,
+    ) {
+    }
 
     ngOnChanges() {
         if (this.textPart) {
@@ -27,6 +34,32 @@ export class WordComponent implements OnChanges {
 
     public hasLineBreak(content: string): boolean {
         return content.includes('\n');
+    }
+
+
+    public clickPopup(): void {
+        this.popupShowed = !this.popupShowed;
+        this.changeDetection.detectChanges();
+    }
+
+
+    public decreaseLevel(): void {
+
+    }
+
+
+    public increaseLevel(): void {
+
+    }
+
+
+    public setKnown(): void {
+
+    }
+
+
+    public updateTranslation(): void {
+
     }
 
 
