@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    EventEmitter,
+    Input,
+    OnChanges,
+    Output
+} from '@angular/core';
+import { FormControl, FormGroup } from "@angular/forms";
 import { TextPart } from '../../../app/Objects';
 
 @Component({
@@ -12,7 +21,11 @@ export class WordComponent implements OnChanges {
     @Input()
     public textPart: TextPart;
 
+    @Output()
+    public wordEdit: EventEmitter<TextPart> = new EventEmitter<TextPart>();
+
     public popupShowed: boolean = false;
+    public translateForm: FormGroup;
 
     public color: string;
     public title: string;
@@ -27,7 +40,13 @@ export class WordComponent implements OnChanges {
     ngOnChanges() {
         if (this.textPart) {
             this.color = this.getColor(this.textPart.level);
-            this.title = this.textPart.type === 'word' ? this.textPart.translation : '';
+            this.title = this.textPart.type === 'word' ? this.textPart.translation || '' : '';
+
+            this.translateForm = new FormGroup({
+                translation: new FormControl(this.textPart.translation),
+                exampleSentence: new FormControl(this.textPart.exampleSentence),
+                exampleSentenceTranslation: new FormControl(this.textPart.exampleSentenceTranslation),
+            });
         }
     }
 
@@ -44,22 +63,32 @@ export class WordComponent implements OnChanges {
 
 
     public decreaseLevel(): void {
+        this.textPart.level = this.textPart.level / 2;
 
+        this.wordEdit.emit(this.textPart);
     }
 
 
     public increaseLevel(): void {
+        this.textPart.level = this.textPart.level / 2 + this.colorMaxLevel / 2;
 
+        this.wordEdit.emit(this.textPart);
     }
 
 
     public setKnown(): void {
+        this.textPart.level = this.colorMaxLevel;
 
+        this.wordEdit.emit(this.textPart);
     }
 
 
     public updateTranslation(): void {
+        this.textPart.translation = this.translateForm.get('translation').value;
+        this.textPart.exampleSentence = this.translateForm.get('exampleSentence').value;
+        this.textPart.exampleSentenceTranslation = this.translateForm.get('exampleSentenceTranslation').value;
 
+        this.wordEdit.emit(this.textPart);
     }
 
 
