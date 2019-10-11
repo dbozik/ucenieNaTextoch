@@ -23,6 +23,8 @@ export class WordComponent implements OnChanges {
 
     @Output()
     public wordEdit: EventEmitter<TextPart> = new EventEmitter<TextPart>();
+    @Output()
+    public openTranslation: EventEmitter<string> = new EventEmitter<string>();
 
     public popupShowed: boolean = false;
     public translateForm: FormGroup;
@@ -58,6 +60,7 @@ export class WordComponent implements OnChanges {
 
 
     public clickPopup(): void {
+        this.openTranslation.emit(this.textPart.content);
         this.popupShowed = !this.popupShowed;
         this.changeDetection.detectChanges();
     }

@@ -1,9 +1,12 @@
  - signup - check for duplicate logins
  - forgotten password
  - languages - add a hint to dictionary field
- - languages - regex without backslashes
  - languages - on remove display a confirm window
  - add text - extendible text area for longer texts
  - read text - select an extension - save a link to some word in the selection - for parsing
- - read text - include paragraphs and stuff like that
  - add text - words are not updated immediately
+ - create loader on events (i.e. opening a long text)
+ - translate window - not scroll
+ - performance on long texts
+ - long text - didn't save all the words
+ - translate popup - close on click elsewhere (currently just the original word)

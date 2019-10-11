@@ -42,6 +42,7 @@ export class ReadTextComponent implements OnInit {
 
     public setTranslateLink(word: string, dictionary: string = this.language.dictionary): void {
         this.translateLink = dictionary.replace('{word}', word);
+        this.changeDetectorRef.detectChanges();
     }
 
 

@@ -6,7 +6,12 @@
     <div class="row">
         <div class="col-sm-6 text-area bordered">
             <ng-container *ngFor="let textPart of text.textParts; let index = index">
-                <app-word  [textPart]="text.textParts[index]" (wordEdit)="wordEdit($event)"></app-word>
+                <app-word
+                    [textPart]="text.textParts[index]"
+                    (openTranslation)="setTranslateLink($event)"
+                    (wordEdit)="wordEdit($event)"
+                >
+                </app-word>
             </ng-container>
         </div>
 
