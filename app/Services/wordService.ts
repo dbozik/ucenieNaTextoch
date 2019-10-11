@@ -1,12 +1,19 @@
 import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import * as DA from '../DA/namespace';
-import { WordObject } from '../Objects';
+import { ipcEvents } from '../../web/shared/ipc-events.enum';
+import * as DA from '../DA';
+import { GetRequestHandler } from '../Handlers/get-request.handler';
+import { TextPart, WordObject } from '../Objects';
 
 export class WordService {
     private wordsDA = new DA.Words();
 
     public constructor() {
+    }
+
+
+    public init(): void {
+        this.processEditWord();
     }
 
 
@@ -28,5 +35,14 @@ export class WordService {
 
     public updateLevel(id: string, newLevel: number): void {
         this.wordsDA.updateLevel(id, newLevel);
+    }
+
+
+    private processEditWord(): void {
+        const editWord$ = (word: TextPart) => this.wordsDA.edit(word);
+
+        const editWordChain = new GetRequestHandler(ipcEvents.EDIT_WORD, editWord$);
+
+        editWordChain.run({});
     }
 }

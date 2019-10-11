@@ -1,5 +1,5 @@
 import { Observable, ReplaySubject } from 'rxjs';
-import { WordObject } from '../Objects/namespace';
+import { TextPart, WordObject } from '../Objects/namespace';
 import { Database } from './database';
 
 export class Words {
@@ -77,6 +77,33 @@ export class Words {
         });
 
         return wordsSource$.asObservable();
+    }
+
+
+    public edit(word: TextPart): Observable<WordObject> {
+        const wordSource$: ReplaySubject<WordObject> = new ReplaySubject(1);
+
+        setTimeout(() => {
+            this.db.words.update(
+                {_id: word.wordId},
+                {
+                    $set: {
+                        word: word.content,
+                        level: word.level,
+                        translation: word.translation,
+                        exampleSentence: word.exampleSentence,
+                        exampleSentenceTranslation: word.exampleSentenceTranslation,
+                    }
+                },
+                {},
+                (error, affectedNumber, editedWord: WordObject) => {
+                    wordSource$.next(editedWord);
+                    wordSource$.complete();
+                });
+        }, 100);
+        this.db.words.persistence.compactDatafile();
+
+        return wordSource$.asObservable();
     }
 
 

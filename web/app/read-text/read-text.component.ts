@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Language, Text } from '../../../app/Objects';
+import { Language, Text, TextPart } from '../../../app/Objects';
 import { LanguageService } from '../services/language.service';
 import { TextService } from '../services/text.service';
 
@@ -42,5 +42,26 @@ export class ReadTextComponent implements OnInit {
 
     public setTranslateLink(word: string, dictionary: string = this.language.dictionary): void {
         this.translateLink = dictionary.replace('{word}', word);
+    }
+
+
+    public wordEdit(word: TextPart): void {
+        this.textService.editWord(word).subscribe(() => {
+            for (let index = 0; index < this.text.textParts.length; index++) {
+                if (this.text.textParts[index].wordId === word.wordId) {
+                    this.text.textParts[index] = {
+                        wordId: word.wordId,
+                        content: this.text.textParts[index].content,
+                        level: word.level,
+                        type: word.type,
+                        translation: word.translation,
+                        exampleSentence: word.exampleSentence,
+                        exampleSentenceTranslation: word.exampleSentenceTranslation,
+                    };
+                }
+            }
+
+            this.changeDetectorRef.detectChanges();
+        });
     }
 }

@@ -7,7 +7,7 @@ import {
     OnChanges,
     Output
 } from '@angular/core';
-import { FormControl, FormGroup } from "@angular/forms";
+import { FormControl, FormGroup } from '@angular/forms';
 import { TextPart } from '../../../app/Objects';
 
 @Component({
@@ -39,6 +39,7 @@ export class WordComponent implements OnChanges {
 
     ngOnChanges() {
         if (this.textPart) {
+            this.popupShowed = false;
             this.color = this.getColor(this.textPart.level);
             this.title = this.textPart.type === 'word' ? this.textPart.translation || '' : '';
 
@@ -70,7 +71,11 @@ export class WordComponent implements OnChanges {
 
 
     public increaseLevel(): void {
-        this.textPart.level = this.textPart.level / 2 + this.colorMaxLevel / 2;
+        if (this.textPart.level === 0) {
+            this.textPart.level = 0.1;
+        } else {
+            this.textPart.level = this.textPart.level / 2 + this.colorMaxLevel / 2;
+        }
 
         this.wordEdit.emit(this.textPart);
     }
