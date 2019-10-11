@@ -27,7 +27,7 @@ export class ReadTextComponent implements OnInit {
     ngOnInit() {
         const textId = this.route.snapshot.params.id;
 
-        this.textService.get(textId).subscribe((result: Text) => {
+        this.textService.getParsed(textId).subscribe((result: Text) => {
             this.text = result;
             this.changeDetectorRef.detectChanges();
 

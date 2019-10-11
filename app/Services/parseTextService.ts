@@ -1,21 +1,26 @@
-import { TextPart } from '../Objects/TextPart';
+import { Text, TextPart, WordObject } from '../Objects';
 
 export class ParseTextService {
-    public constructor() {
+    private wordSeparatorsRegex: RegExp;
+    private sentenceSeparatorsRegex: RegExp;
+
+    public constructor(private wordSeparators: string, private sentenceSeparators: string) {
+        this.wordSeparatorsRegex = new RegExp(`[\\n${wordSeparators.replace(']', '\\]')}]+`);
+        this.sentenceSeparatorsRegex = new RegExp(`[\\n${sentenceSeparators.replace(']', '\\]')}]+`);
     }
 
-    public static splitToWords(text: string): string[] {
+    public splitToWords(text: string): string[] {
         return this.splitToWordsCase(text)
             .map(word => word.toLowerCase());
     }
 
-    public static splitToSentences(text: string): string[] {
-        return text.split(/[.?!]+/)
+    public splitToSentences(text: string): string[] {
+        return text.split(this.sentenceSeparatorsRegex)
             .filter(sentence => sentence !== '');
     }
 
-    public static splitToParts(text: string): TextPart[] {
-        const justWords = ParseTextService.splitToWordsCase(text);
+    public splitToParts(text: string): TextPart[] {
+        const justWords = this.splitToWordsCase(text);
         const textParts: TextPart[] = [];
 
         // iterate through words
@@ -52,73 +57,74 @@ export class ParseTextService {
         return textParts.filter(word => word.content !== '');
     }
 
-    private static splitToWordsCase(text: string): string[] {
-        return text.split(/[\s,.?!;:_()\[\]/\\"-]+/)
+
+    public extractWords(textParts: TextPart[]): string[] {
+        return textParts.filter(textPart => textPart.type === 'word')
+            .map(textPart => textPart.content.toLowerCase())
+            .filter((word, index, list) => list.indexOf(word) === index);
+    }
+
+
+    public completeTextParts(textParts: TextPart[], wordObjects: WordObject[]): TextPart[] {
+        const result: TextPart[] = JSON.parse(JSON.stringify(textParts));
+
+        wordObjects.forEach(wordObject => {
+            result.filter(textPart => textPart.content.toLowerCase() === wordObject.word)
+                .forEach(textPart => {
+                    textPart.wordId = wordObject._id;
+                    textPart.translation = wordObject.translation;
+                    textPart.level = wordObject.level;
+                    textPart.exampleSentence = wordObject.exampleSentence;
+                });
+        });
+
+        return result;
+    }
+
+
+    public getWords(text: Text, userId: string): WordObject[] {
+        const wordObjects: WordObject[] = [];
+
+        this.sentencesFromText(text).forEach(sentence => {
+            this.wordsFromSentence(sentence).forEach(word => {
+                wordObjects.push({
+                    word,
+                    exampleSentence: sentence,
+                    languageId: text.languageId,
+                    userId,
+                    level: 0,
+                });
+            });
+        });
+
+        return this.uniqBy(wordObjects, 'word');
+    }
+
+
+    private splitToWordsCase(text: string): string[] {
+        return text.split(this.wordSeparatorsRegex)
             .filter(word => word !== '');
     }
 
-    // class text
 
-    // properties:
-    // text
-    // language
-    // parsed text
-    // word list
-    // sentences list
-
-    /////////////////////////////////////////////////////////
-    // method to split the text
-    // arguments are none
-
-    // get sentence separators
-    //
-    // get word separators from the language settings
-    // split the text by the visible and hidden separators
-    // save the result of words and symbols to parsed text
-
-    //////////////////////////////////////////////////////////
-    // method to get vocabulary returns a list of word objects
-    // arguments are the text, the language and settings
-
-    //  take the parsed text
-    //  get the distinct, lowercase words
-    //  for every word
-    // find the word object in database (word, languageId, userId)
-    // add the word object to translated words array
-
-    //////////////////////////////////////////////////////////////
-    // method to translate parsed text
-
-    // for every element in parsed text
-    // if it is a symbol, skip
-    // if it is a word
-    // find in vocabulary list
-    // if it exists
-    // fill in parsed text its id
-    // if it does not exist
-    // create a new word object
-    // set word
-    // translation = void
-    // level = unknown
-    // sentence = get sentence
-    // add the word object to vocabulary list
-
-    ///////////////////////////////////////////////////////////
-    // method to parse text
-    // arguments are the text, the language, the settings
-
-    // initialize the class properties
-    // call the split the text function
-    // call the vocabulary function
-    // call the translate parsed text function
+    private uniqBy(array: any[], key: string): any[] {
+        const seen = new Set();
+        return array.filter(item => {
+            const property = item[key]; // key(item);
+            return seen.has(property) ? false : seen.add(property);
+        });
+    }
 
 
-    // class settings
-    // properties:
-    // user
-    // list of languages
-    // dictionary
-    // word separators
-    // hidden word separators
-    // sentence separators
+    private sentencesFromText(text: Text): string[] {
+        return text.text.split(this.sentenceSeparatorsRegex)
+            .filter(sentence => sentence !== '');
+    }
+
+
+    private wordsFromSentence(sentence: string): string[] {
+        return sentence.split(this.wordSeparatorsRegex)
+            .filter(word => word !== '')
+            .map(word => word.toLowerCase());
+    }
 }

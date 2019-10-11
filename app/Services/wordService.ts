@@ -1,6 +1,7 @@
-import { Observable, ReplaySubject } from 'rxjs';
+import { Observable } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import * as DA from '../DA/namespace';
-import { WordObject } from '../Objects/namespace';
+import { WordObject } from '../Objects';
 
 export class WordService {
     private wordsDA = new DA.Words();
@@ -8,23 +9,18 @@ export class WordService {
     public constructor() {
     }
 
-    public getWord(word: string, exampleSentence: string): Observable<WordObject> {
-        const wordSource$: ReplaySubject<WordObject> = new ReplaySubject(1);
 
-        const words = new DA.Words();
+    public saveWords = (words: WordObject[]): Observable<WordObject[]> => {
+        return this.wordsDA.getList(words.map(wordObject => wordObject.word)).pipe(
+            switchMap((savedWordObjects: WordObject[]) => {
+                const savedWords = savedWordObjects.map(wordObject => wordObject.word);
+                const wordsToSave = words.filter(wordObject => !savedWords.includes(wordObject.word));
 
-        words.get(word).subscribe(retrievedWord => {
-            if (retrievedWord) {
-                wordSource$.next(retrievedWord);
-            } else {
-                words.add(word, exampleSentence, '1', '1').subscribe(addedWord => {
-                    wordSource$.next(addedWord);
-                });
-            }
-        });
-
-        return wordSource$.asObservable();
+                return this.wordsDA.saveMultiple(wordsToSave);
+            }),
+        );
     }
+
 
     public updateTranslation(id: string, translation: string): void {
         this.wordsDA.updateTranslation(id, translation);

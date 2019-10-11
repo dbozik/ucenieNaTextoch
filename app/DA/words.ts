@@ -29,6 +29,22 @@ export class Words {
         return wordSource$.asObservable();
     }
 
+
+    public saveMultiple(words: WordObject[]): Observable<WordObject[]> {
+        const wordsSource$: ReplaySubject<WordObject[]> = new ReplaySubject(1);
+
+        setTimeout(() => {
+            this.db.words.insert(words, (error, dbWords) => {
+                wordsSource$.next(dbWords);
+                wordsSource$.complete();
+            });
+        }, 100);
+        this.db.words.persistence.compactDatafile();
+
+        return wordsSource$.asObservable();
+    }
+
+
     public get(word: string): Observable<WordObject> {
         const wordSource$: ReplaySubject<WordObject> = new ReplaySubject(1);
 
@@ -50,6 +66,19 @@ export class Words {
 
         return wordSource$.asObservable();
     }
+
+
+    public getList(words: string[]): Observable<WordObject[]> {
+        const wordsSource$: ReplaySubject<WordObject[]> = new ReplaySubject(1);
+
+        this.db.words.find({word: {$in: words}}, (error, foundWords: WordObject[]) => {
+            wordsSource$.next(foundWords);
+            wordsSource$.complete();
+        });
+
+        return wordsSource$.asObservable();
+    }
+
 
     public updateTranslation(id: string, translation: string): void {
         const wordSource$: ReplaySubject<WordObject> = new ReplaySubject(1);

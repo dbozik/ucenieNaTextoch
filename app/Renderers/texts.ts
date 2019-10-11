@@ -12,9 +12,9 @@ const app = new Vue({
 const textsService = new Services.TextService();
 
 const getData = () => {
-    textsService.getList().subscribe(texts => {
-        app.texts = texts;
-    });
+    // textsService.getList().subscribe(texts => {
+    //     app.texts = texts;
+    // });
 };
 
 const getArchivedTexts = () => {

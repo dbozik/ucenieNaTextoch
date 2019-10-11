@@ -19,4 +19,19 @@ export class TextService {
     public get(textId: string): Observable<Text> {
         return this.ipcService.sendData(ipcEvents.GET_TEXT, textId);
     }
+
+
+    public getParsed(textId: string): Observable<Text> {
+        return this.ipcService.sendData(ipcEvents.GET_TEXT_PARSED, textId);
+    }
+
+
+    public getTexts(languageId: string): Observable<Text[]> {
+        return this.ipcService.sendData(ipcEvents.GET_TEXTS, languageId);
+    }
+
+
+    public openText(textId: string): Observable<Text> {
+        return this.ipcService.sendData(ipcEvents.OPEN_TEXT, textId);
+    }
 }
