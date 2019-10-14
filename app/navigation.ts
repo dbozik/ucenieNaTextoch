@@ -27,6 +27,9 @@ export class Navigation {
         },
         {
             label: 'Vocabulary',
+            click: () => {
+                this.openPage(Routes.WORDS);
+            },
         },
         {
             label: 'Settings',
