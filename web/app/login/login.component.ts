@@ -4,13 +4,12 @@ import { Router } from '@angular/router';
 import { ipcEvents } from '../../shared/ipc-events.enum';
 import { Routes } from '../../shared/routes.enum';
 import { IpcService } from '../add-text/ipc.service';
-import { LanguageService } from '../services/language.service';
+import { LoginService } from '../services/login.service';
 
 @Component({
     selector: 'app-login',
     templateUrl: './login.component.html',
     styleUrls: ['./login.component.scss'],
-    providers: [LanguageService]
 })
 export class LoginComponent implements OnInit {
     public signinForm: FormGroup;
@@ -18,16 +17,18 @@ export class LoginComponent implements OnInit {
     public wrongCredentials: boolean = false;
 
     constructor(
+        private readonly loginService: LoginService,
         private readonly ipcService: IpcService,
         private readonly formBuilder: FormBuilder,
         private readonly cdr: ChangeDetectorRef,
         private readonly router: Router,
-        private readonly languageService: LanguageService,
     ) {
     }
 
 
     public ngOnInit(): void {
+        this.loginService.logOut();
+
         this.signinForm = this.formBuilder.group({
             username: this.formBuilder.control('', Validators.required),
             password: this.formBuilder.control('', Validators.required),
@@ -47,7 +48,6 @@ export class LoginComponent implements OnInit {
         }
 
         this.ipcService.ipc.send(ipcEvents.LOGIN, this.signinForm.value);
-        this.languageService.signin();
     }
 
 

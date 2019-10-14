@@ -23,6 +23,7 @@ export class LanguageSelectionComponent implements OnInit {
     }
 
     ngOnInit() {
+        console.log('language selection component created');
         this.languagesControl.valueChanges.subscribe((languageId: string) => {
             this.languageService.languageSelected(languageId);
         });

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { Language } from '../../../app/Objects';
 import { ipcEvents } from '../../shared/ipc-events.enum';
 import { IpcService } from '../add-text/ipc.service';
@@ -28,21 +28,17 @@ export class LanguageService {
      * getLanguages
      */
     public getLanguages(): Observable<Language[]> {
-        return this.signin$.pipe(
-            switchMap(() => {
-                return this.ipcService.getData<Language[]>(ipcEvents.LANGUAGES).pipe(
-                    map((languages: Language[]) => {
-                        return languages.sort((languageA, languageB) => {
-                            if (languageA.name < languageB.name) {
-                                return -1;
-                            }
-                            if (languageA.name > languageB.name) {
-                                return 1;
-                            }
-                            return 0;
-                        });
-                    })
-                );
+        return this.ipcService.getData<Language[]>(ipcEvents.LANGUAGES).pipe(
+            map((languages: Language[]) => {
+                return languages.sort((languageA, languageB) => {
+                    if (languageA.name < languageB.name) {
+                        return -1;
+                    }
+                    if (languageA.name > languageB.name) {
+                        return 1;
+                    }
+                    return 0;
+                });
             })
         );
     }
@@ -72,10 +68,5 @@ export class LanguageService {
     public languageSelected(languageId: string): void {
         this.ipcService.sendData(ipcEvents.LANGUAGE_SELECTED, languageId);
         this.languageChangedSource.next(true);
-    }
-
-
-    public signin(): void {
-        this.signin$.next();
     }
 }
