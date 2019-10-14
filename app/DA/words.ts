@@ -1,5 +1,6 @@
 import { Observable, ReplaySubject } from 'rxjs';
 import { TextPart, WordObject } from '../Objects/namespace';
+import { StateService } from "../Services";
 import { Database } from './database';
 
 export class Words {
@@ -48,7 +49,7 @@ export class Words {
     public get(word: string): Observable<WordObject> {
         const wordSource$: ReplaySubject<WordObject> = new ReplaySubject(1);
 
-        this.db.words.findOne({word: word}, (error, foundWord: WordObject) => {
+        this.db.words.findOne({word}, (error, foundWord: WordObject) => {
             wordSource$.next(foundWord);
             wordSource$.complete();
         });
@@ -71,7 +72,10 @@ export class Words {
     public getList(words: string[]): Observable<WordObject[]> {
         const wordsSource$: ReplaySubject<WordObject[]> = new ReplaySubject(1);
 
-        this.db.words.find({word: {$in: words}}, (error, foundWords: WordObject[]) => {
+        const userId = StateService.getInstance().userId;
+        const languageId = StateService.getInstance().language._id;
+
+        this.db.words.find({word: {$in: words}, languageId, userId}, (error, foundWords: WordObject[]) => {
             wordsSource$.next(foundWords);
             wordsSource$.complete();
         });

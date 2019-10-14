@@ -1,5 +1,6 @@
 import { Observable, ReplaySubject } from 'rxjs';
-import { Text } from '../Objects/Text';
+import { Text } from '../Objects';
+import { StateService } from '../Services';
 import { Database } from './database';
 
 export class Texts {
@@ -8,18 +9,17 @@ export class Texts {
     public constructor() {
     }
 
-    public addText(text: string, title: string, userId: string, languageId: string)
+    public addText(text: string, title: string)
         : Observable<Text> {
         const textSource$: ReplaySubject<Text> = new ReplaySubject(1);
 
         setTimeout(() => {
             this.db.texts.insert(
                 {
+                    ...this.userLanguageRequest(),
                     createdOn: new Date(),
-                    userId: userId,
-                    languageId: languageId,
-                    text: text,
-                    title: title
+                    text,
+                    title,
                 },
                 (error, dbText) => {
                     textSource$.next(dbText);
@@ -42,10 +42,10 @@ export class Texts {
         return textSource$.asObservable();
     }
 
-    public getList(userId: string, languageId: string): Observable<Text[]> {
+    public getList(): Observable<Text[]> {
         const textSource$: ReplaySubject<Text[]> = new ReplaySubject(1);
 
-        this.db.texts.find({userId, languageId}, (error, texts: Text[]) => {
+        this.db.texts.find({...this.userLanguageRequest()}, (error, texts: Text[]) => {
             textSource$.next(texts);
         });
 
@@ -54,5 +54,13 @@ export class Texts {
 
     public delete(textId): void {
         this.db.texts.remove({_id: textId});
+    }
+
+
+    private userLanguageRequest(): {userId: string, languageId: string} {
+        const userId = StateService.getInstance().userId;
+        const languageId = StateService.getInstance().language._id;
+
+        return {userId, languageId};
     }
 }

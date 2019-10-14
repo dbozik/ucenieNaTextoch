@@ -20,7 +20,6 @@ export class Text {
     public _id?: string;
     public createdOn?: Date;
     public textParts?: Objects.TextPart[];
-    public wordObjects?: Objects.WordObject[];
 
     constructor() {
     }

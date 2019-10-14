@@ -2,7 +2,7 @@ import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { ipcEvents } from '../../web/shared/ipc-events.enum';
 import * as DA from '../DA';
-import { GetRequestHandler } from '../Handlers/get-request.handler';
+import { GetRequestHandler } from '../Handlers';
 import { TextPart, WordObject } from '../Objects';
 
 export class WordService {

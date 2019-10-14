@@ -4,9 +4,7 @@ import { ParseTextService, StateService, WordService } from '.';
 import { ipcEvents } from '../../web/shared/ipc-events.enum';
 import { Routes } from '../../web/shared/routes.enum';
 import * as DA from '../DA';
-import { GetRequestHandler } from '../Handlers/get-request.handler';
-import { IpcMainHandler } from '../Handlers/ipc-main.handler';
-import { MethodHandler } from '../Handlers/method.handler';
+import { GetRequestHandler, IpcMainHandler, MethodHandler } from '../Handlers';
 import { Navigation } from '../navigation';
 import { Language, Text, TextPart, WordObject } from '../Objects';
 
@@ -97,11 +95,7 @@ export class TextService {
 
 
     private processGetTexts(): void {
-        const getTexts$ = (languageId: string) => {
-            const userId = StateService.getInstance().userId;
-
-            return this.textsDA.getList(userId, languageId);
-        };
+        const getTexts$ = () => this.textsDA.getList();
 
         const getTextsChain = new GetRequestHandler(ipcEvents.GET_TEXTS, getTexts$);
         getTextsChain.run({});
@@ -136,9 +130,7 @@ export class TextService {
             switchMap((textDA: Text) => {
                 text = textDA;
 
-                return (new DA.Languages()).get(text.languageId);
-            }),
-            switchMap((language: Language) => {
+                const language = StateService.getInstance().language;
                 parseTextService = new ParseTextService(language.wordSeparators, language.sentenceSeparators);
                 textParts = parseTextService.splitToParts(text.text);
                 const words = parseTextService.extractWords(textParts);
@@ -146,7 +138,6 @@ export class TextService {
                 return this.wordsDA.getList(words);
             }),
             map((wordObjects: WordObject[]) => {
-                text.wordObjects = wordObjects;
                 text.textParts = parseTextService.completeTextParts(textParts, wordObjects);
 
                 return text;
@@ -156,17 +147,15 @@ export class TextService {
 
 
     private saveText$ = (text: Text) => {
-        const userId = StateService.getInstance().userId;
-
         return (new DA.Languages()).get(text.languageId).pipe(
             switchMap((language: Language) => {
                 const parseTextService = new ParseTextService(language.wordSeparators, language.sentenceSeparators);
-                const words = parseTextService.getWords(text, userId);
+                const words = parseTextService.getWords(text);
 
                 return (new WordService()).saveWords(words);
             }),
             switchMap(() => {
-                return this.textsDA.addText(text.text, text.title, userId, text.languageId);
+                return this.textsDA.addText(text.text, text.title);
             })
         );
     }

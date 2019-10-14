@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { Language, Text } from '../../../app/Objects';
+import { Text } from '../../../app/Objects';
 import { LanguageService } from '../services/language.service';
 import { TextService } from '../services/text.service';
 
@@ -12,10 +12,7 @@ import { TextService } from '../services/text.service';
     providers: [TextService, LanguageService],
 })
 export class TextsComponent implements OnInit {
-    public languages: Language[];
     public texts: Text[] = [];
-
-    public languagesControl: FormControl = new FormControl();
 
     constructor(
         private readonly languageService: LanguageService,
@@ -25,20 +22,16 @@ export class TextsComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.languagesControl.valueChanges.pipe(
-            switchMap((languageId: string) => {
-                return this.textService.getTexts(languageId);
+        this.languageService.languageChanged.pipe(
+            switchMap((selected: boolean) => {
+                if (selected) {
+                    return this.textService.getTexts();
+                } else {
+                    return of([]);
+                }
             })
         ).subscribe((texts: Text[]) => {
             this.texts = texts;
-            this.changeDetection.detectChanges();
-        });
-
-        this.languageService.getLanguages().subscribe((languages: Language[]) => {
-            this.languages = languages;
-            if (this.languages && this.languages.length > 0) {
-                this.languagesControl.setValue(this.languages[0]._id);
-            }
             this.changeDetection.detectChanges();
         });
     }

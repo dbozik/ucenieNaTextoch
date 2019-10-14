@@ -1,9 +1,13 @@
 import { ipcMain } from 'electron';
 import { Observable } from 'rxjs';
+import { StateService } from ".";
 import * as Services from '.';
 import { ipcEvents } from '../../web/shared/ipc-events.enum';
 import * as DA from '../DA/namespace';
 import { GetRequestHandler } from "../Handlers/get-request.handler";
+import { IpcMainHandler } from "../Handlers/ipc-main.handler";
+import { MethodHandler } from "../Handlers/method.handler";
+import { SendRequestHandler } from "../Handlers/send-request.handler";
 import { Language } from '../Objects/Language';
 
 export class LanguageService {
@@ -15,6 +19,7 @@ export class LanguageService {
 
     public init(): void {
         this.getLanguage();
+        this.processSelectedLanguage();
     }
 
 
@@ -95,5 +100,19 @@ export class LanguageService {
                 event.sender.send(eventName + '-reply', response);
             });
         });
+    }
+
+
+    private processSelectedLanguage(): void {
+        const selectedLanguageChain = new IpcMainHandler(ipcEvents.LANGUAGE_SELECTED);
+        selectedLanguageChain
+            .next(
+                new SendRequestHandler((languageId: string) => this.languageDA.get(languageId))
+            )
+            .next(
+                new MethodHandler((language: Language) => StateService.getInstance().language = language)
+            );
+
+        selectedLanguageChain.run({});
     }
 }
