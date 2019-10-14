@@ -30,7 +30,9 @@ export class TextsComponent implements OnInit {
                 return this.textService.getTexts(languageId);
             })
         ).subscribe((texts: Text[]) => {
-            this.texts = texts;
+            this.texts = texts.sort(
+                (first, second) => (new Date(first.createdOn)).getTime() - (new Date(second.createdOn)).getTime()
+            );
             this.changeDetection.detectChanges();
         });
 
