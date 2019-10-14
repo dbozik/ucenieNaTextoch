@@ -76,6 +76,18 @@ export class Words {
         return wordsSource$.asObservable();
     }
 
+    public getByLanguage(languageId: string): Observable<WordObject[]> {
+        const wordsSource$: Subject<WordObject[]> = new Subject();
+        const userId = StateService.getInstance().userId;
+
+        this.db.words.find({userId, languageId}, (error, foundWords: WordObject[]) => {
+            wordsSource$.next(foundWords);
+            wordsSource$.complete();
+        });
+
+        return wordsSource$.asObservable();
+    }
+
 
     public edit(word: TextPart): Observable<WordObject> {
         const wordSource$: Subject<WordObject> = new Subject();

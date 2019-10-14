@@ -14,6 +14,7 @@ export class WordService {
 
     public init(): void {
         this.processEditWord();
+        this.processGetWords();
     }
 
 
@@ -44,5 +45,13 @@ export class WordService {
         const editWordChain = new GetRequestHandler(ipcEvents.EDIT_WORD, editWord$);
 
         editWordChain.run({});
+    }
+
+
+    private processGetWords(): void {
+        const getWords$ = (languageId: string) => this.wordsDA.getByLanguage(languageId);
+
+        const getWordsChain = new GetRequestHandler(ipcEvents.GET_WORDS, getWords$);
+        getWordsChain.run({});
     }
 }
