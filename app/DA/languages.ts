@@ -1,5 +1,5 @@
-import { Observable, ReplaySubject } from 'rxjs';
-import { Language } from '../Objects/Language';
+import { Observable, ReplaySubject, Subject } from 'rxjs';
+import { Language } from '../Objects';
 import { Database } from './database';
 
 export class Languages {
@@ -90,15 +90,13 @@ export class Languages {
     }
 
     private observableRequest(request: (callback) => void): Observable<any> {
-        const responseSource$: ReplaySubject<any> = new ReplaySubject<any>(1);
+        const responseSource$: Subject<any> = new Subject<any>();
 
         request((error, response) => {
-            setTimeout(() => {
-                responseSource$.next(response);
-            }, 100);
+            this.db.languages.persistence.compactDatafile();
+            responseSource$.next(response);
         });
 
-        this.db.languages.persistence.compactDatafile();
 
         return responseSource$.asObservable();
     }

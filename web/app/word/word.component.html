@@ -31,4 +31,8 @@
         </div>
     </div>
 </span>
-<br *ngIf="hasLineBreak(textPart.content)">
+
+<ng-container *ngIf="hasLineBreak(textPart.content)">
+    <br>
+    <br>
+</ng-container>
