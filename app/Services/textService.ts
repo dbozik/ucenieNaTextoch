@@ -143,10 +143,9 @@ export class TextService {
                 textParts = parseTextService.splitToParts(text.text);
                 const words = parseTextService.extractWords(textParts);
 
-                return this.wordsDA.getList(words);
+                return this.wordsDA.getList(words, language._id);
             }),
             map((wordObjects: WordObject[]) => {
-                text.wordObjects = wordObjects;
                 text.textParts = parseTextService.completeTextParts(textParts, wordObjects);
 
                 return text;
@@ -163,7 +162,7 @@ export class TextService {
                 const parseTextService = new ParseTextService(language.wordSeparators, language.sentenceSeparators);
                 const words = parseTextService.getWords(text, userId);
 
-                return (new WordService()).saveWords(words);
+                return (new WordService()).saveWords(words, language._id);
             }),
             switchMap(() => {
                 return this.textsDA.addText(text.text, text.title, userId, text.languageId);

@@ -1,10 +1,9 @@
-import { Observable, ReplaySubject } from 'rxjs';
-import { TextPart, WordObject } from '../Objects/namespace';
+import { Observable, Subject } from 'rxjs';
+import { TextPart, WordObject } from '../Objects/';
+import { StateService } from '../Services';
 import { Database } from './database';
 
 export class Words {
-    public wordId: number;
-
     private db: Database = new Database();
 
     public constructor() {
@@ -12,7 +11,7 @@ export class Words {
 
     public add(word: string, exampleSentence: string, languageId: string, userId: string)
         : Observable<WordObject> {
-        const wordSource$: ReplaySubject<WordObject> = new ReplaySubject(1);
+        const wordSource$: Subject<WordObject> = new Subject();
 
         const newWord: WordObject = {
             word: word,
@@ -31,22 +30,19 @@ export class Words {
 
 
     public saveMultiple(words: WordObject[]): Observable<WordObject[]> {
-        const wordsSource$: ReplaySubject<WordObject[]> = new ReplaySubject(1);
+        const wordsSource$: Subject<WordObject[]> = new Subject();
 
-        setTimeout(() => {
-            this.db.words.insert(words, (error, dbWords) => {
-                wordsSource$.next(dbWords);
-                wordsSource$.complete();
-            });
-        }, 100);
-        this.db.words.persistence.compactDatafile();
+        this.db.words.insert(words, (error, dbWords) => {
+            wordsSource$.next(dbWords);
+            wordsSource$.complete();
+        });
 
         return wordsSource$.asObservable();
     }
 
 
     public get(word: string): Observable<WordObject> {
-        const wordSource$: ReplaySubject<WordObject> = new ReplaySubject(1);
+        const wordSource$: Subject<WordObject> = new Subject();
 
         this.db.words.findOne({word: word}, (error, foundWord: WordObject) => {
             wordSource$.next(foundWord);
@@ -57,7 +53,7 @@ export class Words {
     }
 
     public getById(id: string): Observable<WordObject> {
-        const wordSource$: ReplaySubject<WordObject> = new ReplaySubject(1);
+        const wordSource$: Subject<WordObject> = new Subject();
 
         this.db.words.findOne({_id: id}, (error, foundWord: WordObject) => {
             wordSource$.next(foundWord);
@@ -68,10 +64,11 @@ export class Words {
     }
 
 
-    public getList(words: string[]): Observable<WordObject[]> {
-        const wordsSource$: ReplaySubject<WordObject[]> = new ReplaySubject(1);
+    public getList(words: string[], languageId: string): Observable<WordObject[]> {
+        const wordsSource$: Subject<WordObject[]> = new Subject();
+        const userId = StateService.getInstance().userId;
 
-        this.db.words.find({word: {$in: words}}, (error, foundWords: WordObject[]) => {
+        this.db.words.find({word: {$in: words}, userId, languageId}, (error, foundWords: WordObject[]) => {
             wordsSource$.next(foundWords);
             wordsSource$.complete();
         });
@@ -81,34 +78,32 @@ export class Words {
 
 
     public edit(word: TextPart): Observable<WordObject> {
-        const wordSource$: ReplaySubject<WordObject> = new ReplaySubject(1);
+        const wordSource$: Subject<WordObject> = new Subject();
 
-        setTimeout(() => {
-            this.db.words.update(
-                {_id: word.wordId},
-                {
-                    $set: {
-                        word: word.content,
-                        level: word.level,
-                        translation: word.translation,
-                        exampleSentence: word.exampleSentence,
-                        exampleSentenceTranslation: word.exampleSentenceTranslation,
-                    }
-                },
-                {},
-                (error, affectedNumber, editedWord: WordObject) => {
-                    wordSource$.next(editedWord);
-                    wordSource$.complete();
-                });
-        }, 100);
-        this.db.words.persistence.compactDatafile();
+        this.db.words.update(
+            {_id: word.wordId},
+            {
+                $set: {
+                    word: word.content,
+                    level: word.level,
+                    translation: word.translation,
+                    exampleSentence: word.exampleSentence,
+                    exampleSentenceTranslation: word.exampleSentenceTranslation,
+                }
+            },
+            {},
+            (error, affectedNumber, editedWord: WordObject) => {
+                this.db.words.persistence.compactDatafile();
+                wordSource$.next(editedWord);
+                wordSource$.complete();
+            });
 
         return wordSource$.asObservable();
     }
 
 
     public updateTranslation(id: string, translation: string): void {
-        const wordSource$: ReplaySubject<WordObject> = new ReplaySubject(1);
+        const wordSource$: Subject<WordObject> = new Subject();
 
         this.db.words.update(
             {_id: id},
@@ -118,7 +113,7 @@ export class Words {
     }
 
     public updateLevel(id: string, level: number): void {
-        const wordSource$: ReplaySubject<WordObject> = new ReplaySubject(1);
+        const wordSource$: Subject<WordObject> = new Subject();
 
         this.db.words.update(
             {_id: id},

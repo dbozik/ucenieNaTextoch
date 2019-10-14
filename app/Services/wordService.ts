@@ -2,7 +2,7 @@ import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { ipcEvents } from '../../web/shared/ipc-events.enum';
 import * as DA from '../DA';
-import { GetRequestHandler } from '../Handlers/get-request.handler';
+import { GetRequestHandler } from '../Handlers';
 import { TextPart, WordObject } from '../Objects';
 
 export class WordService {
@@ -17,8 +17,8 @@ export class WordService {
     }
 
 
-    public saveWords = (words: WordObject[]): Observable<WordObject[]> => {
-        return this.wordsDA.getList(words.map(wordObject => wordObject.word)).pipe(
+    public saveWords = (words: WordObject[], languageId: string): Observable<WordObject[]> => {
+        return this.wordsDA.getList(words.map(wordObject => wordObject.word), languageId).pipe(
             switchMap((savedWordObjects: WordObject[]) => {
                 const savedWords = savedWordObjects.map(wordObject => wordObject.word);
                 const wordsToSave = words.filter(wordObject => !savedWords.includes(wordObject.word));

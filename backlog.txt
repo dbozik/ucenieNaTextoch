@@ -8,5 +8,4 @@
  - create loader on events (i.e. opening a long text)
  - translate window - not scroll
  - performance on long texts
- - long text - didn't save all the words
  - translate popup - close on click elsewhere (currently just the original word)
