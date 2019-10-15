@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { TextPart } from '../../../app/Objects';
-import { colorMaxLevel } from "../color.utils";
+import { colorMaxLevel } from '../color.utils';
 
 @Component({
     selector: 'app-word',
@@ -38,15 +38,7 @@ export class WordComponent implements OnChanges {
 
     ngOnChanges() {
         if (this.textPart) {
-            console.log("got a textPart");
             this.popupShowed = false;
-
-            this.translateForm = new FormGroup({
-                translation: new FormControl(this.textPart.translation),
-                exampleSentence: new FormControl(this.textPart.exampleSentence),
-                exampleSentenceTranslation: new FormControl(this.textPart.exampleSentenceTranslation),
-            });
-            // console.timeEnd(this.textPart + 'Rendered');
         }
     }
 
@@ -57,6 +49,12 @@ export class WordComponent implements OnChanges {
 
 
     public clickPopup(): void {
+        this.translateForm = new FormGroup({
+            translation: new FormControl(this.textPart.translation),
+            exampleSentence: new FormControl(this.textPart.exampleSentence),
+            exampleSentenceTranslation: new FormControl(this.textPart.exampleSentenceTranslation),
+        });
+
         this.openTranslation.emit(this.textPart.content);
         this.popupShowed = !this.popupShowed;
         this.changeDetection.detectChanges();

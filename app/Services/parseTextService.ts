@@ -66,17 +66,46 @@ export class ParseTextService {
 
 
     public completeTextParts(textParts: TextPart[], wordObjects: WordObject[]): TextPart[] {
+        console.time('deepCopy');
         const result: TextPart[] = JSON.parse(JSON.stringify(textParts));
+        console.timeEnd('deepCopy');
+        console.time('createMap');
+        const wordObjectsMap = new Map();
+        wordObjects.forEach(wordObject => wordObjectsMap.set(wordObject.word, wordObject));
+        console.timeEnd('createMap');
 
-        wordObjects.forEach(wordObject => {
-            result.filter(textPart => textPart.content.toLowerCase() === wordObject.word)
-                .forEach(textPart => {
-                    textPart.wordId = wordObject._id;
-                    textPart.translation = wordObject.translation;
-                    textPart.level = wordObject.level;
-                    textPart.exampleSentence = wordObject.exampleSentence;
-                });
+        console.time('filter');
+        const filtered = result.filter(textPart => textPart.type === 'word');
+        console.timeEnd('filter');
+        console.time('editTextParts');
+        filtered.forEach(textPart => {
+            const wordObject = wordObjectsMap.get(textPart.content.toLowerCase());
+
+            if (wordObject) {
+                textPart.wordId = wordObject._id;
+                textPart.translation = wordObject.translation;
+                textPart.level = wordObject.level;
+                textPart.exampleSentence = wordObject.exampleSentence;
+            } else {
+                console.log(textPart.content);
+            }
         });
+        console.timeEnd('editTextParts');
+
+        // wordObjects.forEach(wordObject => {
+        //     // console.time('filter');
+        //     const filtered = result.filter(textPart => textPart.content.toLowerCase() === wordObject.word)
+        //     // console.timeEnd('filter');
+        //
+        //     // console.time('editTextPart');
+        //         filtered.forEach(textPart => {
+        //             textPart.wordId = wordObject._id;
+        //             textPart.translation = wordObject.translation;
+        //             textPart.level = wordObject.level;
+        //             textPart.exampleSentence = wordObject.exampleSentence;
+        //         });
+        //     // console.timeEnd('editTextPart');
+        // });
 
         return result;
     }
