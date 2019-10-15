@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { switchMap } from 'rxjs/operators';
 import { Language, WordObject } from '../../../app/Objects';
+import { getColor } from '../color.utils';
 import { LanguageService } from '../services/language.service';
 import { WordService } from '../services/word.service';
 
@@ -14,7 +15,7 @@ import { WordService } from '../services/word.service';
 export class WordsComponent implements OnInit {
 
     public languages: Language[];
-    public words: WordObject[] = [];
+    public words: (WordObject | 'color')[] = [];
 
     public languagesControl: FormControl = new FormControl();
 
@@ -31,7 +32,8 @@ export class WordsComponent implements OnInit {
                 return this.wordService.getWords(languageId);
             })
         ).subscribe((words: WordObject[]) => {
-            this.words = words.sort((first, second) => first.level - second.level);
+            this.words = words.sort((first, second) => first.level - second.level)
+                .map(word => ({...word, color: getColor(word.level)}));
             this.changeDetection.detectChanges();
         });
 
