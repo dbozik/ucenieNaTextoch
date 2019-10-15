@@ -6,4 +6,6 @@ export class TextPart {
     public exampleSentence?: string;
     public exampleSentenceTranslation?: string;
     public level?: number;
+    public color?: string;
+    public title?: string;
 }

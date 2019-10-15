@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { TextPart } from '../../../app/Objects';
-import { colorMaxLevel, getColor } from "../color.utils";
+import { colorMaxLevel } from '../color.utils';
 
 @Component({
     selector: 'app-word',
@@ -30,8 +30,6 @@ export class WordComponent implements OnChanges {
     public popupShowed: boolean = false;
     public translateForm: FormGroup;
 
-    public color: string;
-    public title: string;
 
     constructor(
         private readonly changeDetection: ChangeDetectorRef,
@@ -41,14 +39,6 @@ export class WordComponent implements OnChanges {
     ngOnChanges() {
         if (this.textPart) {
             this.popupShowed = false;
-            this.color = getColor(this.textPart.level);
-            this.title = this.textPart.type === 'word' ? this.textPart.translation || '' : '';
-
-            this.translateForm = new FormGroup({
-                translation: new FormControl(this.textPart.translation),
-                exampleSentence: new FormControl(this.textPart.exampleSentence),
-                exampleSentenceTranslation: new FormControl(this.textPart.exampleSentenceTranslation),
-            });
         }
     }
 
@@ -59,6 +49,12 @@ export class WordComponent implements OnChanges {
 
 
     public clickPopup(): void {
+        this.translateForm = new FormGroup({
+            translation: new FormControl(this.textPart.translation),
+            exampleSentence: new FormControl(this.textPart.exampleSentence),
+            exampleSentenceTranslation: new FormControl(this.textPart.exampleSentenceTranslation),
+        });
+
         this.openTranslation.emit(this.textPart.content);
         this.popupShowed = !this.popupShowed;
         this.changeDetection.detectChanges();
@@ -94,6 +90,8 @@ export class WordComponent implements OnChanges {
         this.textPart.translation = this.translateForm.get('translation').value;
         this.textPart.exampleSentence = this.translateForm.get('exampleSentence').value;
         this.textPart.exampleSentenceTranslation = this.translateForm.get('exampleSentenceTranslation').value;
+
+        this.textPart.level = 0.1;
 
         this.wordEdit.emit(this.textPart);
     }

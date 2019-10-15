@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Language, Text, TextPart } from '../../../app/Objects';
+import { getColor } from "../color.utils";
 import { LanguageService } from '../services/language.service';
 import { TextService } from '../services/text.service';
 
@@ -28,7 +29,7 @@ export class ReadTextComponent implements OnInit {
         const textId = this.route.snapshot.params.id;
 
         this.textService.getParsed(textId).subscribe((result: Text) => {
-            this.text = result;
+            this.text = this.processTextParts(result);
             this.changeDetectorRef.detectChanges();
 
             this.languageService.getLanguage(this.text.languageId).subscribe((language: Language) => {
@@ -37,6 +38,21 @@ export class ReadTextComponent implements OnInit {
                 this.changeDetectorRef.detectChanges();
             });
         });
+    }
+
+    public hasLineBreak(content: string): boolean {
+        return content.includes('\n');
+    }
+
+
+    public processTextParts(text: Text): Text {
+        text.textParts = text.textParts.map((textPart: TextPart) => ({
+            ...textPart,
+            color: textPart.type === 'word' ? getColor(textPart.level) : '',
+            title: textPart.type === 'word' ? textPart.translation || '' : ''
+        }));
+
+        return text;
     }
 
 
@@ -54,6 +70,8 @@ export class ReadTextComponent implements OnInit {
                         wordId: word.wordId,
                         content: this.text.textParts[index].content,
                         level: word.level,
+                        color: getColor(word.level),
+                        title: word.translation,
                         type: word.type,
                         translation: word.translation,
                         exampleSentence: word.exampleSentence,
