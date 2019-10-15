@@ -43,6 +43,10 @@ export class ReadTextComponent implements OnInit {
         });
     }
 
+    public hasLineBreak(content: string): boolean {
+        return content.includes('\n');
+    }
+
 
     public processTextParts(text: Text): Text {
         text.textParts = text.textParts.map((textPart: TextPart) => ({
@@ -69,6 +73,8 @@ export class ReadTextComponent implements OnInit {
                         wordId: word.wordId,
                         content: this.text.textParts[index].content,
                         level: word.level,
+                        color: getColor(word.level),
+                        title: word.translation,
                         type: word.type,
                         translation: word.translation,
                         exampleSentence: word.exampleSentence,

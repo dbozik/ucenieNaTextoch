@@ -93,6 +93,8 @@ export class WordComponent implements OnChanges {
         this.textPart.exampleSentence = this.translateForm.get('exampleSentence').value;
         this.textPart.exampleSentenceTranslation = this.translateForm.get('exampleSentenceTranslation').value;
 
+        this.textPart.level = 0.1;
+
         this.wordEdit.emit(this.textPart);
     }
 }

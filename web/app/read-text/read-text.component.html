@@ -5,7 +5,16 @@
 
     <div class="row">
         <div class="col-sm-6 text-area bordered">
-            <ng-container *ngFor="let textPart of text.textParts; let index = index">
+            <ng-container *ngFor="let textPart of text.textParts; let index = index; trackBy: trackBy">
+                <!--<span [style.backgroundColor]="text.textParts[index].color" [title]="text.textParts[index].title" class="popup text-part">
+                    {{textPart.content}}
+                </span>
+
+                <ng-container *ngIf="hasLineBreak(text.textParts[index].content)">
+                    <br>
+                    <br>
+                </ng-container>-->
+
                 <app-word
                     [textPart]="text.textParts[index]"
                     (openTranslation)="setTranslateLink($event)"
