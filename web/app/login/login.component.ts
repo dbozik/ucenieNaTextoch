@@ -1,9 +1,8 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ipcEvents } from '../../shared/ipc-events.enum';
 import { Routes } from '../../shared/routes.enum';
-import { IpcService } from '../add-text/ipc.service';
+import { LoginService } from '../services/login.service';
 
 @Component({
     selector: 'app-login',
@@ -16,7 +15,7 @@ export class LoginComponent implements OnInit {
     public wrongCredentials: boolean = false;
 
     constructor(
-        private readonly ipcService: IpcService,
+        private readonly loginService: LoginService,
         private readonly formBuilder: FormBuilder,
         private readonly cdr: ChangeDetectorRef,
         private readonly router: Router,
@@ -30,7 +29,7 @@ export class LoginComponent implements OnInit {
             password: this.formBuilder.control('', Validators.required),
         });
 
-        this.ipcService.ipc.on(ipcEvents.LOGIN_FAILED, () => {
+        this.loginService.loginFailed$().subscribe(() => {
             this.wrongCredentials = true;
             this.cdr.detectChanges();
         });
@@ -43,7 +42,7 @@ export class LoginComponent implements OnInit {
             return;
         }
 
-        this.ipcService.ipc.send(ipcEvents.LOGIN, this.signinForm.value);
+        this.loginService.login(this.signinForm.value).subscribe();
     }
 
 

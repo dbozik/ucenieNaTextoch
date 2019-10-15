@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Language, Text, TextPart } from '../../../app/Objects';
-import { getColor } from "../color.utils";
+import { getColor } from '../color.utils';
 import { LanguageService } from '../services/language.service';
 import { TextService } from '../services/text.service';
 
@@ -38,10 +38,6 @@ export class ReadTextComponent implements OnInit {
                 this.changeDetectorRef.detectChanges();
             });
         });
-    }
-
-    public hasLineBreak(content: string): boolean {
-        return content.includes('\n');
     }
 
 

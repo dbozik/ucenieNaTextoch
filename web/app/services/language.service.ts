@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Language } from '../../../app/Objects/Language';
+import { Language } from '../../../app/Objects';
 import { ipcEvents } from '../../shared/ipc-events.enum';
-import { IpcService } from '../add-text/ipc.service';
+import { IpcService } from './ipc.service';
 
 @Injectable()
 export class LanguageService {

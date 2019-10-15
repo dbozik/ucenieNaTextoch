@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { take } from 'rxjs/operators';
-import { Language } from '../../../app/Objects/Language';
+import { Language } from '../../../app/Objects';
 import { LanguageService } from '../services/language.service';
 
 @Component({
