@@ -2,9 +2,9 @@ import { ipcMain } from 'electron';
 import { Observable } from 'rxjs';
 import * as Services from '.';
 import { ipcEvents } from '../../web/shared/ipc-events.enum';
-import * as DA from '../DA/namespace';
-import { GetRequestHandler } from "../Handlers/get-request.handler";
-import { Language } from '../Objects/Language';
+import * as DA from '../DA';
+import { GetRequestHandler } from '../Handlers';
+import { Language } from '../Objects';
 
 export class LanguageService {
     private languageDA = new DA.Languages();

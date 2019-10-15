@@ -2,13 +2,10 @@ import { tap } from 'rxjs/operators';
 import { ipcEvents } from '../../web/shared/ipc-events.enum';
 import { Routes } from '../../web/shared/routes.enum';
 import * as DA from '../DA';
-import { IpcMainHandler } from '../Handlers/ipc-main.handler';
-import { MethodHandler } from '../Handlers/method.handler';
-import { RedirectHandler } from '../Handlers/redirect.handler';
-import { SendRequestHandler } from '../Handlers/send-request.handler';
+import { IpcMainHandler, MethodHandler, RedirectHandler, SendRequestHandler } from '../Handlers';
 import { LwtApp } from '../lwt-app';
 import { Navigation } from '../navigation';
-import { User } from '../Objects/User';
+import { User } from '../Objects';
 import { StateService } from './stateService';
 
 export class UserService {

@@ -1,4 +1,4 @@
-import * as Services from '../app/Services/namespace';
+import * as Services from '../app/Services';
 
 // console.log('im in');
 

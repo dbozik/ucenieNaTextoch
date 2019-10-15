@@ -1,4 +1,0 @@
-	-	bootstrap
-	-	vue.js
-	-	add and parse texts
-	-	gulp

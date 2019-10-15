@@ -1,5 +1,5 @@
 import { Observable, ReplaySubject } from 'rxjs';
-import { User } from '../Objects/User';
+import { User } from '../Objects';
 import { Database } from './database';
 
 export class UserDA {

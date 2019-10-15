@@ -1,5 +1,5 @@
 import { Observable, Subject } from 'rxjs';
-import { TextPart, WordObject } from '../Objects/';
+import { TextPart, WordObject } from '../Objects';
 import { StateService } from '../Services';
 import { Database } from './database';
 

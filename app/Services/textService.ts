@@ -4,9 +4,7 @@ import { ParseTextService, StateService, WordService } from '.';
 import { ipcEvents } from '../../web/shared/ipc-events.enum';
 import { Routes } from '../../web/shared/routes.enum';
 import * as DA from '../DA';
-import { GetRequestHandler } from '../Handlers/get-request.handler';
-import { IpcMainHandler } from '../Handlers/ipc-main.handler';
-import { MethodHandler } from '../Handlers/method.handler';
+import { GetRequestHandler, IpcMainHandler, MethodHandler } from '../Handlers';
 import { Navigation } from '../navigation';
 import { Language, Text, TextPart, WordObject } from '../Objects';
 

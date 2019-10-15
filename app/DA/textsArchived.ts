@@ -1,5 +1,5 @@
 import { Observable, ReplaySubject } from 'rxjs';
-import { Text } from '../Objects/Text';
+import { Text } from '../Objects';
 import { Database } from './database';
 
 export class TextsArchived {
