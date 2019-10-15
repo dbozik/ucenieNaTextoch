@@ -9,15 +9,6 @@ export class ParseTextService {
         this.sentenceSeparatorsRegex = new RegExp(`[\\n${sentenceSeparators.replace(']', '\\]')}]+`);
     }
 
-    public splitToWords(text: string): string[] {
-        return this.splitToWordsCase(text)
-            .map(word => word.toLowerCase());
-    }
-
-    public splitToSentences(text: string): string[] {
-        return text.split(this.sentenceSeparatorsRegex)
-            .filter(sentence => sentence !== '');
-    }
 
     public splitToParts(text: string): TextPart[] {
         const justWords = this.splitToWordsCase(text);

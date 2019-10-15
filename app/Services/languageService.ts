@@ -18,13 +18,10 @@ export class LanguageService {
     }
 
 
-    public getList(userId: string): Observable<Language[]> {
-        return this.languageDA.getList(userId);
-    }
-
     public get(id: string): Observable<Language> {
         return this.languageDA.get(id);
     }
+
 
     public add(event, language: Language): void {
         const userId = Services.StateService.getInstance().userId;

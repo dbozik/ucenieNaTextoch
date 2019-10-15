@@ -30,15 +30,6 @@ export class WordService {
     }
 
 
-    public updateTranslation(id: string, translation: string): void {
-        this.wordsDA.updateTranslation(id, translation);
-    }
-
-    public updateLevel(id: string, newLevel: number): void {
-        this.wordsDA.updateLevel(id, newLevel);
-    }
-
-
     private processEditWord(): void {
         const editWord$ = (word: TextPart) => this.wordsDA.edit(word);
 

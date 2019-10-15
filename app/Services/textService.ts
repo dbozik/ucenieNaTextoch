@@ -1,4 +1,4 @@
-import { BehaviorSubject, Observable, ReplaySubject, Subject } from 'rxjs';
+import { Observable, ReplaySubject, Subject } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { ParseTextService, StateService, WordService } from '.';
 import { ipcEvents } from '../../web/shared/ipc-events.enum';
@@ -13,20 +13,10 @@ export class TextService {
     private textsDA = new DA.Texts();
     private textsArchivedDA = new DA.TextsArchived();
     private wordsDA = new DA.Words();
-    private textParts: TextPart[] = [];
-    private wordObjects: WordObject[] = [];
-
-    private textSource$: BehaviorSubject<Text> = new BehaviorSubject(new Text());
-    public text$: Observable<Text> = this.textSource$.asObservable();
 
     public constructor() {
     }
 
-    private _textId: string;
-
-    public set textId(textId: string) {
-        this._textId = textId;
-    }
 
     public init(): void {
         this.processSaveText();
@@ -43,26 +33,6 @@ export class TextService {
         return texts.getList();
     }
 
-
-    public updateTranslation(wordId: string, translation: string): void {
-        this.wordObjects.find(wordObject => wordObject._id === wordId).translation = translation;
-
-        this.textParts.filter(textPart => textPart.wordId === wordId)
-            .forEach(textPart => textPart.translation = translation);
-
-        // this.textPartsSource$.next(this.textParts);
-        // this.wordObjectsSource$.next(this.wordObjects);
-    }
-
-    public updateLevel(wordId: string, level: number): void {
-        this.wordObjects.find(wordObject => wordObject._id === wordId).level = level;
-
-        this.textParts.filter(textPart => textPart.wordId === wordId)
-            .forEach(textPart => textPart.level = level);
-
-        // this.textPartsSource$.next(this.textParts);
-        // this.wordObjectsSource$.next(this.wordObjects);
-    }
 
     public archive(textId: string): Observable<boolean> {
         const resultSource$: Subject<boolean> = new ReplaySubject<boolean>(1);

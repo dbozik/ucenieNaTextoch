@@ -112,25 +112,4 @@ export class Words {
 
         return wordSource$.asObservable();
     }
-
-
-    public updateTranslation(id: string, translation: string): void {
-        const wordSource$: Subject<WordObject> = new Subject();
-
-        this.db.words.update(
-            {_id: id},
-            {$set: {translation: translation}},
-            {},
-        );
-    }
-
-    public updateLevel(id: string, level: number): void {
-        const wordSource$: Subject<WordObject> = new Subject();
-
-        this.db.words.update(
-            {_id: id},
-            {$set: {level: level}},
-            {},
-        );
-    }
 }
