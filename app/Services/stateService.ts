@@ -1,3 +1,5 @@
+import { Language } from "../Objects";
+
 export class StateService {
     private static instance: StateService;
 
@@ -13,6 +15,18 @@ export class StateService {
     public set userId(value: string) {
         this._userId = value;
     }
+
+    private _language: Language;
+
+    public get language(): Language {
+        return this._language;
+    }
+
+
+    public set language(value: Language) {
+        this._language = value;
+    }
+
 
     static getInstance(): StateService {
         if (!StateService.instance) {

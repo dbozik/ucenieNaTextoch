@@ -24,4 +24,6 @@ $min-text-height: 80vh;
 
 .translate-box {
     max-height: $min-text-height;
+    position: fixed;
+    top: auto;
 }

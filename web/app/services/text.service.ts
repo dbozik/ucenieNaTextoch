@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Text } from '../../../app/Objects';
+import { Text, TextPart } from '../../../app/Objects';
 import { ipcEvents } from '../../shared/ipc-events.enum';
 import { IpcService } from '../add-text/ipc.service';
 
@@ -33,5 +33,10 @@ export class TextService {
 
     public openText(textId: string): Observable<Text> {
         return this.ipcService.sendData(ipcEvents.OPEN_TEXT, textId);
+    }
+
+
+    public editWord(word: TextPart): Observable<TextPart> {
+        return this.ipcService.sendData(ipcEvents.EDIT_WORD, word);
     }
 }

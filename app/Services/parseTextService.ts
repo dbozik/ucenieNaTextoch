@@ -67,15 +67,22 @@ export class ParseTextService {
 
     public completeTextParts(textParts: TextPart[], wordObjects: WordObject[]): TextPart[] {
         const result: TextPart[] = JSON.parse(JSON.stringify(textParts));
+        const wordObjectsMap = new Map();
+        wordObjects.forEach(wordObject => wordObjectsMap.set(wordObject.word, wordObject));
 
-        wordObjects.forEach(wordObject => {
-            result.filter(textPart => textPart.content.toLowerCase() === wordObject.word)
-                .forEach(textPart => {
-                    textPart.wordId = wordObject._id;
-                    textPart.translation = wordObject.translation;
-                    textPart.level = wordObject.level;
-                    textPart.exampleSentence = wordObject.exampleSentence;
-                });
+        const textPartsWords = result.filter(textPart => textPart.type === 'word');
+
+        textPartsWords.forEach(textPart => {
+            const wordObject = wordObjectsMap.get(textPart.content.toLowerCase());
+
+            if (wordObject) {
+                textPart.wordId = wordObject._id;
+                textPart.translation = wordObject.translation;
+                textPart.level = wordObject.level;
+                textPart.exampleSentence = wordObject.exampleSentence;
+            } else {
+                console.log(textPart.content);
+            }
         });
 
         return result;
@@ -88,7 +95,7 @@ export class ParseTextService {
         this.sentencesFromText(text).forEach(sentence => {
             this.wordsFromSentence(sentence).forEach(word => {
                 wordObjects.push({
-                    word,
+                    word: word.toLowerCase(),
                     exampleSentence: sentence,
                     languageId: text.languageId,
                     userId,

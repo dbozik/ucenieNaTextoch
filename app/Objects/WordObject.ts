@@ -4,6 +4,7 @@ export class WordObject {
     public translation?: string;
     public level: number;
     public exampleSentence: string;
+    public exampleSentenceTranslation?: string;
     public languageId: string;
     public userId: string;
 

@@ -35,5 +35,6 @@ export default class Main {
         (new Services.UserService()).init();
         (new Services.TextService()).init();
         (new Services.LanguageService()).init();
+        (new Services.WordService()).init();
     }
 }

@@ -1,25 +1,27 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { switchMap } from 'rxjs/operators';
-import { Language, Text } from '../../../app/Objects';
+import { Language, WordObject } from '../../../app/Objects';
+import { getColor } from '../color.utils';
 import { LanguageService } from '../services/language.service';
-import { TextService } from '../services/text.service';
+import { WordService } from '../services/word.service';
 
 @Component({
-    selector: 'app-texts',
-    templateUrl: './texts.component.html',
-    styleUrls: ['./texts.component.scss'],
-    providers: [TextService, LanguageService],
+    selector: 'app-words',
+    templateUrl: './words.component.html',
+    styleUrls: ['./words.component.scss'],
+    providers: [WordService, LanguageService],
 })
-export class TextsComponent implements OnInit {
+export class WordsComponent implements OnInit {
+
     public languages: Language[];
-    public texts: Text[] = [];
+    public words: (WordObject | 'color')[] = [];
 
     public languagesControl: FormControl = new FormControl();
 
     constructor(
         private readonly languageService: LanguageService,
-        private readonly textService: TextService,
+        private readonly wordService: WordService,
         private readonly changeDetection: ChangeDetectorRef,
     ) {
     }
@@ -27,12 +29,11 @@ export class TextsComponent implements OnInit {
     ngOnInit() {
         this.languagesControl.valueChanges.pipe(
             switchMap((languageId: string) => {
-                return this.textService.getTexts(languageId);
+                return this.wordService.getWords(languageId);
             })
-        ).subscribe((texts: Text[]) => {
-            this.texts = texts.sort(
-                (first, second) => (new Date(first.createdOn)).getTime() - (new Date(second.createdOn)).getTime()
-            );
+        ).subscribe((words: WordObject[]) => {
+            this.words = words.sort((first, second) => first.level - second.level)
+                .map(word => ({...word, color: getColor(word.level)}));
             this.changeDetection.detectChanges();
         });
 
@@ -43,11 +44,6 @@ export class TextsComponent implements OnInit {
             }
             this.changeDetection.detectChanges();
         });
-    }
-
-
-    public textClick(textId: string): void {
-        this.textService.openText(textId);
     }
 
 }

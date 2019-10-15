@@ -1,4 +1,38 @@
-<span [style.backgroundColor]="color" [title]="title" class="popup text-part">
+<span [style.backgroundColor]="textPart.color" [title]="textPart.title" class="popup text-part" (click)="clickPopup()">
     {{textPart.content}}
+
+    <div *ngIf="popupShowed" class="popuptext show" [formGroup]="translateForm" (click)="$event.stopPropagation()">
+        <div class="font-weight-bold font-size-1_5">
+            {{textPart.content}}
+        </div>
+        <div class="btn-group-lg">
+            <button class="minus-button btn btn-dark btn-lg" (click)="decreaseLevel()">-</button>
+            <button class="plus-button btn btn-dark btn-lg" (click)="increaseLevel()">+</button>
+            <button class="btn btn-dark btn-lg" (click)="setKnown()">Known</button>
+        </div>
+
+        <div>Translation:</div>
+        <div>
+            <input type="text" formControlName="translation">
+        </div>
+
+        <div>Example sentence:</div>
+        <div>
+            <input type="text" formControlName="exampleSentence">
+        </div>
+
+        <div>Example sentence translation:</div>
+        <div>
+            <input type="text" formControlName="exampleSentenceTranslation">
+        </div>
+
+        <div>
+            <button class="btn btn-dark btn-lg" (click)="updateTranslation()">Submit</button>
+        </div>
+    </div>
 </span>
-<br *ngIf="hasLineBreak(textPart.content)">
+
+<ng-container *ngIf="hasLineBreak(textPart.content)">
+    <br>
+    <br>
+</ng-container>
