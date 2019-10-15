@@ -13,6 +13,7 @@ export class TextService {
     private textsDA = new DA.Texts();
     private textsArchivedDA = new DA.TextsArchived();
     private wordsDA = new DA.Words();
+    private languagesDA = new DA.Languages();
 
     public constructor() {
     }
@@ -27,11 +28,11 @@ export class TextService {
     }
 
 
-    public getArchivedList(): Observable<Text[]> {
-        const texts = new DA.TextsArchived();
-
-        return texts.getList();
-    }
+    // public getArchivedList(): Observable<Text[]> {
+    //     const texts = new DA.TextsArchived();
+    //
+    //     return texts.getList();
+    // }
 
 
     public archive(textId: string): Observable<boolean> {
@@ -104,7 +105,7 @@ export class TextService {
             switchMap((textDA: Text) => {
                 text = textDA;
 
-                return (new DA.Languages()).get(text.languageId);
+                return this.languagesDA.get(text.languageId);
             }),
             switchMap((language: Language) => {
                 parseTextService = new ParseTextService(language.wordSeparators, language.sentenceSeparators);
@@ -125,7 +126,7 @@ export class TextService {
     private saveText$ = (text: Text) => {
         const userId = StateService.getInstance().userId;
 
-        return (new DA.Languages()).get(text.languageId).pipe(
+        return this.languagesDA.get(text.languageId).pipe(
             switchMap((language: Language) => {
                 const parseTextService = new ParseTextService(language.wordSeparators, language.sentenceSeparators);
                 const words = parseTextService.getWords(text, userId);
