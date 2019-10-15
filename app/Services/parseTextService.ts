@@ -95,7 +95,7 @@ export class ParseTextService {
         this.sentencesFromText(text).forEach(sentence => {
             this.wordsFromSentence(sentence).forEach(word => {
                 wordObjects.push({
-                    word,
+                    word: word.toLowerCase(),
                     exampleSentence: sentence,
                     languageId: text.languageId,
                     userId,
