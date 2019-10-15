@@ -31,7 +31,7 @@ export class WordsComponent implements OnInit {
                 return this.wordService.getWords(languageId);
             })
         ).subscribe((words: WordObject[]) => {
-            this.words = words;
+            this.words = words.sort((first, second) => first.level - second.level);
             this.changeDetection.detectChanges();
         });
 
