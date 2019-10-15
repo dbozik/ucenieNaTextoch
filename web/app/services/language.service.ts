@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { bindCallback, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Language } from '../../../app/Objects';
 import { ipcEvents } from '../../shared/ipc-events.enum';
@@ -18,9 +18,6 @@ export class LanguageService {
     }
 
 
-    /**
-     * getLanguages
-     */
     public getLanguages(): Observable<Language[]> {
         return this.ipcService.getData<Language[]>(ipcEvents.LANGUAGES).pipe(
             map((languages: Language[]) => {
@@ -38,17 +35,11 @@ export class LanguageService {
     }
 
 
-    /**
-     * addLanguage
-     */
     public addLanguage(language: Language): Observable<Language> {
         return this.ipcService.sendData<Language>(ipcEvents.ADD_LANGUAGE, language);
     }
 
 
-    /**
-     * editLanguage
-     */
     public editLanguage(language: Language): Observable<Language> {
         return this.ipcService.sendData<Language>(ipcEvents.EDIT_LANGUAGE, language);
     }
@@ -56,5 +47,15 @@ export class LanguageService {
 
     public deleteLanguage(languageId: string): Observable<void> {
         return this.ipcService.sendData<string, void>(ipcEvents.DELETE_LANGUAGE, languageId);
+    }
+
+
+    public selectLanguage(languageId: string): Observable<any> {
+        return this.ipcService.sendData(ipcEvents.SELECT_LANGUAGE, languageId);
+    }
+
+
+    public languageSelected$(): Observable<any> {
+        return bindCallback(callback => this.ipcService.ipc.on(ipcEvents.LANGUAGE_SELECTED, callback))();
     }
 }

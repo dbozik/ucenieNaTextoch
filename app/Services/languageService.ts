@@ -1,7 +1,8 @@
-import * as Services from '.';
+import { StateService } from '.';
 import { ipcEvents } from '../../web/shared/ipc-events.enum';
 import * as DA from '../DA';
-import { GetRequestHandler } from '../Handlers';
+import { GetRequestHandler, IpcMainHandler, MethodHandler, SendRequestHandler } from '../Handlers';
+import { LwtApp } from '../lwt-app';
 import { Language } from '../Objects';
 
 export class LanguageService {
@@ -17,12 +18,31 @@ export class LanguageService {
         this.processEditLanguage();
         this.processDeleteLanguage();
         this.processGetLanguages();
+        this.processSelectLanguage();
+    }
+
+
+    private processSelectLanguage(): void {
+        const selectLanguageChain = new IpcMainHandler(ipcEvents.SELECT_LANGUAGE);
+        selectLanguageChain
+            .next(
+                new SendRequestHandler((languageId: string) => this.languageDA.get(languageId))
+            )
+            .next(
+                new MethodHandler((language: Language) => StateService.getInstance().language = language)
+            )
+            .next(
+                new MethodHandler<any>(() => LwtApp.getInstance().mainWindow.webContents.send(ipcEvents.LANGUAGE_SELECTED))
+            );
+
+        selectLanguageChain.run({});
+
     }
 
 
     private processGetLanguages(): void {
         const getLanguages$ = () => {
-            const userId = Services.StateService.getInstance().userId;
+            const userId = StateService.getInstance().userId;
 
             return this.languageDA.getList(userId);
         };
@@ -34,7 +54,7 @@ export class LanguageService {
 
     private processAddLanguage(): void {
         const addLanguage$ = (language: Language) => {
-            const userId = Services.StateService.getInstance().userId;
+            const userId = StateService.getInstance().userId;
 
             return this.languageDA.addLanguage(
                 language.name,
