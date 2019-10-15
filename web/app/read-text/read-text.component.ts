@@ -1,6 +1,7 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Language, Text, TextPart } from '../../../app/Objects';
+import { getColor } from "../color.utils";
 import { LanguageService } from '../services/language.service';
 import { TextService } from '../services/text.service';
 
@@ -26,9 +27,12 @@ export class ReadTextComponent implements OnInit {
 
     ngOnInit() {
         const textId = this.route.snapshot.params.id;
-
+        console.time('getParsed');
         this.textService.getParsed(textId).subscribe((result: Text) => {
-            this.text = result;
+            console.timeEnd('getParsed');
+            console.time('processTextParts');
+            this.text = this.processTextParts(result);
+            console.timeEnd('processTextParts');
             this.changeDetectorRef.detectChanges();
 
             this.languageService.getLanguage(this.text.languageId).subscribe((language: Language) => {
@@ -37,6 +41,17 @@ export class ReadTextComponent implements OnInit {
                 this.changeDetectorRef.detectChanges();
             });
         });
+    }
+
+
+    public processTextParts(text: Text): Text {
+        text.textParts = text.textParts.map((textPart: TextPart) => ({
+            ...textPart,
+            color: textPart.type === 'word' ? getColor(textPart.level) : '',
+            title: textPart.type === 'word' ? textPart.translation || '' : ''
+        }));
+
+        return text;
     }
 
 
@@ -64,5 +79,10 @@ export class ReadTextComponent implements OnInit {
 
             this.changeDetectorRef.detectChanges();
         });
+    }
+
+
+    public trackBy(index, inscructor): any {
+        return inscructor.word;
     }
 }

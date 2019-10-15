@@ -1,4 +1,4 @@
-<span [style.backgroundColor]="color" [title]="title" class="popup text-part" (click)="clickPopup()">
+<span [style.backgroundColor]="textPart.color" [title]="textPart.title" class="popup text-part" (click)="clickPopup()">
     {{textPart.content}}
 
     <div [class.show]="popupShowed" class="popuptext" [formGroup]="translateForm" (click)="$event.stopPropagation()">

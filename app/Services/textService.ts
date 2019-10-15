@@ -132,21 +132,31 @@ export class TextService {
         let text: Text;
         let parseTextService: ParseTextService;
 
+        console.time('getText');
         return this.getText$(textId).pipe(
             switchMap((textDA: Text) => {
+                console.timeEnd('getText');
                 text = textDA;
 
                 return (new DA.Languages()).get(text.languageId);
             }),
             switchMap((language: Language) => {
                 parseTextService = new ParseTextService(language.wordSeparators, language.sentenceSeparators);
+                console.time('splitToParts');
                 textParts = parseTextService.splitToParts(text.text);
+                console.timeEnd('splitToParts');
+                console.time('extractWords');
                 const words = parseTextService.extractWords(textParts);
+                console.timeEnd('extractWords');
 
+                console.time('getWords');
                 return this.wordsDA.getList(words, language._id);
             }),
             map((wordObjects: WordObject[]) => {
+                console.timeEnd('getWords');
+                console.time('completeTextParts');
                 text.textParts = parseTextService.completeTextParts(textParts, wordObjects);
+                console.timeEnd('completeTextParts');
 
                 return text;
             }),
