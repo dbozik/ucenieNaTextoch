@@ -9,3 +9,6 @@
  - translate popup - close on click elsewhere (currently just the original word)
  - archive texts
  - refactoring - replace replaySubject, add db persistance update on remove/edit items
+ - read text - virtual scroll
+ - read text - search
+ - MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 lwt-language-selected listeners added. Use emitter.setMaxListeners() to increase limit

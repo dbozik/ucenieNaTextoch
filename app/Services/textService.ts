@@ -66,8 +66,9 @@ export class TextService {
 
 
     private processGetTexts(): void {
-        const getTexts$ = (languageId: string) => {
+        const getTexts$ = () => {
             const userId = StateService.getInstance().userId;
+            const languageId = StateService.getInstance().language._id;
 
             return this.textsDA.getList(userId, languageId);
         };
@@ -125,6 +126,7 @@ export class TextService {
 
     private saveText$ = (text: Text) => {
         const userId = StateService.getInstance().userId;
+        text.languageId = StateService.getInstance().language._id;
 
         return this.languagesDA.get(text.languageId).pipe(
             switchMap((language: Language) => {

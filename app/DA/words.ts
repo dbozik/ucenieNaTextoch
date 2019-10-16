@@ -42,8 +42,9 @@ export class Words {
         return this.db.words.find$({word: {$in: words}, userId, languageId});
     }
 
-    public getByLanguage(languageId: string): Observable<WordObject[]> {
+    public getByLanguage(): Observable<WordObject[]> {
         const userId = StateService.getInstance().userId;
+        const languageId = StateService.getInstance().language._id;
 
         return this.db.words.find$({userId, languageId});
     }

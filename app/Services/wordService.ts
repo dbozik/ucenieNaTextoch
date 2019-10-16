@@ -40,7 +40,7 @@ export class WordService {
 
 
     private processGetWords(): void {
-        const getWords$ = (languageId: string) => this.wordsDA.getByLanguage(languageId);
+        const getWords$ = () => this.wordsDA.getByLanguage();
 
         const getWordsChain = new GetRequestHandler(ipcEvents.GET_WORDS, getWords$);
         getWordsChain.run({});

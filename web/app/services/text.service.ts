@@ -26,8 +26,8 @@ export class TextService {
     }
 
 
-    public getTexts(languageId: string): Observable<Text[]> {
-        return this.ipcService.sendData(ipcEvents.GET_TEXTS, languageId);
+    public getTexts(): Observable<Text[]> {
+        return this.ipcService.getData(ipcEvents.GET_TEXTS);
     }
 
 

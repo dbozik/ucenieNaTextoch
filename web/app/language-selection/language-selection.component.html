@@ -1,5 +1,5 @@
 <div class="row" *ngIf="languages && languages.length > 0">
-    <select [formControl]="languagesControl">
+    <select [formControl]="languagesControl" class="form-control">
         <option *ngFor="let language of languages" [value]="language._id">
             {{language.name}}
         </option>

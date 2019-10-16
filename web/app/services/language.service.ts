@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { bindCallback, Observable } from 'rxjs';
+import { Observable, ReplaySubject, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Language } from '../../../app/Objects';
 import { ipcEvents } from '../../shared/ipc-events.enum';
@@ -7,9 +7,14 @@ import { IpcService } from './ipc.service';
 
 @Injectable()
 export class LanguageService {
+    private languageSelectedSource$: Subject<boolean> = new ReplaySubject(1);
+
+    public languageSelected$: Observable<boolean> = this.languageSelectedSource$.asObservable();
+
     constructor(
         private readonly ipcService: IpcService,
     ) {
+        this.ipcService.ipc.on(ipcEvents.LANGUAGE_SELECTED, () => this.languageSelectedSource$.next(true));
     }
 
 
@@ -52,10 +57,5 @@ export class LanguageService {
 
     public selectLanguage(languageId: string): Observable<any> {
         return this.ipcService.sendData(ipcEvents.SELECT_LANGUAGE, languageId);
-    }
-
-
-    public languageSelected$(): Observable<any> {
-        return bindCallback(callback => this.ipcService.ipc.on(ipcEvents.LANGUAGE_SELECTED, callback))();
     }
 }

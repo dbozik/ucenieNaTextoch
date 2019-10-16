@@ -12,7 +12,7 @@ export class WordService {
     }
 
 
-    public getWords(languageId: string): Observable<WordObject[]> {
-        return this.ipcService.sendData(ipcEvents.GET_WORDS, languageId);
+    public getWords(): Observable<WordObject[]> {
+        return this.ipcService.getData(ipcEvents.GET_WORDS);
     }
 }

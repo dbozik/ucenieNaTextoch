@@ -32,6 +32,9 @@ export class LanguageSelectionComponent implements OnInit {
             if (loggedIn) {
                 this.languageService.getLanguages().subscribe((languages: Language[]) => {
                     this.languages = languages;
+                    if (this.languages && this.languages.length > 0) {
+                        this.languagesControl.setValue(this.languages[0]._id);
+                    }
                     this.changeDetection.detectChanges();
                 });
             } else {
