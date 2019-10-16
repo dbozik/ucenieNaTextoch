@@ -1,5 +1,6 @@
 import { Observable } from 'rxjs';
 import { Text } from '../Objects';
+import { StateService } from '../Services';
 import { Database } from './database';
 
 export class Texts {
@@ -8,15 +9,14 @@ export class Texts {
     public constructor() {
     }
 
-    public addText(text: string, title: string, userId: string, languageId: string)
+    public addText(text: string, title: string)
         : Observable<Text> {
         return this.db.texts.insert$(
             {
+                ...StateService.getInstance().userLanguageRequest,
                 createdOn: new Date(),
-                userId: userId,
-                languageId: languageId,
-                text: text,
-                title: title
+                text,
+                title,
             });
     }
 
@@ -26,8 +26,8 @@ export class Texts {
     }
 
 
-    public getList(userId: string, languageId: string): Observable<Text[]> {
-        return this.db.texts.find$({userId, languageId});
+    public getList(): Observable<Text[]> {
+        return this.db.texts.find$(StateService.getInstance().userLanguageRequest);
     }
 
 

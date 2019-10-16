@@ -1,4 +1,5 @@
 import { Text, TextPart, WordObject } from '../Objects';
+import { StateService } from './stateService';
 
 export class ParseTextService {
     private wordSeparatorsRegex: RegExp;
@@ -80,7 +81,7 @@ export class ParseTextService {
     }
 
 
-    public getWords(text: Text, userId: string): WordObject[] {
+    public getWords(text: Text): WordObject[] {
         const wordObjects: WordObject[] = [];
 
         this.sentencesFromText(text).forEach(sentence => {
@@ -89,7 +90,7 @@ export class ParseTextService {
                     word: word.toLowerCase(),
                     exampleSentence: sentence,
                     languageId: text.languageId,
-                    userId,
+                    userId: StateService.getInstance().userId,
                     level: 0,
                 });
             });

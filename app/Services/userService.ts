@@ -57,11 +57,7 @@ export class UserService {
         signinChain.next(
             sendRequest
         ).next(
-            new SendRequestHandler(() => {
-                const userId = StateService.getInstance().userId;
-
-                return (new Languages()).getList(userId);
-            })
+            new SendRequestHandler(() => (new Languages()).getList())
         ).next(
             new MethodHandler<any>((languages: Language[]) => {
                 if (languages && languages.length > 0) {

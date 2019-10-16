@@ -1,5 +1,6 @@
 import { Observable } from 'rxjs';
 import { Language } from '../Objects';
+import { StateService } from '../Services';
 import { Database } from './database';
 
 export class Languages {
@@ -9,11 +10,10 @@ export class Languages {
     }
 
 
-    public addLanguage(name: string, dictionary: string, userId: string, wordSeparators: string,
-                       sentenceSeparators: string)
+    public addLanguage(name: string, dictionary: string, wordSeparators: string, sentenceSeparators: string)
         : Observable<Language> {
         return this.db.languages.insert$({
-            userId,
+            userId: StateService.getInstance().userId,
             name,
             dictionary,
             wordSeparators,
@@ -51,7 +51,7 @@ export class Languages {
     }
 
 
-    public getList(userId: string): Observable<Language[]> {
-        return this.db.languages.find$({userId});
+    public getList(): Observable<Language[]> {
+        return this.db.languages.find$({userId: StateService.getInstance().userId});
     }
 }

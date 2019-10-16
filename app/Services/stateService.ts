@@ -1,4 +1,4 @@
-import { Language } from "../Objects";
+import { Language } from '../Objects';
 
 export class StateService {
     private static instance: StateService;
@@ -25,6 +25,11 @@ export class StateService {
 
     public set language(value: Language) {
         this._language = value;
+    }
+
+
+    public get userLanguageRequest(): { userId: string, languageId: string } {
+        return {userId: this.userId, languageId: this.language._id};
     }
 
 

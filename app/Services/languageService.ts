@@ -41,11 +41,7 @@ export class LanguageService {
 
 
     private processGetLanguages(): void {
-        const getLanguages$ = () => {
-            const userId = StateService.getInstance().userId;
-
-            return this.languageDA.getList(userId);
-        };
+        const getLanguages$ = () => this.languageDA.getList();
 
         const getLanguagesChain = new GetRequestHandler(ipcEvents.LANGUAGES, getLanguages$);
         getLanguagesChain.run({});
@@ -54,12 +50,9 @@ export class LanguageService {
 
     private processAddLanguage(): void {
         const addLanguage$ = (language: Language) => {
-            const userId = StateService.getInstance().userId;
-
             return this.languageDA.addLanguage(
                 language.name,
                 language.dictionary,
-                userId,
                 language.wordSeparators.toString(),
                 language.sentenceSeparators.toString());
         };

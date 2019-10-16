@@ -66,12 +66,7 @@ export class TextService {
 
 
     private processGetTexts(): void {
-        const getTexts$ = () => {
-            const userId = StateService.getInstance().userId;
-            const languageId = StateService.getInstance().language._id;
-
-            return this.textsDA.getList(userId, languageId);
-        };
+        const getTexts$ = () => this.textsDA.getList();
 
         const getTextsChain = new GetRequestHandler(ipcEvents.GET_TEXTS, getTexts$);
         getTextsChain.run({});
@@ -105,15 +100,13 @@ export class TextService {
         return this.getText$(textId).pipe(
             switchMap((textDA: Text) => {
                 text = textDA;
+                const language = StateService.getInstance().language;
 
-                return this.languagesDA.get(text.languageId);
-            }),
-            switchMap((language: Language) => {
                 parseTextService = new ParseTextService(language.wordSeparators, language.sentenceSeparators);
                 textParts = parseTextService.splitToParts(text.text);
                 const words = parseTextService.extractWords(textParts);
 
-                return this.wordsDA.getList(words, language._id);
+                return this.wordsDA.getList(words);
             }),
             map((wordObjects: WordObject[]) => {
                 text.textParts = parseTextService.completeTextParts(textParts, wordObjects);
@@ -125,18 +118,15 @@ export class TextService {
 
 
     private saveText$ = (text: Text) => {
-        const userId = StateService.getInstance().userId;
-        text.languageId = StateService.getInstance().language._id;
+        const language = StateService.getInstance().language;
+        text.languageId = language._id;
 
-        return this.languagesDA.get(text.languageId).pipe(
-            switchMap((language: Language) => {
-                const parseTextService = new ParseTextService(language.wordSeparators, language.sentenceSeparators);
-                const words = parseTextService.getWords(text, userId);
+        const parseTextService = new ParseTextService(language.wordSeparators, language.sentenceSeparators);
+        const words = parseTextService.getWords(text);
 
-                return (new WordService()).saveWords(words, language._id);
-            }),
+        return (new WordService()).saveWords(words).pipe(
             switchMap(() => {
-                return this.textsDA.addText(text.text, text.title, userId, text.languageId);
+                return this.textsDA.addText(text.text, text.title);
             })
         );
     }

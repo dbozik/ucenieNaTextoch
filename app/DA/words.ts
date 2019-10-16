@@ -9,14 +9,13 @@ export class Words {
     public constructor() {
     }
 
-    public add(word: string, exampleSentence: string, languageId: string, userId: string)
+    public add(word: string, exampleSentence: string)
         : Observable<WordObject> {
         const newWord: WordObject = {
+            ...StateService.getInstance().userLanguageRequest,
             word,
             exampleSentence,
             level: 0,
-            languageId,
-            userId,
         };
         return this.db.words.insert$(newWord);
     }
@@ -36,10 +35,8 @@ export class Words {
     }
 
 
-    public getList(words: string[], languageId: string): Observable<WordObject[]> {
-        const userId = StateService.getInstance().userId;
-
-        return this.db.words.find$({word: {$in: words}, userId, languageId});
+    public getList(words: string[]): Observable<WordObject[]> {
+        return this.db.words.find$({...StateService.getInstance().userLanguageRequest, word: {$in: words}});
     }
 
     public getByLanguage(): Observable<WordObject[]> {
