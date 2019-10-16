@@ -2,6 +2,8 @@ export enum ipcEvents {
     LOGIN = 'lwt-login',
     LOGIN_FAILED = 'lwt-login-failed',
     SIGNUP = 'lwt-signup',
+    LOGGED_IN = 'lwt-logged-in',
+    LOGGED_OUT = 'lwt-logged-out',
     USER_ID = 'lwt-user-id',
     LANGUAGES = 'lwt-languages',
     SELECT_LANGUAGE = 'lwt-select-language',

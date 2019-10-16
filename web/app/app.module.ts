@@ -14,6 +14,7 @@ import { ReadTextComponent } from './read-text/read-text.component';
 import { WebviewDirective } from './webview.directive';
 import { WordComponent } from './word/word.component';
 import { WordsComponent } from './words/words.component';
+import { LanguageSelectionComponent } from './language-selection/language-selection.component';
 
 @NgModule({
     declarations: [
@@ -27,6 +28,7 @@ import { WordsComponent } from './words/words.component';
         WebviewDirective,
         WordComponent,
         WordsComponent,
+        LanguageSelectionComponent,
     ],
     imports: [
         BrowserModule,

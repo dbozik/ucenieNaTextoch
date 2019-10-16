@@ -1,14 +1,20 @@
 import { Injectable } from '@angular/core';
-import { bindCallback, Observable } from 'rxjs';
+import { BehaviorSubject, bindCallback, Observable, Subject } from 'rxjs';
 import { User } from '../../../app/Objects';
 import { ipcEvents } from '../../shared/ipc-events.enum';
 import { IpcService } from './ipc.service';
 
 @Injectable()
 export class LoginService {
+    private loggedInSource$: Subject<boolean> = new BehaviorSubject<boolean>(false);
+
+    public loggedIn$: Observable<boolean> = this.loggedInSource$.asObservable();
+
     constructor(
         private readonly ipcService: IpcService,
     ) {
+        this.ipcService.ipc.on(ipcEvents.LOGGED_IN, () => this.loggedInSource$.next(true));
+        this.ipcService.ipc.on(ipcEvents.LOGGED_OUT, () => this.loggedInSource$.next(false));
     }
 
 

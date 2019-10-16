@@ -59,6 +59,8 @@ export class UserService {
         ).next(
             new MethodHandler<any>(() => (new Navigation().openMenu()))
         ).next(
+            new MethodHandler<any>(() => LwtApp.getInstance().mainWindow.webContents.send(ipcEvents.LOGGED_IN))
+        ).next(
             new RedirectHandler(Routes.TEXTS)
         );
 

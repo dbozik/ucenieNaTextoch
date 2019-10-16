@@ -1,7 +1,9 @@
 import { NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { Menu } from 'electron';
+import { ipcEvents } from '../web/shared/ipc-events.enum';
 import { Routes } from '../web/shared/routes.enum';
+import { LwtApp } from './lwt-app';
 import Main from './Main';
 
 interface AngularWindow extends Window {
@@ -41,6 +43,7 @@ export class Navigation {
             label: 'Signout',
             click: () => {
                 this.closeMenu();
+                LwtApp.getInstance().mainWindow.webContents.send(ipcEvents.LOGGED_OUT);
                 this.openPage(Routes.LOGIN);
             },
         }
