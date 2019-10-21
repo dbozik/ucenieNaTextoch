@@ -2,7 +2,9 @@
     <span [style.backgroundColor]="textPart.color" [title]="textPart.title" class="popup text-part" (click)="clickPopup()">
     {{textPart.content}}
 
-    <div *ngIf="popupShowed" class="popuptext show" [formGroup]="translateForm" (click)="$event.stopPropagation()">
+    <div *ngIf="popupShowed" class="popuptext show" [formGroup]="translateForm" (click)="$event.stopPropagation()"
+         (keyup.enter)="updateTranslation()"
+    >
         <div class="font-weight-bold font-size-1_5">
             {{textPart.content}}
         </div>
@@ -14,7 +16,7 @@
 
         <div>Translation:</div>
         <div>
-            <input type="text" formControlName="translation">
+            <input type="text" formControlName="translation" #translationField>
         </div>
 
         <div>Example sentence:</div>

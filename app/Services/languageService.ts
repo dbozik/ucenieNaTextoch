@@ -61,8 +61,7 @@ export class LanguageService {
         addLanguageChain
             .next(
                 new MethodHandler<any>((data) => {
-                    LwtApp.getInstance().mainWindow.webContents.send(ipcEvents.LANGUAGE_SELECTED);
-
+                    LwtApp.getInstance().mainWindow.webContents.send(ipcEvents.LANGUAGES_CHANGED);
                     return data;
                 })
             );
@@ -92,7 +91,7 @@ export class LanguageService {
         deleteLanguageChain
             .next(
                 new MethodHandler<any>((data) => {
-                    LwtApp.getInstance().mainWindow.webContents.send(ipcEvents.LANGUAGE_SELECTED);
+                    LwtApp.getInstance().mainWindow.webContents.send(ipcEvents.LANGUAGES_CHANGED);
 
                     return data;
                 })

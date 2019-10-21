@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Language } from '../../../app/Objects';
@@ -16,6 +16,9 @@ export class AddTextComponent implements OnInit {
 
     public textForm: FormGroup;
 
+    @ViewChild('titleField')
+    public titleField: ElementRef<HTMLInputElement>;
+
     constructor(
         private readonly formBuilder: FormBuilder,
         private readonly changeDetector: ChangeDetectorRef,
@@ -29,6 +32,7 @@ export class AddTextComponent implements OnInit {
             title: new FormControl('', Validators.required),
             text: new FormControl('', Validators.required),
         });
+        this.titleField.nativeElement.focus();
     }
 
 

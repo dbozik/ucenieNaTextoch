@@ -1,11 +1,11 @@
 import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
-    Component,
+    Component, ElementRef,
     EventEmitter,
     Input,
     OnChanges,
-    Output
+    Output, ViewChild
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { TextPart } from '../../../app/Objects';
@@ -26,6 +26,9 @@ export class WordComponent implements OnChanges {
     public wordEdit: EventEmitter<TextPart> = new EventEmitter<TextPart>();
     @Output()
     public openTranslation: EventEmitter<string> = new EventEmitter<string>();
+
+    @ViewChild('translationField')
+    public translationField: ElementRef<HTMLInputElement>;
 
     public popupShowed: boolean = false;
     public translateForm: FormGroup;
@@ -54,9 +57,10 @@ export class WordComponent implements OnChanges {
             exampleSentence: new FormControl(this.textPart.exampleSentence),
             exampleSentenceTranslation: new FormControl(this.textPart.exampleSentenceTranslation),
         });
-
         this.openTranslation.emit(this.textPart.content);
         this.popupShowed = !this.popupShowed;
+        this.changeDetection.detectChanges();
+        this.translationField.nativeElement.focus();
         this.changeDetection.detectChanges();
     }
 

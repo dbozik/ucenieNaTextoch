@@ -33,7 +33,7 @@ export class LanguageSelectionComponent implements OnInit {
 
         this.loginService.loggedIn$.subscribe((loggedIn: boolean) => {
             if (loggedIn) {
-                this.languageService.languageSelected$
+                this.languageService.languagesChanged$
                     .pipe(
                         startWith(true),
                         switchMap(() => this.languageService.getLanguages())
