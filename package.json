@@ -1,13 +1,14 @@
 {
-  "name": "LWT",
+  "name": "unt",
   "version": "1.0.0",
   "description": "learning with texts in electron",
   "main": "app/App.js",
   "scripts": {
     "startOld": "tsc --w & electron-forge start",
-    "start": "ng build & concurrently --kill-others \"tsc --w\" \"electron-forge start\"",
+    "start": "ng build & SET NODE_ENV=dev & concurrently --kill-others \"tsc --w\" \"electron-forge start\"",
     "package": "electron-forge package",
     "make": "electron-forge make",
+    "build:prod": "ng build --prod & tsc & SET NODE_ENV=prod & npm run make",
     "dev": "tsc --w & cd app & node dev",
     "test": "jest --verbose",
     "electron": "concurrently --kill-others \"tsc --w\" \"electron-forge start --inspect-electron\""
