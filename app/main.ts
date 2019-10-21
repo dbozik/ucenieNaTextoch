@@ -18,7 +18,6 @@ export default class Main {
 
         Main.lwtApp = new LwtApp(app, browserWindow);
         Main.lwtApp.init();
-        Main.navigation = new Navigation();
 
         Main.loadServices();
     }

@@ -89,6 +89,14 @@ export class LanguageService {
         const deleteLanguageChain = new GetRequestHandler(ipcEvents.DELETE_LANGUAGE,
             (languageId: string) => this.languageDA.delete(languageId)
         );
+        deleteLanguageChain
+            .next(
+                new MethodHandler<any>((data) => {
+                    LwtApp.getInstance().mainWindow.webContents.send(ipcEvents.LANGUAGE_SELECTED);
+
+                    return data;
+                })
+            );
 
         deleteLanguageChain.run({});
     }

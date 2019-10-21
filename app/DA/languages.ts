@@ -1,4 +1,5 @@
 import { Observable } from 'rxjs';
+import { tap } from "rxjs/operators";
 import { Language } from '../Objects';
 import { StateService } from '../Services';
 import { Database } from './database';
@@ -18,7 +19,9 @@ export class Languages {
             dictionary,
             wordSeparators,
             sentenceSeparators,
-        });
+        }).pipe(
+            tap(() => this.db.destroyLanguages()),
+        );
     }
 
 
@@ -37,21 +40,29 @@ export class Languages {
                     sentenceSeparators: sentenceSeparators.toString()
                 },
             }
+        ).pipe(
+            tap(() => this.db.destroyLanguages()),
         );
     }
 
 
     public get(languageId: string): Observable<Language> {
-        return this.db.languages.findOne$({_id: languageId});
+        return this.db.languages.findOne$({_id: languageId}).pipe(
+            tap(() => this.db.destroyLanguages()),
+        );
     }
 
 
     public delete(languageId: string): Observable<any> {
-        return this.db.languages.remove$({_id: languageId});
+        return this.db.languages.remove$({_id: languageId}).pipe(
+            tap(() => this.db.destroyLanguages()),
+        );
     }
 
 
     public getList(): Observable<Language[]> {
-        return this.db.languages.find$({userId: StateService.getInstance().userId});
+        return this.db.languages.find$({userId: StateService.getInstance().userId}).pipe(
+            tap(() => this.db.destroyLanguages()),
+        );
     }
 }
