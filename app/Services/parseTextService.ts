@@ -1,4 +1,5 @@
 import { Text, TextPart, WordObject } from '../Objects';
+import { StateService } from './stateService';
 
 export class ParseTextService {
     private wordSeparatorsRegex: RegExp;
@@ -9,15 +10,6 @@ export class ParseTextService {
         this.sentenceSeparatorsRegex = new RegExp(`[\\n${sentenceSeparators.replace(']', '\\]')}]+`);
     }
 
-    public splitToWords(text: string): string[] {
-        return this.splitToWordsCase(text)
-            .map(word => word.toLowerCase());
-    }
-
-    public splitToSentences(text: string): string[] {
-        return text.split(this.sentenceSeparatorsRegex)
-            .filter(sentence => sentence !== '');
-    }
 
     public splitToParts(text: string): TextPart[] {
         const justWords = this.splitToWordsCase(text);
@@ -89,7 +81,7 @@ export class ParseTextService {
     }
 
 
-    public getWords(text: Text, userId: string): WordObject[] {
+    public getWords(text: Text): WordObject[] {
         const wordObjects: WordObject[] = [];
 
         this.sentencesFromText(text).forEach(sentence => {
@@ -98,7 +90,7 @@ export class ParseTextService {
                     word: word.toLowerCase(),
                     exampleSentence: sentence,
                     languageId: text.languageId,
-                    userId,
+                    userId: StateService.getInstance().userId,
                     level: 0,
                 });
             });

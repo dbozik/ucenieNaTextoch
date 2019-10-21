@@ -1,7 +1,7 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { switchMap } from 'rxjs/operators';
-import { Language, WordObject } from '../../../app/Objects';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { Subject } from 'rxjs';
+import { startWith, switchMap, takeUntil } from 'rxjs/operators';
+import { WordObject } from '../../../app/Objects';
 import { getColor } from '../color.utils';
 import { LanguageService } from '../services/language.service';
 import { WordService } from '../services/word.service';
@@ -12,12 +12,11 @@ import { WordService } from '../services/word.service';
     styleUrls: ['./words.component.scss'],
     providers: [WordService, LanguageService],
 })
-export class WordsComponent implements OnInit {
+export class WordsComponent implements OnInit, OnDestroy {
 
-    public languages: Language[];
     public words: (WordObject | 'color')[] = [];
 
-    public languagesControl: FormControl = new FormControl();
+    private componentDestroyed$: Subject<boolean> = new Subject<boolean>();
 
     constructor(
         private readonly languageService: LanguageService,
@@ -26,24 +25,23 @@ export class WordsComponent implements OnInit {
     ) {
     }
 
+
     ngOnInit() {
-        this.languagesControl.valueChanges.pipe(
-            switchMap((languageId: string) => {
-                return this.wordService.getWords(languageId);
+        this.languageService.languageSelected$.pipe(
+            startWith(true),
+            takeUntil(this.componentDestroyed$),
+            switchMap(() => {
+                return this.wordService.getWords();
             })
         ).subscribe((words: WordObject[]) => {
             this.words = words.sort((first, second) => first.level - second.level)
                 .map(word => ({...word, color: getColor(word.level)}));
             this.changeDetection.detectChanges();
         });
-
-        this.languageService.getLanguages().subscribe((languages: Language[]) => {
-            this.languages = languages;
-            if (this.languages && this.languages.length > 0) {
-                this.languagesControl.setValue(this.languages[0]._id);
-            }
-            this.changeDetection.detectChanges();
-        });
     }
 
+
+    public ngOnDestroy(): void {
+        this.componentDestroyed$.next(true);
+    }
 }

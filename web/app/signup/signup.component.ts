@@ -1,9 +1,9 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ipcEvents } from '../../shared/ipc-events.enum';
+import { User } from '../../../app/Objects';
 import { Routes } from '../../shared/routes.enum';
-import { IpcService } from '../add-text/ipc.service';
+import { LoginService } from '../services/login.service';
 
 @Component({
     selector: 'app-signup',
@@ -19,7 +19,7 @@ export class SignupComponent implements OnInit {
 
     constructor(
         private readonly formBuilder: FormBuilder,
-        private readonly ipcService: IpcService,
+        private readonly loginService: LoginService,
         private readonly changeDetector: ChangeDetectorRef,
         private readonly router: Router,
     ) {
@@ -48,12 +48,11 @@ export class SignupComponent implements OnInit {
             return;
         }
 
-        this.ipcService.ipc.send(ipcEvents.SIGNUP, {
+        this.loginService.signup({
             username: this.signupForm.get('username').value,
             password: this.signupForm.get('password').value,
             email: this.signupForm.get('email').value,
-        });
-
+        } as User).subscribe();
     }
 
 

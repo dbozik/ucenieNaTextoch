@@ -1,5 +1,6 @@
-import * as Datastore from 'nedb';
 import * as path from 'path';
+import { Datastore } from './datastore';
+
 
 export class Database {
     private rootPath = './data/';
@@ -46,17 +47,6 @@ export class Database {
         });
 
         return this._languages;
-    }
-
-    private _settings: Datastore = null;
-
-    public get settings(): Datastore {
-        this._settings = new Datastore({
-            filename: path.join(this.rootPath, 'settings.db'),
-            autoload: true
-        });
-
-        return this._settings;
     }
 
     private _users: Datastore = null;

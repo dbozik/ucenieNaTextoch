@@ -1,5 +1,6 @@
-import { Observable, ReplaySubject } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Text } from '../Objects';
+import { StateService } from '../Services';
 import { Database } from './database';
 
 export class Texts {
@@ -8,51 +9,31 @@ export class Texts {
     public constructor() {
     }
 
-    public addText(text: string, title: string, userId: string, languageId: string)
+    public addText(text: string, title: string)
         : Observable<Text> {
-        const textSource$: ReplaySubject<Text> = new ReplaySubject(1);
-
-        setTimeout(() => {
-            this.db.texts.insert(
-                {
-                    createdOn: new Date(),
-                    userId: userId,
-                    languageId: languageId,
-                    text: text,
-                    title: title
-                },
-                (error, dbText) => {
-                    textSource$.next(dbText);
-                    textSource$.complete();
-                });
-        }, 100);
-        this.db.texts.persistence.compactDatafile();
-
-        return textSource$.asObservable();
+        return this.db.texts.insert$(
+            {
+                ...StateService.getInstance().userLanguageRequest,
+                createdOn: new Date(),
+                text,
+                title,
+            });
     }
+
 
     public get(textId: string): Observable<Text> {
-        const textSource$: ReplaySubject<Text> = new ReplaySubject(1);
-
-        this.db.texts.findOne({_id: textId}, (error, text: Text) => {
-            textSource$.next(text);
-            textSource$.complete();
-        });
-
-        return textSource$.asObservable();
+        return this.db.texts.findOne$({_id: textId});
     }
 
-    public getList(userId: string, languageId: string): Observable<Text[]> {
-        const textSource$: ReplaySubject<Text[]> = new ReplaySubject(1);
 
-        this.db.texts.find({userId, languageId}, (error, texts: Text[]) => {
-            textSource$.next(texts);
-        });
-
-        return textSource$.asObservable();
+    public getList(): Observable<Text[]> {
+        return this.db.texts.find$(StateService.getInstance().userLanguageRequest);
     }
+
 
     public delete(textId): void {
-        this.db.texts.remove({_id: textId});
+        this.db.texts.remove$({_id: textId}).subscribe(() => {
+            this.db.texts.persistence.compactDatafile();
+        });
     }
 }

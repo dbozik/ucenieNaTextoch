@@ -1,15 +1,20 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, ReplaySubject, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Language } from '../../../app/Objects/Language';
+import { Language } from '../../../app/Objects';
 import { ipcEvents } from '../../shared/ipc-events.enum';
-import { IpcService } from '../add-text/ipc.service';
+import { IpcService } from './ipc.service';
 
 @Injectable()
 export class LanguageService {
+    private languageSelectedSource$: Subject<boolean> = new ReplaySubject(1);
+
+    public languageSelected$: Observable<boolean> = this.languageSelectedSource$.asObservable();
+
     constructor(
         private readonly ipcService: IpcService,
     ) {
+        this.ipcService.ipc.on(ipcEvents.LANGUAGE_SELECTED, () => this.languageSelectedSource$.next(true));
     }
 
 
@@ -18,9 +23,6 @@ export class LanguageService {
     }
 
 
-    /**
-     * getLanguages
-     */
     public getLanguages(): Observable<Language[]> {
         return this.ipcService.getData<Language[]>(ipcEvents.LANGUAGES).pipe(
             map((languages: Language[]) => {
@@ -38,17 +40,11 @@ export class LanguageService {
     }
 
 
-    /**
-     * addLanguage
-     */
     public addLanguage(language: Language): Observable<Language> {
         return this.ipcService.sendData<Language>(ipcEvents.ADD_LANGUAGE, language);
     }
 
 
-    /**
-     * editLanguage
-     */
     public editLanguage(language: Language): Observable<Language> {
         return this.ipcService.sendData<Language>(ipcEvents.EDIT_LANGUAGE, language);
     }
@@ -56,5 +52,10 @@ export class LanguageService {
 
     public deleteLanguage(languageId: string): Observable<void> {
         return this.ipcService.sendData<string, void>(ipcEvents.DELETE_LANGUAGE, languageId);
+    }
+
+
+    public selectLanguage(languageId: string): Observable<any> {
+        return this.ipcService.sendData(ipcEvents.SELECT_LANGUAGE, languageId);
     }
 }

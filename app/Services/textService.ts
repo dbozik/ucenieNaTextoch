@@ -1,12 +1,10 @@
-import { BehaviorSubject, Observable, ReplaySubject, Subject } from 'rxjs';
+import { Observable, ReplaySubject, Subject } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { ParseTextService, StateService, WordService } from '.';
 import { ipcEvents } from '../../web/shared/ipc-events.enum';
 import { Routes } from '../../web/shared/routes.enum';
 import * as DA from '../DA';
-import { GetRequestHandler } from '../Handlers/get-request.handler';
-import { IpcMainHandler } from '../Handlers/ipc-main.handler';
-import { MethodHandler } from '../Handlers/method.handler';
+import { GetRequestHandler, IpcMainHandler, MethodHandler } from '../Handlers';
 import { Navigation } from '../navigation';
 import { Language, Text, TextPart, WordObject } from '../Objects';
 
@@ -15,20 +13,11 @@ export class TextService {
     private textsDA = new DA.Texts();
     private textsArchivedDA = new DA.TextsArchived();
     private wordsDA = new DA.Words();
-    private textParts: TextPart[] = [];
-    private wordObjects: WordObject[] = [];
-
-    private textSource$: BehaviorSubject<Text> = new BehaviorSubject(new Text());
-    public text$: Observable<Text> = this.textSource$.asObservable();
+    private languagesDA = new DA.Languages();
 
     public constructor() {
     }
 
-    private _textId: string;
-
-    public set textId(textId: string) {
-        this._textId = textId;
-    }
 
     public init(): void {
         this.processSaveText();
@@ -39,32 +28,12 @@ export class TextService {
     }
 
 
-    public getArchivedList(): Observable<Text[]> {
-        const texts = new DA.TextsArchived();
+    // public getArchivedList(): Observable<Text[]> {
+    //     const texts = new DA.TextsArchived();
+    //
+    //     return texts.getList();
+    // }
 
-        return texts.getList();
-    }
-
-
-    public updateTranslation(wordId: string, translation: string): void {
-        this.wordObjects.find(wordObject => wordObject._id === wordId).translation = translation;
-
-        this.textParts.filter(textPart => textPart.wordId === wordId)
-            .forEach(textPart => textPart.translation = translation);
-
-        // this.textPartsSource$.next(this.textParts);
-        // this.wordObjectsSource$.next(this.wordObjects);
-    }
-
-    public updateLevel(wordId: string, level: number): void {
-        this.wordObjects.find(wordObject => wordObject._id === wordId).level = level;
-
-        this.textParts.filter(textPart => textPart.wordId === wordId)
-            .forEach(textPart => textPart.level = level);
-
-        // this.textPartsSource$.next(this.textParts);
-        // this.wordObjectsSource$.next(this.wordObjects);
-    }
 
     public archive(textId: string): Observable<boolean> {
         const resultSource$: Subject<boolean> = new ReplaySubject<boolean>(1);
@@ -97,11 +66,7 @@ export class TextService {
 
 
     private processGetTexts(): void {
-        const getTexts$ = (languageId: string) => {
-            const userId = StateService.getInstance().userId;
-
-            return this.textsDA.getList(userId, languageId);
-        };
+        const getTexts$ = () => this.textsDA.getList();
 
         const getTextsChain = new GetRequestHandler(ipcEvents.GET_TEXTS, getTexts$);
         getTextsChain.run({});
@@ -135,15 +100,13 @@ export class TextService {
         return this.getText$(textId).pipe(
             switchMap((textDA: Text) => {
                 text = textDA;
+                const language = StateService.getInstance().language;
 
-                return (new DA.Languages()).get(text.languageId);
-            }),
-            switchMap((language: Language) => {
                 parseTextService = new ParseTextService(language.wordSeparators, language.sentenceSeparators);
                 textParts = parseTextService.splitToParts(text.text);
                 const words = parseTextService.extractWords(textParts);
 
-                return this.wordsDA.getList(words, language._id);
+                return this.wordsDA.getList(words);
             }),
             map((wordObjects: WordObject[]) => {
                 text.textParts = parseTextService.completeTextParts(textParts, wordObjects);
@@ -155,17 +118,15 @@ export class TextService {
 
 
     private saveText$ = (text: Text) => {
-        const userId = StateService.getInstance().userId;
+        const language = StateService.getInstance().language;
+        text.languageId = language._id;
 
-        return (new DA.Languages()).get(text.languageId).pipe(
-            switchMap((language: Language) => {
-                const parseTextService = new ParseTextService(language.wordSeparators, language.sentenceSeparators);
-                const words = parseTextService.getWords(text, userId);
+        const parseTextService = new ParseTextService(language.wordSeparators, language.sentenceSeparators);
+        const words = parseTextService.getWords(text);
 
-                return (new WordService()).saveWords(words, language._id);
-            }),
+        return (new WordService()).saveWords(words).pipe(
             switchMap(() => {
-                return this.textsDA.addText(text.text, text.title, userId, text.languageId);
+                return this.textsDA.addText(text.text, text.title);
             })
         );
     }

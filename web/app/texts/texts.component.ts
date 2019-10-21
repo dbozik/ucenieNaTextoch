@@ -1,7 +1,7 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { switchMap } from 'rxjs/operators';
-import { Language, Text } from '../../../app/Objects';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { Subject } from 'rxjs';
+import { startWith, switchMap, takeUntil } from 'rxjs/operators';
+import { Text } from '../../../app/Objects';
 import { LanguageService } from '../services/language.service';
 import { TextService } from '../services/text.service';
 
@@ -11,11 +11,10 @@ import { TextService } from '../services/text.service';
     styleUrls: ['./texts.component.scss'],
     providers: [TextService, LanguageService],
 })
-export class TextsComponent implements OnInit {
-    public languages: Language[];
-    public texts: Text[] = [];
+export class TextsComponent implements OnInit, OnDestroy {
+    private componentDestroyed$: Subject<boolean> = new Subject<boolean>();
 
-    public languagesControl: FormControl = new FormControl();
+    public texts: Text[] = [];
 
     constructor(
         private readonly languageService: LanguageService,
@@ -25,9 +24,11 @@ export class TextsComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.languagesControl.valueChanges.pipe(
-            switchMap((languageId: string) => {
-                return this.textService.getTexts(languageId);
+        this.languageService.languageSelected$.pipe(
+            startWith(true),
+            takeUntil(this.componentDestroyed$),
+            switchMap(() => {
+                return this.textService.getTexts();
             })
         ).subscribe((texts: Text[]) => {
             this.texts = texts.sort(
@@ -35,14 +36,11 @@ export class TextsComponent implements OnInit {
             );
             this.changeDetection.detectChanges();
         });
+    }
 
-        this.languageService.getLanguages().subscribe((languages: Language[]) => {
-            this.languages = languages;
-            if (this.languages && this.languages.length > 0) {
-                this.languagesControl.setValue(this.languages[0]._id);
-            }
-            this.changeDetection.detectChanges();
-        });
+
+    public ngOnDestroy(): void {
+        this.componentDestroyed$.next(true);
     }
 
 

@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Language, Text, TextPart } from '../../../app/Objects';
-import { getColor } from "../color.utils";
+import { getColor } from '../color.utils';
 import { LanguageService } from '../services/language.service';
 import { TextService } from '../services/text.service';
 
@@ -29,7 +29,8 @@ export class ReadTextComponent implements OnInit {
         const textId = this.route.snapshot.params.id;
 
         this.textService.getParsed(textId).subscribe((result: Text) => {
-            this.text = this.processTextParts(result);
+            this.text = result;
+            this.text.textParts = this.processTextParts(result.textParts);
             this.changeDetectorRef.detectChanges();
 
             this.languageService.getLanguage(this.text.languageId).subscribe((language: Language) => {
@@ -38,21 +39,6 @@ export class ReadTextComponent implements OnInit {
                 this.changeDetectorRef.detectChanges();
             });
         });
-    }
-
-    public hasLineBreak(content: string): boolean {
-        return content.includes('\n');
-    }
-
-
-    public processTextParts(text: Text): Text {
-        text.textParts = text.textParts.map((textPart: TextPart) => ({
-            ...textPart,
-            color: textPart.type === 'word' ? getColor(textPart.level) : '',
-            title: textPart.type === 'word' ? textPart.translation || '' : ''
-        }));
-
-        return text;
     }
 
 
@@ -64,11 +50,13 @@ export class ReadTextComponent implements OnInit {
 
     public wordEdit(word: TextPart): void {
         this.textService.editWord(word).subscribe(() => {
-            for (let index = 0; index < this.text.textParts.length; index++) {
-                if (this.text.textParts[index].wordId === word.wordId) {
-                    this.text.textParts[index] = {
+            const editedTextParts: TextPart[] = [];
+
+            for (const textPart of this.text.textParts) {
+                if (textPart.wordId === word.wordId) {
+                    editedTextParts.push({
                         wordId: word.wordId,
-                        content: this.text.textParts[index].content,
+                        content: textPart.content,
                         level: word.level,
                         color: getColor(word.level),
                         title: word.translation,
@@ -76,11 +64,23 @@ export class ReadTextComponent implements OnInit {
                         translation: word.translation,
                         exampleSentence: word.exampleSentence,
                         exampleSentenceTranslation: word.exampleSentenceTranslation,
-                    };
+                    });
+                } else {
+                    editedTextParts.push(JSON.parse(JSON.stringify(textPart)));
                 }
             }
 
+            this.text.textParts = editedTextParts;
             this.changeDetectorRef.detectChanges();
         });
+    }
+
+
+    private processTextParts(textParts: TextPart[]): TextPart[] {
+        return textParts.map((textPart: TextPart) => ({
+            ...textPart,
+            color: textPart.type === 'word' ? getColor(textPart.level) : '',
+            title: textPart.type === 'word' ? textPart.translation || '' : ''
+        }));
     }
 }

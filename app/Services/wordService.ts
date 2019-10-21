@@ -18,8 +18,8 @@ export class WordService {
     }
 
 
-    public saveWords = (words: WordObject[], languageId: string): Observable<WordObject[]> => {
-        return this.wordsDA.getList(words.map(wordObject => wordObject.word), languageId).pipe(
+    public saveWords = (words: WordObject[]): Observable<WordObject[]> => {
+        return this.wordsDA.getList(words.map(wordObject => wordObject.word)).pipe(
             switchMap((savedWordObjects: WordObject[]) => {
                 const savedWords = savedWordObjects.map(wordObject => wordObject.word);
                 const wordsToSave = words.filter(wordObject => !savedWords.includes(wordObject.word));
@@ -27,15 +27,6 @@ export class WordService {
                 return this.wordsDA.saveMultiple(wordsToSave);
             }),
         );
-    }
-
-
-    public updateTranslation(id: string, translation: string): void {
-        this.wordsDA.updateTranslation(id, translation);
-    }
-
-    public updateLevel(id: string, newLevel: number): void {
-        this.wordsDA.updateLevel(id, newLevel);
     }
 
 
@@ -49,7 +40,7 @@ export class WordService {
 
 
     private processGetWords(): void {
-        const getWords$ = (languageId: string) => this.wordsDA.getByLanguage(languageId);
+        const getWords$ = () => this.wordsDA.getByLanguage();
 
         const getWordsChain = new GetRequestHandler(ipcEvents.GET_WORDS, getWords$);
         getWordsChain.run({});

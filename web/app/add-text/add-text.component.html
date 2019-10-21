@@ -8,13 +8,6 @@
         </div>
 
         <div class="row">
-            <select name="languages" class="form-control" formControlName="language">
-                <option value="" disabled selected class="form-control">Language</option>
-                <option [value]="language._id" *ngFor="let language of languages">{{language.name}}</option>
-            </select>
-        </div>
-
-        <div class="row">
             <textarea class="form-control" rows="15" formControlName="text"></textarea>
         </div>
     </div>

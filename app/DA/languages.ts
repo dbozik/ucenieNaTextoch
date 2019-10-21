@@ -1,5 +1,6 @@
-import { Observable, ReplaySubject, Subject } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Language } from '../Objects';
+import { StateService } from '../Services';
 import { Database } from './database';
 
 export class Languages {
@@ -8,39 +9,15 @@ export class Languages {
     public constructor() {
     }
 
-    private static retreive(dbLanguage: Language): Language {
-        return {
-            _id: dbLanguage._id,
-            name: dbLanguage.name,
-            dictionary: dbLanguage.dictionary,
-            wordSeparators: dbLanguage.wordSeparators,
-            sentenceSeparators: dbLanguage.sentenceSeparators,
-            userId: dbLanguage.userId,
-        };
-    }
 
-    public addLanguage(name: string, dictionary: string, userId: string, wordSeparators: string,
-                       sentenceSeparators: string)
+    public addLanguage(name: string, dictionary: string, wordSeparators: string, sentenceSeparators: string)
         : Observable<Language> {
-        return this.observableRequest(callback => {
-            this.db.languages.insert(
-                {
-                    userId: userId, name: name, dictionary: dictionary,
-                    wordSeparators: wordSeparators.toString(),
-                    sentenceSeparators: sentenceSeparators.toString()
-                },
-                (error, dbLanguage: any) => {
-                    const language: Language = {
-                        _id: dbLanguage._id,
-                        name: dbLanguage.name,
-                        dictionary: dbLanguage.dictionary,
-                        wordSeparators: dbLanguage.wordSeparators,
-                        sentenceSeparators: dbLanguage.sentenceSeparators,
-                        userId: dbLanguage.userId,
-                    };
-
-                    callback(error, language);
-                });
+        return this.db.languages.insert$({
+            userId: StateService.getInstance().userId,
+            name,
+            dictionary,
+            wordSeparators,
+            sentenceSeparators,
         });
     }
 
@@ -48,56 +25,33 @@ export class Languages {
     public editLanguage(languageId: string, name: string, dictionary: string, wordSeparators: string,
                         sentenceSeparators: string)
         : Observable<Language> {
-        return this.observableRequest(callback => {
-            this.db.languages.update(
-                {
-                    _id: languageId,
+        return this.db.languages.update$(
+            {
+                _id: languageId,
+            },
+            {
+                $set: {
+                    name: name,
+                    dictionary: dictionary,
+                    wordSeparators: wordSeparators.toString(),
+                    sentenceSeparators: sentenceSeparators.toString()
                 },
-                {
-                    $set: {
-                        name: name,
-                        dictionary: dictionary,
-                        wordSeparators: wordSeparators.toString(),
-                        sentenceSeparators: sentenceSeparators.toString()
-                    },
-                },
-                {},
-                (error, dbLanguage: any) => {
-                    const language: Language = Languages.retreive(dbLanguage);
-
-                    callback(error, language);
-                });
-        });
+            }
+        );
     }
 
 
     public get(languageId: string): Observable<Language> {
-        return this.observableRequest((callback) => {
-            this.db.languages.findOne({_id: languageId}, callback);
-        });
+        return this.db.languages.findOne$({_id: languageId});
     }
+
 
     public delete(languageId: string): Observable<any> {
-        return this.observableRequest((callback) => {
-            this.db.languages.remove({_id: languageId}, callback);
-        });
+        return this.db.languages.remove$({_id: languageId});
     }
 
-    public getList(userId: string): Observable<Language[]> {
-        return this.observableRequest((callback) => {
-            this.db.languages.find({userId}, callback);
-        });
-    }
 
-    private observableRequest(request: (callback) => void): Observable<any> {
-        const responseSource$: Subject<any> = new Subject<any>();
-
-        request((error, response) => {
-            this.db.languages.persistence.compactDatafile();
-            responseSource$.next(response);
-        });
-
-
-        return responseSource$.asObservable();
+    public getList(): Observable<Language[]> {
+        return this.db.languages.find$({userId: StateService.getInstance().userId});
     }
 }

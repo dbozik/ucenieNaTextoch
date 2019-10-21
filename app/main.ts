@@ -21,13 +21,6 @@ export default class Main {
         Main.navigation = new Navigation();
 
         Main.loadServices();
-
-        const languageService = new Services.LanguageService();
-
-        languageService.bindSendLanguages();
-        languageService.bindAddLanguage();
-        languageService.bindEditLanguage();
-        languageService.bindDeleteLanguage();
     }
 
 

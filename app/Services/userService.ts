@@ -1,18 +1,15 @@
 import { tap } from 'rxjs/operators';
 import { ipcEvents } from '../../web/shared/ipc-events.enum';
 import { Routes } from '../../web/shared/routes.enum';
-import * as DA from '../DA';
-import { IpcMainHandler } from '../Handlers/ipc-main.handler';
-import { MethodHandler } from '../Handlers/method.handler';
-import { RedirectHandler } from '../Handlers/redirect.handler';
-import { SendRequestHandler } from '../Handlers/send-request.handler';
+import { Languages, UserDA } from '../DA';
+import { IpcMainHandler, MethodHandler, RedirectHandler, SendRequestHandler } from '../Handlers';
 import { LwtApp } from '../lwt-app';
 import { Navigation } from '../navigation';
-import { User } from '../Objects/User';
+import { Language, User } from '../Objects';
 import { StateService } from './stateService';
 
 export class UserService {
-    private userDA = new DA.UserDA();
+    private userDA = new UserDA();
 
     public init(): void {
         this.signup();
@@ -60,7 +57,17 @@ export class UserService {
         signinChain.next(
             sendRequest
         ).next(
-            new MethodHandler<any>(() => (new Navigation().openMenu()))
+            new SendRequestHandler(() => (new Languages()).getList())
+        ).next(
+            new MethodHandler<any>((languages: Language[]) => {
+                if (languages && languages.length > 0) {
+                    StateService.getInstance().language = languages[0];
+                }
+            })
+        ).next(
+            new MethodHandler<any>((languages: Language[]) => new Navigation().openMenu())
+        ).next(
+            new MethodHandler<any>(() => LwtApp.getInstance().mainWindow.webContents.send(ipcEvents.LOGGED_IN))
         ).next(
             new RedirectHandler(Routes.TEXTS)
         );

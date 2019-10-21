@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Text, TextPart } from '../../../app/Objects';
 import { ipcEvents } from '../../shared/ipc-events.enum';
-import { IpcService } from '../add-text/ipc.service';
+import { IpcService } from './ipc.service';
 
 @Injectable()
 export class TextService {
@@ -26,8 +26,8 @@ export class TextService {
     }
 
 
-    public getTexts(languageId: string): Observable<Text[]> {
-        return this.ipcService.sendData(ipcEvents.GET_TEXTS, languageId);
+    public getTexts(): Observable<Text[]> {
+        return this.ipcService.getData(ipcEvents.GET_TEXTS);
     }
 
 
