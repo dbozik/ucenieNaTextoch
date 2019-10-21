@@ -28,7 +28,6 @@ export class TextsComponent implements OnInit, OnDestroy {
             startWith(true),
             takeUntil(this.componentDestroyed$),
             switchMap(() => {
-                console.log('component - languageSelected');
                 return this.textService.getTexts();
             })
         ).subscribe((texts: Text[]) => {

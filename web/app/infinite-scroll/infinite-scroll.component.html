@@ -1,0 +1,5 @@
+<div class="scroll-box" (scroll)="onScroll()" #scrollBox>
+    <ng-container *ngFor="let item of displayedItems">
+        <ng-container *ngTemplateOutlet="itemRef; context: {$implicit: item}"></ng-container>
+    </ng-container>
+</div>

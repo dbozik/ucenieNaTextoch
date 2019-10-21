@@ -6,15 +6,17 @@ import { AddTextComponent } from './add-text/add-text.component';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { ScrollItemDirective } from "./infinite-scroll/scroll-item.directive";
+import { LanguageSelectionComponent } from './language-selection/language-selection.component';
 import { LoginComponent } from './login/login.component';
+import { ReadTextComponent } from './read-text/read-text.component';
 import { SettingsComponent } from './settings/settings.component';
 import { SignupComponent } from './signup/signup.component';
 import { TextsComponent } from './texts/texts.component';
-import { ReadTextComponent } from './read-text/read-text.component';
 import { WebviewDirective } from './webview.directive';
 import { WordComponent } from './word/word.component';
 import { WordsComponent } from './words/words.component';
-import { LanguageSelectionComponent } from './language-selection/language-selection.component';
+import { InfiniteScrollComponent } from './infinite-scroll/infinite-scroll.component';
 
 @NgModule({
     declarations: [
@@ -29,6 +31,8 @@ import { LanguageSelectionComponent } from './language-selection/language-select
         WordComponent,
         WordsComponent,
         LanguageSelectionComponent,
+        InfiniteScrollComponent,
+        ScrollItemDirective,
     ],
     imports: [
         BrowserModule,

@@ -18,6 +18,7 @@ $min-text-height: 80vh;
 
 .text-area {
     min-height: $min-text-height;
+    max-height: $min-text-height;
     font-size: 2em;
     line-height: 2em;
 }
