@@ -15,7 +15,7 @@ export class ReadTextComponent implements OnInit {
     public text: Text;
     public translateLink: string = '';
 
-    private language: Language;
+    private languageDictionary: string;
 
     constructor(
         private readonly route: ActivatedRoute,
@@ -31,18 +31,15 @@ export class ReadTextComponent implements OnInit {
         this.textService.getParsed(textId).subscribe((result: Text) => {
             this.text = result;
             this.text.textParts = this.processTextParts(result.textParts);
-            this.changeDetectorRef.detectChanges();
 
-            this.languageService.getLanguage(this.text.languageId).subscribe((language: Language) => {
-                this.language = language;
-                this.setTranslateLink('', this.language.dictionary);
-                this.changeDetectorRef.detectChanges();
-            });
+            this.languageDictionary = this.text.languageDictionary;
+            this.setTranslateLink('', this.languageDictionary);
+            this.changeDetectorRef.detectChanges();
         });
     }
 
 
-    public setTranslateLink(word: string, dictionary: string = this.language.dictionary): void {
+    public setTranslateLink(word: string, dictionary: string = this.languageDictionary): void {
         this.translateLink = dictionary.replace('{word}', word);
         this.changeDetectorRef.detectChanges();
     }
