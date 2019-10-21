@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { startWith, switchMap } from 'rxjs/operators';
 import { Language } from '../../../app/Objects';
 import { LanguageService } from '../services/language.service';
 import { LoginService } from '../services/login.service';
@@ -30,7 +31,11 @@ export class LanguageSelectionComponent implements OnInit {
 
         this.loginService.loggedIn$.subscribe((loggedIn: boolean) => {
             if (loggedIn) {
-                this.languageService.getLanguages().subscribe((languages: Language[]) => {
+                this.languageService.languageSelected$
+                    .pipe(
+                        startWith(true),
+                        switchMap(() => this.languageService.getLanguages())
+                        ).subscribe((languages: Language[]) => {
                     this.languages = languages;
                     if (this.languages && this.languages.length > 0) {
                         this.languagesControl.setValue(this.languages[0]._id);

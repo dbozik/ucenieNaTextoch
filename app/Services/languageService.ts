@@ -58,6 +58,14 @@ export class LanguageService {
         };
 
         const addLanguageChain = new GetRequestHandler(ipcEvents.ADD_LANGUAGE, addLanguage$);
+        addLanguageChain
+            .next(
+                new MethodHandler<any>((data) => {
+                    LwtApp.getInstance().mainWindow.webContents.send(ipcEvents.LANGUAGE_SELECTED);
+
+                    return data;
+                })
+            );
         addLanguageChain.run({});
     }
 

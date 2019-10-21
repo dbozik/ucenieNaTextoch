@@ -9,12 +9,11 @@
  - translate popup - close on click elsewhere (currently just the original word)
  - archive texts
  - refactoring - replace replaySubject, add db persistance update on remove/edit items
- - read text - virtual scroll
  - read text - search
  - MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 lwt-language-selected listeners added. Use emitter.setMaxListeners() to increase limit
  - translation popup - focus on translation
  - translation popup - translate + enter - save
- - add text - focus o title
+ - add text - focus on title
  - adding words with first letter capital
  - setup build - ng build in production mode, environment to prod
  - after adding a new language - add in in the selection list
@@ -22,3 +21,4 @@
  - read-text - attach translate dictionary to the text
  - read-text - display, how many percents are loaded
  - parsing long texts - performance
+ - ENOENT - no such file or directory languages.db~
