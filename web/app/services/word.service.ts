@@ -15,4 +15,9 @@ export class WordService {
     public getWords(): Observable<WordObject[]> {
         return this.ipcService.getData(ipcEvents.GET_WORDS);
     }
+
+
+    public openWord(wordId: string): Observable<string> {
+        return this.ipcService.sendData(ipcEvents.OPEN_WORD_EDIT, wordId);
+    }
 }

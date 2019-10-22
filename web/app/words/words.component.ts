@@ -76,4 +76,9 @@ export class WordsComponent implements OnInit, OnDestroy {
         window.URL.revokeObjectURL(url);
         downloadLink.remove();
     }
+
+
+    public editWord(wordId): void {
+        this.wordService.openWord(wordId).subscribe();
+    }
 }

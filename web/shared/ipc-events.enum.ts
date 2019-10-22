@@ -19,5 +19,6 @@ export enum ipcEvents {
     GET_TEXTS = 'lwt-get-texts',
     OPEN_TEXT = 'lwt-open-text',
     EDIT_WORD = 'lwt-edit-word',
+    OPEN_WORD_EDIT = 'lwt-open-word-edit',
     GET_WORDS = 'lwt-get-words',
 }

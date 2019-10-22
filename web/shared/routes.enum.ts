@@ -5,5 +5,6 @@ export enum Routes {
     SIGNUP = 'signup',
     READ_TEXT = 'readText',
     WORDS = 'words',
+    WORD = 'word',
     SETTINGS = 'settings',
 }

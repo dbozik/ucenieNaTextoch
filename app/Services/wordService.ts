@@ -1,9 +1,11 @@
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { ipcEvents } from '../../web/shared/ipc-events.enum';
+import { Routes } from '../../web/shared/routes.enum';
 import * as DA from '../DA';
-import { GetRequestHandler } from '../Handlers';
-import { TextPart, WordObject } from '../Objects';
+import { GetRequestHandler, MethodHandler } from '../Handlers';
+import { Navigation } from '../navigation';
+import { Text, TextPart, WordObject } from '../Objects';
 
 export class WordService {
     private wordsDA = new DA.Words();
@@ -15,6 +17,7 @@ export class WordService {
     public init(): void {
         this.processEditWord();
         this.processGetWords();
+        this.processOpenWordEdit();
     }
 
 
@@ -44,5 +47,17 @@ export class WordService {
 
         const getWordsChain = new GetRequestHandler(ipcEvents.GET_WORDS, getWords$);
         getWordsChain.run({});
+    }
+
+
+    private processOpenWordEdit(): void {
+        const openWordEditChain = new GetRequestHandler(ipcEvents.OPEN_WORD_EDIT, (wordId: string) => of(wordId));
+
+        openWordEditChain
+            .next(
+                new MethodHandler((wordId: string) => (new Navigation()).openPage(`${Routes.WORD}/${wordId}`))
+            );
+
+        openWordEditChain.run({});
     }
 }
