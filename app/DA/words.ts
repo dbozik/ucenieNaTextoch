@@ -52,7 +52,7 @@ export class Words {
             {_id: word.wordId},
             {
                 $set: {
-                    word: word.content,
+                    word: word.content.toLowerCase(),
                     level: word.level,
                     translation: word.translation,
                     exampleSentence: word.exampleSentence,

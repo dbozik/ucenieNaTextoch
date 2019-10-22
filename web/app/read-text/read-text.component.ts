@@ -1,7 +1,8 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Language, Text, TextPart } from '../../../app/Objects';
+import { Text, TextPart } from '../../../app/Objects';
 import { getColor } from '../color.utils';
+import { ClickService } from '../services/click.service';
 import { LanguageService } from '../services/language.service';
 import { TextService } from '../services/text.service';
 
@@ -9,7 +10,7 @@ import { TextService } from '../services/text.service';
     selector: 'app-read-text',
     templateUrl: './read-text.component.html',
     styleUrls: ['./read-text.component.scss'],
-    providers: [TextService, LanguageService],
+    providers: [ClickService, TextService, LanguageService],
 })
 export class ReadTextComponent implements OnInit {
     public text: Text;
@@ -19,6 +20,7 @@ export class ReadTextComponent implements OnInit {
 
     constructor(
         private readonly route: ActivatedRoute,
+        private readonly clickService: ClickService,
         private readonly languageService: LanguageService,
         private readonly textService: TextService,
         private readonly changeDetectorRef: ChangeDetectorRef,
@@ -70,6 +72,11 @@ export class ReadTextComponent implements OnInit {
             this.text.textParts = editedTextParts;
             this.changeDetectorRef.detectChanges();
         });
+    }
+
+
+    public onTextAreaClick(): void {
+        this.clickService.click();
     }
 
 

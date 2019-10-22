@@ -1,15 +1,19 @@
 import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
-    Component, ElementRef,
+    Component,
+    ElementRef,
     EventEmitter,
     Input,
     OnChanges,
-    Output, ViewChild
+    Output,
+    ViewChild
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { take } from 'rxjs/operators';
 import { TextPart } from '../../../app/Objects';
 import { colorMaxLevel } from '../color.utils';
+import { ClickService } from '../services/click.service';
 
 @Component({
     selector: 'app-word',
@@ -36,6 +40,7 @@ export class WordComponent implements OnChanges {
 
     constructor(
         private readonly changeDetection: ChangeDetectorRef,
+        private readonly clickService: ClickService,
     ) {
     }
 
@@ -52,16 +57,31 @@ export class WordComponent implements OnChanges {
 
 
     public clickPopup(): void {
-        this.translateForm = new FormGroup({
-            translation: new FormControl(this.textPart.translation),
-            exampleSentence: new FormControl(this.textPart.exampleSentence),
-            exampleSentenceTranslation: new FormControl(this.textPart.exampleSentenceTranslation),
-        });
-        this.openTranslation.emit(this.textPart.content);
-        this.popupShowed = !this.popupShowed;
-        this.changeDetection.detectChanges();
-        this.translationField.nativeElement.focus();
-        this.changeDetection.detectChanges();
+        if (!this.popupShowed) {
+            this.popupShowed = true;
+
+            this.translateForm = new FormGroup({
+                translation: new FormControl(this.textPart.translation),
+                exampleSentence: new FormControl(this.textPart.exampleSentence),
+                exampleSentenceTranslation: new FormControl(this.textPart.exampleSentenceTranslation),
+            });
+            this.openTranslation.emit(this.textPart.content);
+            this.changeDetection.detectChanges();
+            this.translationField.nativeElement.focus();
+            this.changeDetection.detectChanges();
+
+            this.clickService.wordClicked$.pipe(
+                take(1),
+            ).subscribe(() => {
+                this.popupShowed = false;
+                this.changeDetection.detectChanges();
+            });
+        }
+    }
+
+
+    public preventPropagation(event: MouseEvent): void {
+        event.stopPropagation();
     }
 
 

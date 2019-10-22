@@ -4,9 +4,24 @@
  - languages - on remove display a confirm window
  - read text - select an extension - several words - save a link to some word in the selection - for parsing
  - create loader on events (i.e. opening a long text)
- - translate popup - close on click elsewhere (currently just the original word)
  - archive texts
  - read text - search
- - adding words with first letter capital
- - setup build - ng build in production mode, environment to prod
  - read-text - display, how many percents are loaded
+ - more settings - default language, background image, password
+ - display settings/db tables as json
+ - short texts - scrolled window too small
+
+ Story 6
+  - edit a word
+  - export words
+  - multiple word expressions
+  - read text - show percents
+
+Story 7
+ - filter texts
+ - filter words
+ - text percentage
+
+Story 8
+ - edit a text
+ - archive texts

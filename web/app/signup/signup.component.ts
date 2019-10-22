@@ -8,7 +8,8 @@ import { LoginService } from '../services/login.service';
 @Component({
     selector: 'app-signup',
     templateUrl: './signup.component.html',
-    styleUrls: ['./signup.component.scss']
+    styleUrls: ['./signup.component.scss'],
+    providers: [LoginService],
 })
 export class SignupComponent implements OnInit {
 
