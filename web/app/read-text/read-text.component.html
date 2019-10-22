@@ -1,11 +1,11 @@
 <ng-container *ngIf="text">
     <div class="row text-title text-center">
-        <h3>{{text.title ? text.title : text.text.slice(0, 10) + '...'}}</h3>
+        <h3>{{text.title ? text.title : text.text.slice(0, 10) + '...'}} ({{percentage | percent}})</h3>
     </div>
 
     <div class="row">
         <div class="col-sm-6 text-area bordered" (click)="onTextAreaClick()">
-            <app-infinite-scroll [items]="text.textParts">
+            <app-infinite-scroll [items]="text.textParts" (loaded)="onLoaded($event)">
                 <app-word
                     *appScrollItem="let item"
                     [textPart]="item"

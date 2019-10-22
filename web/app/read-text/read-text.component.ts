@@ -15,6 +15,7 @@ import { TextService } from '../services/text.service';
 export class ReadTextComponent implements OnInit {
     public text: Text;
     public translateLink: string = '';
+    public percentage: number = 0;
 
     private languageDictionary: string;
 
@@ -77,6 +78,12 @@ export class ReadTextComponent implements OnInit {
 
     public onTextAreaClick(): void {
         this.clickService.click();
+    }
+
+
+    public onLoaded(payload: { percentage: number }): void {
+        this.percentage = payload.percentage;
+        this.changeDetectorRef.detectChanges();
     }
 
 

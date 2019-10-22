@@ -10,6 +10,7 @@
  - more settings - default language, background image, password
  - display settings/db tables as json
  - short texts - scrolled window too small
+ - process translations with longer texts - performance
 
  Story 6
   - edit a word
