@@ -1,7 +1,8 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Language, Text, TextPart } from '../../../app/Objects';
+import { Text, TextPart } from '../../../app/Objects';
 import { getColor } from '../color.utils';
+import { ClickService } from '../services/click.service';
 import { LanguageService } from '../services/language.service';
 import { TextService } from '../services/text.service';
 
@@ -9,16 +10,17 @@ import { TextService } from '../services/text.service';
     selector: 'app-read-text',
     templateUrl: './read-text.component.html',
     styleUrls: ['./read-text.component.scss'],
-    providers: [TextService, LanguageService],
+    providers: [ClickService, TextService, LanguageService],
 })
 export class ReadTextComponent implements OnInit {
     public text: Text;
     public translateLink: string = '';
 
-    private language: Language;
+    private languageDictionary: string;
 
     constructor(
         private readonly route: ActivatedRoute,
+        private readonly clickService: ClickService,
         private readonly languageService: LanguageService,
         private readonly textService: TextService,
         private readonly changeDetectorRef: ChangeDetectorRef,
@@ -31,18 +33,15 @@ export class ReadTextComponent implements OnInit {
         this.textService.getParsed(textId).subscribe((result: Text) => {
             this.text = result;
             this.text.textParts = this.processTextParts(result.textParts);
-            this.changeDetectorRef.detectChanges();
 
-            this.languageService.getLanguage(this.text.languageId).subscribe((language: Language) => {
-                this.language = language;
-                this.setTranslateLink('', this.language.dictionary);
-                this.changeDetectorRef.detectChanges();
-            });
+            this.languageDictionary = this.text.languageDictionary;
+            this.setTranslateLink('', this.languageDictionary);
+            this.changeDetectorRef.detectChanges();
         });
     }
 
 
-    public setTranslateLink(word: string, dictionary: string = this.language.dictionary): void {
+    public setTranslateLink(word: string, dictionary: string = this.languageDictionary): void {
         this.translateLink = dictionary.replace('{word}', word);
         this.changeDetectorRef.detectChanges();
     }
@@ -73,6 +72,11 @@ export class ReadTextComponent implements OnInit {
             this.text.textParts = editedTextParts;
             this.changeDetectorRef.detectChanges();
         });
+    }
+
+
+    public onTextAreaClick(): void {
+        this.clickService.click();
     }
 
 

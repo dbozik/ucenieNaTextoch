@@ -8,13 +8,16 @@ import { IpcService } from './ipc.service';
 @Injectable()
 export class LanguageService {
     private languageSelectedSource$: Subject<boolean> = new ReplaySubject(1);
+    private languageChangedSource$: Subject<boolean> = new ReplaySubject(1);
 
     public languageSelected$: Observable<boolean> = this.languageSelectedSource$.asObservable();
+    public languagesChanged$: Observable<boolean> = this.languageChangedSource$.asObservable();
 
     constructor(
         private readonly ipcService: IpcService,
     ) {
         this.ipcService.ipc.on(ipcEvents.LANGUAGE_SELECTED, () => this.languageSelectedSource$.next(true));
+        this.ipcService.ipc.on(ipcEvents.LANGUAGES_CHANGED, () => this.languageChangedSource$.next(true));
     }
 
 

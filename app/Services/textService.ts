@@ -101,6 +101,7 @@ export class TextService {
             switchMap((textDA: Text) => {
                 text = textDA;
                 const language = StateService.getInstance().language;
+                text.languageDictionary = language.dictionary;
 
                 parseTextService = new ParseTextService(language.wordSeparators, language.sentenceSeparators);
                 textParts = parseTextService.splitToParts(text.text);

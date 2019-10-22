@@ -9,6 +9,7 @@ export class Text {
     public title: string;
     // language
     public languageId: string;
+    public languageDictionary?: string;
 
     public userId?: string;
     // word list

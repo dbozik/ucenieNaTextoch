@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { distinctUntilChanged, startWith, switchMap } from 'rxjs/operators';
 import { Language } from '../../../app/Objects';
 import { LanguageService } from '../services/language.service';
 import { LoginService } from '../services/login.service';
@@ -24,13 +25,19 @@ export class LanguageSelectionComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.languagesControl.valueChanges.subscribe((languageId: string) => {
+        this.languagesControl.valueChanges.pipe(
+            distinctUntilChanged(),
+        ).subscribe((languageId: string) => {
             this.languageService.selectLanguage(languageId);
         });
 
         this.loginService.loggedIn$.subscribe((loggedIn: boolean) => {
             if (loggedIn) {
-                this.languageService.getLanguages().subscribe((languages: Language[]) => {
+                this.languageService.languagesChanged$
+                    .pipe(
+                        startWith(true),
+                        switchMap(() => this.languageService.getLanguages())
+                        ).subscribe((languages: Language[]) => {
                     this.languages = languages;
                     if (this.languages && this.languages.length > 0) {
                         this.languagesControl.setValue(this.languages[0]._id);

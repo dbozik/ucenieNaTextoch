@@ -37,27 +37,25 @@ export class LwtApp {
         }
     }
 
+
     private onClose() {
         // Dereference the window object.
         this.mainWindow = null;
     }
+
 
     private onReady = () => {
         this.navigation.closeMenu();
 
         this.mainWindow = new this.browserWindow({width: 1500, height: 927});
 
-        const environment: 'dev' | 'prod' = 'dev';
+        const environment: 'dev' | 'prod' = process.env.NODE_ENV.trim() as 'dev' | 'prod';
 
         this.mainWindow.loadFile('./dist/web/index.html');
         this.navigation.openPage(Routes.LOGIN);
-        // if (environment === 'dev') {
-        //     Main.mainWindow.loadURL(`http://localhost:${PORT}`);
-        // } else {
-        //     Main.mainWindow.loadFile('./dist/web/index.html');
-        // }
-
-        this.mainWindow.webContents.openDevTools();
+        if (environment !== 'prod') {
+            this.mainWindow.webContents.openDevTools();
+        }
 
         this.mainWindow.on('closed', this.onClose);
     }

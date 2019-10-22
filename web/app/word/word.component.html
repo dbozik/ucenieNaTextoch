@@ -1,8 +1,10 @@
 <ng-container *ngIf="textPart && textPart.content">
-    <span [style.backgroundColor]="textPart.color" [title]="textPart.title" class="popup text-part" (click)="clickPopup()">
+    <span [style.backgroundColor]="textPart.color" [title]="textPart.title" class="popup text-part"
+          (click)="preventPropagation($event); clickPopup()">
     {{textPart.content}}
 
-    <div *ngIf="popupShowed" class="popuptext show" [formGroup]="translateForm" (click)="$event.stopPropagation()">
+        <div *ngIf="popupShowed" class="popuptext show" [formGroup]="translateForm" (keyup.enter)="updateTranslation()"
+        >
         <div class="font-weight-bold font-size-1_5">
             {{textPart.content}}
         </div>
@@ -13,17 +15,17 @@
         </div>
 
         <div>Translation:</div>
-        <div>
-            <input type="text" formControlName="translation">
+        <div  (click)="preventPropagation($event)">
+            <input type="text" formControlName="translation" #translationField>
         </div>
 
         <div>Example sentence:</div>
-        <div>
+        <div (click)="preventPropagation($event)">
             <input type="text" formControlName="exampleSentence">
         </div>
 
         <div>Example sentence translation:</div>
-        <div>
+        <div (click)="preventPropagation($event)">
             <input type="text" formControlName="exampleSentenceTranslation">
         </div>
 

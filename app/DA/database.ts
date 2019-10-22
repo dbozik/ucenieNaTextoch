@@ -49,6 +49,11 @@ export class Database {
         return this._languages;
     }
 
+
+    public destroyLanguages(): void {
+        this._languages = null;
+    }
+
     private _users: Datastore = null;
 
     public get users(): Datastore {

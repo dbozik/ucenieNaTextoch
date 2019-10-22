@@ -58,6 +58,13 @@ export class LanguageService {
         };
 
         const addLanguageChain = new GetRequestHandler(ipcEvents.ADD_LANGUAGE, addLanguage$);
+        addLanguageChain
+            .next(
+                new MethodHandler<any>((data) => {
+                    LwtApp.getInstance().mainWindow.webContents.send(ipcEvents.LANGUAGES_CHANGED);
+                    return data;
+                })
+            );
         addLanguageChain.run({});
     }
 
@@ -81,6 +88,14 @@ export class LanguageService {
         const deleteLanguageChain = new GetRequestHandler(ipcEvents.DELETE_LANGUAGE,
             (languageId: string) => this.languageDA.delete(languageId)
         );
+        deleteLanguageChain
+            .next(
+                new MethodHandler<any>((data) => {
+                    LwtApp.getInstance().mainWindow.webContents.send(ipcEvents.LANGUAGES_CHANGED);
+
+                    return data;
+                })
+            );
 
         deleteLanguageChain.run({});
     }

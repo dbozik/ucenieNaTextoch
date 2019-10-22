@@ -2,23 +2,26 @@
  - forgotten password
  - languages - add a hint to dictionary field
  - languages - on remove display a confirm window
- - add text - extendible text area for longer texts
- - read text - select an extension - save a link to some word in the selection - for parsing
+ - read text - select an extension - several words - save a link to some word in the selection - for parsing
  - create loader on events (i.e. opening a long text)
- - performance on long texts
- - translate popup - close on click elsewhere (currently just the original word)
  - archive texts
- - refactoring - replace replaySubject, add db persistance update on remove/edit items
- - read text - virtual scroll
  - read text - search
- - MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 lwt-language-selected listeners added. Use emitter.setMaxListeners() to increase limit
- - translation popup - focus on translation
- - translation popup - translate + enter - save
- - add text - focus o title
- - adding words with first letter capital
- - setup build - ng build in production mode, environment to prod
- - after adding a new language - add in in the selection list
- - scroll - cannot read content of undefined even though all loaded
- - read-text - attach translate dictionary to the text
  - read-text - display, how many percents are loaded
- - parsing long texts - performance
+ - more settings - default language, background image, password
+ - display settings/db tables as json
+ - short texts - scrolled window too small
+
+ Story 6
+  - edit a word
+  - export words
+  - multiple word expressions
+  - read text - show percents
+
+Story 7
+ - filter texts
+ - filter words
+ - text percentage
+
+Story 8
+ - edit a text
+ - archive texts
