@@ -44,4 +44,36 @@ export class WordsComponent implements OnInit, OnDestroy {
     public ngOnDestroy(): void {
         this.componentDestroyed$.next(true);
     }
+
+
+    public exportWords() {
+        const DELIMITER = ';';
+        const words: (WordObject | 'color')[] = this.words;
+
+        // specify how you want to handle null values here
+        const replacer = (key, value) => value === null || typeof value === 'undefined' ? '' : value;
+
+        const header = ['word', 'translate', 'sentence', 'sentenceTranslate'];
+
+        const jsonProcess = (item: string) => JSON.stringify(item, replacer);
+
+        const csv = words.map((word: WordObject) => [
+            jsonProcess(word.word),
+            jsonProcess(word.translation),
+            jsonProcess(word.exampleSentence),
+            jsonProcess(word.exampleSentenceTranslation),
+        ].join(DELIMITER));
+        csv.unshift(header.join(DELIMITER));
+        const csvArray = csv.join('\r\n');
+
+        const downloadLink = document.createElement('a');
+        const blob = new Blob(['\ufeff', csvArray], {type: 'text/csv'});
+        const url = window.URL.createObjectURL(blob);
+
+        downloadLink.href = url;
+        downloadLink.download = 'export.csv';
+        downloadLink.click();
+        window.URL.revokeObjectURL(url);
+        downloadLink.remove();
+    }
 }
