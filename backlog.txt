@@ -6,7 +6,6 @@
  - create loader on events (i.e. opening a long text)
  - archive texts
  - read text - search
- - read-text - display, how many percents are loaded
  - more settings - default language, background image, password
  - display settings/db tables as json
  - short texts - scrolled window too small
@@ -14,9 +13,16 @@
  - MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 lwt-language-selected listeners added. Use emitter.setMaxListeners() to increase limit
  - add word to word list
  - import words to word list
+ - read text - error messages on unfound words
+ - language selection subscribe on route and show only on relevant routes
+ - texts - correct sorting - createdOn descending
+ - word translation - enter on empty translation -> higher level
+ - highligh not connected parts with ctrl
+ - maybe highlight subwords
+ - create a windows installer
 
  Story 6
-  - edit a word
+    - edit a word
     - export words
   - multiple word expressions
     - read text - show percents

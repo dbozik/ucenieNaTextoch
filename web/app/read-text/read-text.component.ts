@@ -73,6 +73,12 @@ export class ReadTextComponent implements OnInit {
 
 
     public onTextAreaClick(): void {
+        const selection = window.getSelection();
+
+        if (selection.type === 'Range') {
+            this.processSelection(selection);
+        }
+
         this.clickService.click();
     }
 
@@ -89,5 +95,35 @@ export class ReadTextComponent implements OnInit {
             color: textPart.type === 'word' ? getColor(textPart.word.level) : '',
             title: textPart.type === 'word' ? textPart.word.translation || '' : ''
         }));
+    }
+
+
+    private processSelection(selection: Selection): void {
+        // get the first app-word node
+        let firstNode: Node = selection.anchorNode;
+        while (firstNode.nodeName !== 'APP-WORD') {
+            firstNode = firstNode.parentElement;
+        }
+
+        // get the last text
+        const lastText = selection.extentNode.textContent.trim();
+
+        const selectionParts: string[] = [];
+        let currentNode: Node = firstNode;
+
+        do {
+            // get the text on the app-word node
+            currentNode.childNodes.forEach((node: Node) => {
+                if (node.nodeName === 'SPAN') {
+                    let nodeContent = node.textContent;
+                    if (nodeContent[0] === ' ' && nodeContent[nodeContent.length - 1] === ' ') {
+                        nodeContent = nodeContent.substring(1, nodeContent.length - 1);
+                    }
+                    selectionParts.push(nodeContent);
+                }
+            });
+            currentNode = currentNode.nextSibling;
+        } while (selectionParts.length === 0 || selectionParts[selectionParts.length - 1].trim() !== lastText);
+        console.log(selectionParts.join(''));
     }
 }
