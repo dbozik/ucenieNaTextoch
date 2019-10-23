@@ -6,7 +6,7 @@ import { Routes } from '../../web/shared/routes.enum';
 import * as DA from '../DA';
 import { GetRequestHandler, IpcMainHandler, MethodHandler } from '../Handlers';
 import { Navigation } from '../navigation';
-import { Language, Text, TextPart, WordObject } from '../Objects';
+import { Language, Text, TextPart, Word } from '../Objects';
 
 export class TextService {
 
@@ -109,7 +109,7 @@ export class TextService {
 
                 return this.wordsDA.getList(words);
             }),
-            map((wordObjects: WordObject[]) => {
+            map((wordObjects: Word[]) => {
                 text.textParts = parseTextService.completeTextParts(textParts, wordObjects);
 
                 return text;

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Text, TextPart } from '../../../app/Objects';
+import { Text, Word } from '../../../app/Objects';
 import { ipcEvents } from '../../shared/ipc-events.enum';
 import { IpcService } from './ipc.service';
 
@@ -36,7 +36,7 @@ export class TextService {
     }
 
 
-    public editWord(word: TextPart): Observable<TextPart> {
+    public editWord(word: Word): Observable<Word> {
         return this.ipcService.sendData(ipcEvents.EDIT_WORD, word);
     }
 }

@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { TextPart, WordObject } from '../Objects';
+import { TextPart, Word } from '../Objects';
 import { StateService } from '../Services';
 import { Database } from './database';
 
@@ -10,10 +10,10 @@ export class Words {
     }
 
     public add(word: string, exampleSentence: string)
-        : Observable<WordObject> {
-        const newWord: WordObject = {
+        : Observable<Word> {
+        const newWord: Word = {
             ...StateService.getInstance().userLanguageRequest,
-            word,
+            content: word,
             exampleSentence,
             level: 0,
         };
@@ -21,25 +21,25 @@ export class Words {
     }
 
 
-    public saveMultiple(words: WordObject[]): Observable<WordObject[]> {
+    public saveMultiple(words: Word[]): Observable<Word[]> {
         return this.db.words.insert$(words);
     }
 
 
-    public get(word: string): Observable<WordObject> {
-        return this.db.words.findOne$({word});
+    public get(word: string): Observable<Word> {
+        return this.db.words.findOne$({content: word});
     }
 
-    public getById(id: string): Observable<WordObject> {
+    public getById(id: string): Observable<Word> {
         return this.db.words.findOne$({_id: id});
     }
 
 
-    public getList(words: string[]): Observable<WordObject[]> {
-        return this.db.words.find$({...StateService.getInstance().userLanguageRequest, word: {$in: words}});
+    public getList(words: string[]): Observable<Word[]> {
+        return this.db.words.find$({...StateService.getInstance().userLanguageRequest, content: {$in: words}});
     }
 
-    public getByLanguage(): Observable<WordObject[]> {
+    public getByLanguage(): Observable<Word[]> {
         const userId = StateService.getInstance().userId;
         const languageId = StateService.getInstance().language._id;
 
@@ -47,13 +47,14 @@ export class Words {
     }
 
 
-    public edit(word: TextPart): Observable<WordObject> {
+    public edit(word: Word): Observable<Word> {
         return this.db.words.update$(
-            {_id: word.wordId},
+            {_id: word._id},
             {
                 $set: {
-                    word: word.content.toLowerCase(),
+                    content: word.content.toLowerCase(),
                     level: word.level,
+                    languageId: word.languageId,
                     translation: word.translation,
                     exampleSentence: word.exampleSentence,
                     exampleSentenceTranslation: word.exampleSentenceTranslation,

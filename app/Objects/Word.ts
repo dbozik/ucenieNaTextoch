@@ -1,6 +1,6 @@
-export class WordObject {
+export class Word {
     public _id?: string;
-    public word: string;
+    public content: string;
     public translation?: string;
     public level: number;
     public exampleSentence: string;

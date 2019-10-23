@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { take } from 'rxjs/operators';
-import { TextPart } from '../../../app/Objects';
+import { TextPart, Word } from '../../../app/Objects';
 import { colorMaxLevel } from '../color.utils';
 import { ClickService } from '../services/click.service';
 
@@ -27,7 +27,7 @@ export class WordComponent implements OnChanges {
     public textPart: TextPart;
 
     @Output()
-    public wordEdit: EventEmitter<TextPart> = new EventEmitter<TextPart>();
+    public wordEdit: EventEmitter<Word> = new EventEmitter<Word>();
     @Output()
     public openTranslation: EventEmitter<string> = new EventEmitter<string>();
 
@@ -57,13 +57,17 @@ export class WordComponent implements OnChanges {
 
 
     public clickPopup(): void {
+        if (this.textPart.type === 'separator') {
+            return;
+        }
+
         if (!this.popupShowed) {
             this.popupShowed = true;
 
             this.translateForm = new FormGroup({
-                translation: new FormControl(this.textPart.translation),
-                exampleSentence: new FormControl(this.textPart.exampleSentence),
-                exampleSentenceTranslation: new FormControl(this.textPart.exampleSentenceTranslation),
+                translation: new FormControl(this.textPart.word.translation),
+                exampleSentence: new FormControl(this.textPart.word.exampleSentence),
+                exampleSentenceTranslation: new FormControl(this.textPart.word.exampleSentenceTranslation),
             });
             this.openTranslation.emit(this.textPart.content);
             this.changeDetection.detectChanges();
@@ -86,37 +90,37 @@ export class WordComponent implements OnChanges {
 
 
     public decreaseLevel(): void {
-        this.textPart.level = this.textPart.level / 2;
+        this.textPart.word.level = this.textPart.word.level / 2;
 
-        this.wordEdit.emit(this.textPart);
+        this.wordEdit.emit(this.textPart.word);
     }
 
 
     public increaseLevel(): void {
-        if (this.textPart.level === 0) {
-            this.textPart.level = 0.1;
+        if (this.textPart.word.level === 0) {
+            this.textPart.word.level = 0.1;
         } else {
-            this.textPart.level = this.textPart.level / 2 + colorMaxLevel / 2;
+            this.textPart.word.level = this.textPart.word.level / 2 + colorMaxLevel / 2;
         }
 
-        this.wordEdit.emit(this.textPart);
+        this.wordEdit.emit(this.textPart.word);
     }
 
 
     public setKnown(): void {
-        this.textPart.level = colorMaxLevel;
+        this.textPart.word.level = colorMaxLevel;
 
-        this.wordEdit.emit(this.textPart);
+        this.wordEdit.emit(this.textPart.word);
     }
 
 
     public updateTranslation(): void {
-        this.textPart.translation = this.translateForm.get('translation').value;
-        this.textPart.exampleSentence = this.translateForm.get('exampleSentence').value;
-        this.textPart.exampleSentenceTranslation = this.translateForm.get('exampleSentenceTranslation').value;
+        this.textPart.word.translation = this.translateForm.get('translation').value;
+        this.textPart.word.exampleSentence = this.translateForm.get('exampleSentence').value;
+        this.textPart.word.exampleSentenceTranslation = this.translateForm.get('exampleSentenceTranslation').value;
 
-        this.textPart.level = 0.1;
+        this.textPart.word.level = 0.1;
 
-        this.wordEdit.emit(this.textPart);
+        this.wordEdit.emit(this.textPart.word);
     }
 }

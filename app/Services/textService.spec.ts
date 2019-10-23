@@ -13,33 +13,28 @@ const textParts: Objects.TextPart[] = [
     {
         content: 'nieco',
         type: 'word',
-        wordId: '1',
     },
     {
         content: ' ',
         type: 'separator',
-        wordId: '',
     },
     {
         content: 'ine',
         type: 'word',
-        wordId: '2',
     },
     {
         content: ', ',
         type: 'separator',
-        wordId: '',
     },
     {
         content: 'nieco',
         type: 'word',
-        wordId: '1',
     },
 ];
 
-const wordObjects: Objects.WordObject[] = [
+const wordObjects: Objects.Word[] = [
     {
-        word: 'nieco',
+        content: 'nieco',
         level: 0,
         exampleSentence: '',
         languageId: '1',

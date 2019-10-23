@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
 import { startWith, switchMap, takeUntil } from 'rxjs/operators';
-import { WordObject } from '../../../app/Objects';
+import { Word } from '../../../app/Objects';
 import { getColor } from '../color.utils';
 import { LanguageService } from '../services/language.service';
 import { WordService } from '../services/word.service';
@@ -14,7 +14,7 @@ import { WordService } from '../services/word.service';
 })
 export class WordsComponent implements OnInit, OnDestroy {
 
-    public words: (WordObject | 'color')[] = [];
+    public words: (Word | 'color')[] = [];
 
     private componentDestroyed$: Subject<boolean> = new Subject<boolean>();
 
@@ -33,7 +33,7 @@ export class WordsComponent implements OnInit, OnDestroy {
             switchMap(() => {
                 return this.wordService.getWords();
             })
-        ).subscribe((words: WordObject[]) => {
+        ).subscribe((words: Word[]) => {
             this.words = words.sort((first, second) => first.level - second.level)
                 .map(word => ({...word, color: getColor(word.level)}));
             this.changeDetection.detectChanges();
@@ -48,7 +48,7 @@ export class WordsComponent implements OnInit, OnDestroy {
 
     public exportWords() {
         const DELIMITER = ';';
-        const words: (WordObject | 'color')[] = this.words;
+        const words: (Word | 'color')[] = this.words;
 
         // specify how you want to handle null values here
         const replacer = (key, value) => value === null || typeof value === 'undefined' ? '' : value;
@@ -57,8 +57,8 @@ export class WordsComponent implements OnInit, OnDestroy {
 
         const jsonProcess = (item: string) => JSON.stringify(item, replacer);
 
-        const csv = words.map((word: WordObject) => [
-            jsonProcess(word.word),
+        const csv = words.map((word: Word) => [
+            jsonProcess(word.content),
             jsonProcess(word.translation),
             jsonProcess(word.exampleSentence),
             jsonProcess(word.exampleSentenceTranslation),

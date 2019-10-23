@@ -13,7 +13,7 @@ export class Text {
 
     public userId?: string;
     // word list
-    public words?: Objects.WordObject[];
+    public words?: Objects.Word[];
     // parsed text
     // sentences list
     public sentences?: string[];

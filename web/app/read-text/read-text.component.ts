@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Text, TextPart } from '../../../app/Objects';
+import { Text, TextPart, Word } from '../../../app/Objects';
 import { getColor } from '../color.utils';
 import { ClickService } from '../services/click.service';
 import { LanguageService } from '../services/language.service';
@@ -48,22 +48,18 @@ export class ReadTextComponent implements OnInit {
     }
 
 
-    public wordEdit(word: TextPart): void {
+    public wordEdit(word: Word): void {
         this.textService.editWord(word).subscribe(() => {
             const editedTextParts: TextPart[] = [];
 
             for (const textPart of this.text.textParts) {
-                if (textPart.wordId === word.wordId) {
+                if (textPart.type === 'word' && textPart.word._id === word._id) {
                     editedTextParts.push({
-                        wordId: word.wordId,
                         content: textPart.content,
-                        level: word.level,
+                        type: 'word',
+                        word,
                         color: getColor(word.level),
                         title: word.translation,
-                        type: word.type,
-                        translation: word.translation,
-                        exampleSentence: word.exampleSentence,
-                        exampleSentenceTranslation: word.exampleSentenceTranslation,
                     });
                 } else {
                     editedTextParts.push(JSON.parse(JSON.stringify(textPart)));
@@ -90,8 +86,8 @@ export class ReadTextComponent implements OnInit {
     private processTextParts(textParts: TextPart[]): TextPart[] {
         return textParts.map((textPart: TextPart) => ({
             ...textPart,
-            color: textPart.type === 'word' ? getColor(textPart.level) : '',
-            title: textPart.type === 'word' ? textPart.translation || '' : ''
+            color: textPart.type === 'word' ? getColor(textPart.word.level) : '',
+            title: textPart.type === 'word' ? textPart.word.translation || '' : ''
         }));
     }
 }

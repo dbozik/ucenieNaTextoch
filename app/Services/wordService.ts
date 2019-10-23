@@ -5,7 +5,7 @@ import { Routes } from '../../web/shared/routes.enum';
 import * as DA from '../DA';
 import { GetRequestHandler, MethodHandler } from '../Handlers';
 import { Navigation } from '../navigation';
-import { Text, TextPart, WordObject } from '../Objects';
+import { Text, TextPart, Word } from '../Objects';
 
 export class WordService {
     private wordsDA = new DA.Words();
@@ -21,11 +21,11 @@ export class WordService {
     }
 
 
-    public saveWords = (words: WordObject[]): Observable<WordObject[]> => {
-        return this.wordsDA.getList(words.map(wordObject => wordObject.word)).pipe(
-            switchMap((savedWordObjects: WordObject[]) => {
-                const savedWords = savedWordObjects.map(wordObject => wordObject.word);
-                const wordsToSave = words.filter(wordObject => !savedWords.includes(wordObject.word));
+    public saveWords = (words: Word[]): Observable<Word[]> => {
+        return this.wordsDA.getList(words.map(wordObject => wordObject.content)).pipe(
+            switchMap((savedWordObjects: Word[]) => {
+                const savedWords = savedWordObjects.map(wordObject => wordObject.content);
+                const wordsToSave = words.filter(wordObject => !savedWords.includes(wordObject.content));
 
                 return this.wordsDA.saveMultiple(wordsToSave);
             }),
@@ -34,7 +34,7 @@ export class WordService {
 
 
     private processEditWord(): void {
-        const editWord$ = (word: TextPart) => this.wordsDA.edit(word);
+        const editWord$ = (word: Word) => this.wordsDA.edit(word);
 
         const editWordChain = new GetRequestHandler(ipcEvents.EDIT_WORD, editWord$);
 
