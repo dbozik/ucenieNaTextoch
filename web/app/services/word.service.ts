@@ -17,7 +17,17 @@ export class WordService {
     }
 
 
+    public getWord(wordId: string): Observable<Word> {
+        return this.ipcService.sendData(ipcEvents.GET_WORD, wordId);
+    }
+
+
     public openWord(wordId: string): Observable<string> {
         return this.ipcService.sendData(ipcEvents.OPEN_WORD_EDIT, wordId);
+    }
+
+
+    public editWord(word: Word): Observable<Word> {
+        return this.ipcService.sendData(ipcEvents.EDIT_WORD, word);
     }
 }

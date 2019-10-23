@@ -18,6 +18,7 @@ export class WordService {
         this.processEditWord();
         this.processGetWords();
         this.processOpenWordEdit();
+        this.processGetWord();
     }
 
 
@@ -30,6 +31,12 @@ export class WordService {
                 return this.wordsDA.saveMultiple(wordsToSave);
             }),
         );
+    }
+
+
+    private processGetWord(): void {
+        const getWordChain = new GetRequestHandler(ipcEvents.GET_WORD, (wordId: string) => this.wordsDA.getById(wordId));
+        getWordChain.run({});
     }
 
 

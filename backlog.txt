@@ -11,12 +11,15 @@
  - display settings/db tables as json
  - short texts - scrolled window too small
  - process translations with longer texts - performance
+ - MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 lwt-language-selected listeners added. Use emitter.setMaxListeners() to increase limit
+ - add word to word list
+ - import words to word list
 
  Story 6
   - edit a word
-  - export words
+    - export words
   - multiple word expressions
-  - read text - show percents
+    - read text - show percents
 
 Story 7
  - filter texts
