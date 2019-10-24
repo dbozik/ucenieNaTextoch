@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Text, TextPart, Word } from '../../../app/Objects';
 import { getColor } from '../color.utils';
@@ -98,9 +98,64 @@ export class ReadTextComponent implements OnInit {
 
 
     public saveSelection(): void {
+        if (this.selectionForm.invalid) {
+            return;
+        }
+
         console.dir(this.selectionForm.value);
+        const selection = this.selectionForm.get('selection').value;
+
+        // find selection indices
+        const selectionIndexes = this.indexes(this.text.text, selection);
+        // get the first word
+        const firstWord = selection.split(' ')[0];
+        // find indexes of the first words
+        const firstWordIndexes = this.indexes(this.text.text, firstWord);
+        // create a list of first words indexes in selection indexes tables
+        const firstWords: number[] = [];
+        selectionIndexes.forEach((selectionIndex: number) => firstWords.push(firstWordIndexes.indexOf(selectionIndex)));
+
+        // filter in text.textParts first words
+        const firstWordParts = this.text.textParts.filter((textPart: TextPart) =>
+            textPart.content.toLowerCase() === firstWord.toLowerCase());
+        // for every firstWords index take a first word
+        firstWords.forEach((firstWordIndex: number) => {
+            const wordObject = firstWordParts[firstWordIndex];
+            if (!wordObject.selections || wordObject.selections.length === 0) {
+                wordObject.selections = [];
+            }
+
+            wordObject.selections.push({
+                content: selection,
+                translation: this.selectionForm.get('translation').value,
+                level: 0.1,
+            } as Word);
+        });
+        // deep copy text parts with added selections
+        this.text.textParts = JSON.parse(JSON.stringify(this.text.textParts));
+
         this.selectionPopupShowed = false;
         this.changeDetectorRef.detectChanges();
+    }
+
+
+    private indexes(source: string, find: string): number[] {
+        if (!source) {
+            return [];
+        }
+        // if find is empty string return all indexes.
+        // if (!find) {
+        //     // or shorter arrow function:
+        //     // return source.split('').map((_,i) => i);
+        //     return source.split('').map(function(_, i) { return i; });
+        // }
+        const result = [];
+        for (let i = 0; i < source.length; ++i) {
+            if (source.substring(i, i + find.length).toLowerCase() === find) {
+                result.push(i);
+            }
+        }
+        return result;
     }
 
 
