@@ -2,17 +2,14 @@ import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
-    ElementRef,
     EventEmitter,
     Input,
     OnChanges,
-    Output,
-    ViewChild
+    Output
 } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
 import { take } from 'rxjs/operators';
 import { TextPart, Word } from '../../../app/Objects';
-import { colorMaxLevel, getColor } from '../color.utils';
+import { getColor } from '../color.utils';
 import { ClickService } from '../services/click.service';
 
 @Component({
@@ -31,11 +28,8 @@ export class WordComponent implements OnChanges {
     @Output()
     public openTranslation: EventEmitter<string> = new EventEmitter<string>();
 
-    @ViewChild('translationField')
-    public translationField: ElementRef<HTMLInputElement>;
-
-    public popupShowed: boolean = false;
-    public translateForm: FormGroup;
+    public popupWord: Word = null;
+    public popupSelection: Word = null;
 
 
     constructor(
@@ -46,7 +40,8 @@ export class WordComponent implements OnChanges {
 
     ngOnChanges() {
         if (this.textPart) {
-            this.popupShowed = false;
+            this.popupWord = null;
+            this.popupSelection = null;
         }
     }
 
@@ -61,26 +56,11 @@ export class WordComponent implements OnChanges {
             return;
         }
 
-        if (!this.popupShowed) {
-            this.popupShowed = true;
+        this.openTranslation.emit(this.textPart.content);
+        this.popupWord = this.textPart.word;
+        this.changeDetection.detectChanges();
 
-            this.translateForm = new FormGroup({
-                translation: new FormControl(this.textPart.word.translation),
-                exampleSentence: new FormControl(this.textPart.word.exampleSentence),
-                exampleSentenceTranslation: new FormControl(this.textPart.word.exampleSentenceTranslation),
-            });
-            this.openTranslation.emit(this.textPart.content);
-            this.changeDetection.detectChanges();
-            this.translationField.nativeElement.focus();
-            this.changeDetection.detectChanges();
-
-            this.clickService.wordClicked$.pipe(
-                take(1),
-            ).subscribe(() => {
-                this.popupShowed = false;
-                this.changeDetection.detectChanges();
-            });
-        }
+        this.closePopupOnClick();
     }
 
 
@@ -89,43 +69,33 @@ export class WordComponent implements OnChanges {
     }
 
 
-    public decreaseLevel(): void {
-        this.textPart.word.level = this.textPart.word.level / 2;
-
-        this.wordEdit.emit(this.textPart.word);
+    public onWordEdit(word: Word): void {
+        this.wordEdit.emit(word);
+        this.popupWord = null;
+        this.changeDetection.detectChanges();
     }
 
 
-    public increaseLevel(): void {
-        if (this.textPart.word.level === 0) {
-            this.textPart.word.level = 0.1;
-        } else {
-            this.textPart.word.level = this.textPart.word.level / 2 + colorMaxLevel / 2;
-        }
+    public clickSelection(selection: Word): void {
+        this.popupSelection = selection;
+        this.changeDetection.detectChanges();
 
-        this.wordEdit.emit(this.textPart.word);
-    }
-
-
-    public setKnown(): void {
-        this.textPart.word.level = colorMaxLevel;
-
-        this.wordEdit.emit(this.textPart.word);
-    }
-
-
-    public updateTranslation(): void {
-        this.textPart.word.translation = this.translateForm.get('translation').value;
-        this.textPart.word.exampleSentence = this.translateForm.get('exampleSentence').value;
-        this.textPart.word.exampleSentenceTranslation = this.translateForm.get('exampleSentenceTranslation').value;
-
-        this.textPart.word.level = 0.1;
-
-        this.wordEdit.emit(this.textPart.word);
+        this.closePopupOnClick();
     }
 
 
     public getColor(level: number): string {
         return getColor(level);
+    }
+
+
+    private closePopupOnClick(): void {
+        this.clickService.wordClicked$.pipe(
+            take(1),
+        ).subscribe(() => {
+            this.popupWord = null;
+            this.popupSelection = null;
+            this.changeDetection.detectChanges();
+        });
     }
 }
