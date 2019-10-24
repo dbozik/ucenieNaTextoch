@@ -13,6 +13,22 @@
                     (wordEdit)="wordEdit($event)"
                 ></app-word>
             </app-infinite-scroll>
+
+            <div *ngIf="selectionPopupShowed" class="popuptext show" [formGroup]="selectionForm" (keyup.enter)="saveSelection()">
+                <div>Selection:</div>
+                <div  (click)="$event.stopPropagation()">
+                    <input type="text" formControlName="selection">
+                </div>
+
+                <div>Translation:</div>
+                <div  (click)="$event.stopPropagation()">
+                    <input type="text" formControlName="translation" #translationField>
+                </div>
+
+                <div>
+                    <button class="btn btn-dark btn-lg" (click)="saveSelection()">Submit</button>
+                </div>
+            </div>
         </div>
 
         <div class="col-sm-5">

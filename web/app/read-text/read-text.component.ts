@@ -1,4 +1,5 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Text, TextPart, Word } from '../../../app/Objects';
 import { getColor } from '../color.utils';
@@ -17,9 +18,16 @@ export class ReadTextComponent implements OnInit {
     public translateLink: string = '';
     public percentage: number = 0;
 
+    @ViewChild('translationField')
+    public translationField: ElementRef<HTMLInputElement>;
+
+    public selectionPopupShowed: boolean = false;
+    public selectionForm: FormGroup;
+
     private languageDictionary: string;
 
     constructor(
+        private readonly formBuilder: FormBuilder,
         private readonly route: ActivatedRoute,
         private readonly clickService: ClickService,
         private readonly languageService: LanguageService,
@@ -89,6 +97,13 @@ export class ReadTextComponent implements OnInit {
     }
 
 
+    public saveSelection(): void {
+        console.dir(this.selectionForm.value);
+        this.selectionPopupShowed = false;
+        this.changeDetectorRef.detectChanges();
+    }
+
+
     private processTextParts(textParts: TextPart[]): TextPart[] {
         return textParts.map((textPart: TextPart) => ({
             ...textPart,
@@ -124,6 +139,15 @@ export class ReadTextComponent implements OnInit {
             });
             currentNode = currentNode.nextSibling;
         } while (selectionParts.length === 0 || selectionParts[selectionParts.length - 1].trim() !== lastText);
-        console.log(selectionParts.join(''));
+        const selectionText = selectionParts.join('');
+        this.setTranslateLink(selectionText);
+
+        this.selectionForm = this.formBuilder.group({
+            selection: selectionText,
+            translation: this.formBuilder.control('', Validators.required),
+        });
+
+        this.selectionPopupShowed = true;
+        this.changeDetectorRef.detectChanges();
     }
 }
