@@ -12,7 +12,7 @@ import {
 import { FormControl, FormGroup } from '@angular/forms';
 import { take } from 'rxjs/operators';
 import { TextPart, Word } from '../../../app/Objects';
-import { colorMaxLevel } from '../color.utils';
+import { colorMaxLevel, getColor } from '../color.utils';
 import { ClickService } from '../services/click.service';
 
 @Component({
@@ -122,5 +122,10 @@ export class WordComponent implements OnChanges {
         this.textPart.word.level = 0.1;
 
         this.wordEdit.emit(this.textPart.word);
+    }
+
+
+    public getColor(level: number): string {
+        return getColor(level);
     }
 }

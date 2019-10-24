@@ -151,7 +151,7 @@ export class ReadTextComponent implements OnInit {
         // }
         const result = [];
         for (let i = 0; i < source.length; ++i) {
-            if (source.substring(i, i + find.length).toLowerCase() === find) {
+            if (source.substring(i, i + find.length).toLowerCase() === find.toLowerCase()) {
                 result.push(i);
             }
         }

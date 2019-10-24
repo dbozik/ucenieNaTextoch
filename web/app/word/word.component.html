@@ -1,39 +1,62 @@
 <ng-container *ngIf="textPart && textPart.content">
+    <span *ngFor="let selection of textPart.selections" title="{{selection.content}} - {{selection.translation}}"
+          [style.backgroundColor]="getColor(selection.level)" class="selection" (click)="selectionPopup(selection)">
+
+        <div *ngIf="selectionPopupShowed" class="popuptext" [formGroup]="selectionForm" (keyup.enter)="updateSelection()">
+            <div class="font-weight-bold font-size-1_5">
+                {{selection.content}}
+            </div>
+            <div class="btn-group-lg">
+                <button class="minus-button btn btn-dark btn-lg" (click)="decreaseSelectionLevel()">-</button>
+                <button class="plus-button btn btn-dark btn-lg" (click)="increaseSelectionLevel()">+</button>
+                <button class="btn btn-dark btn-lg" (click)="setSelectionKnown()">Known</button>
+            </div>
+
+            <div>Translation:</div>
+            <div (click)="preventPropagation($event)">
+                <input type="text" formControlName="translation" #translationField>
+            </div>
+
+            <div>
+                <button class="btn btn-dark btn-lg" (click)="updateSelection()">Submit</button>
+            </div>
+        </div>
+    </span>
+
     <span [style.backgroundColor]="textPart.color" [title]="textPart.title" class="popup text-part"
           (click)="preventPropagation($event); clickPopup()">
-    {{textPart.content}}
+        {{textPart.content}}
 
-        <div *ngIf="popupShowed" class="popuptext show" [formGroup]="translateForm" (keyup.enter)="updateTranslation()"
-        >
-        <div class="font-weight-bold font-size-1_5">
-            {{textPart.content}}
-        </div>
-        <div class="btn-group-lg">
-            <button class="minus-button btn btn-dark btn-lg" (click)="decreaseLevel()">-</button>
-            <button class="plus-button btn btn-dark btn-lg" (click)="increaseLevel()">+</button>
-            <button class="btn btn-dark btn-lg" (click)="setKnown()">Known</button>
-        </div>
+        <div *ngIf="popupShowed" class="popuptext show" [formGroup]="translateForm" (keyup.enter)="updateTranslation()">
+            <div class="font-weight-bold font-size-1_5">
+                {{textPart.content}}
+            </div>
+            <div class="btn-group-lg">
+                <button class="minus-button btn btn-dark btn-lg" (click)="decreaseLevel()">-</button>
+                <button class="plus-button btn btn-dark btn-lg" (click)="increaseLevel()">+</button>
+                <button class="btn btn-dark btn-lg" (click)="setKnown()">Known</button>
+            </div>
 
-        <div>Translation:</div>
-        <div  (click)="preventPropagation($event)">
-            <input type="text" formControlName="translation" #translationField>
-        </div>
+            <div>Translation:</div>
+            <div (click)="preventPropagation($event)">
+                <input type="text" formControlName="translation" #translationField>
+            </div>
 
-        <div>Example sentence:</div>
-        <div (click)="preventPropagation($event)">
-            <input type="text" formControlName="exampleSentence">
-        </div>
+            <div>Example sentence:</div>
+            <div (click)="preventPropagation($event)">
+                <input type="text" formControlName="exampleSentence">
+            </div>
 
-        <div>Example sentence translation:</div>
-        <div (click)="preventPropagation($event)">
-            <input type="text" formControlName="exampleSentenceTranslation">
-        </div>
+            <div>Example sentence translation:</div>
+            <div (click)="preventPropagation($event)">
+                <input type="text" formControlName="exampleSentenceTranslation">
+            </div>
 
-        <div>
-            <button class="btn btn-dark btn-lg" (click)="updateTranslation()">Submit</button>
+            <div>
+                <button class="btn btn-dark btn-lg" (click)="updateTranslation()">Submit</button>
+            </div>
         </div>
-    </div>
-</span>
+    </span>
 
     <ng-container *ngIf="hasLineBreak(textPart.content)">
         <br>
