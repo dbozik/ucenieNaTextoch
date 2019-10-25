@@ -30,4 +30,9 @@ export class WordService {
     public editWord(word: Word): Observable<Word> {
         return this.ipcService.sendData(ipcEvents.EDIT_WORD, word);
     }
+
+
+    public saveSelection(word: Word): Observable<Word> {
+        return this.ipcService.sendData(ipcEvents.SAVE_SELECTION, word);
+    }
 }

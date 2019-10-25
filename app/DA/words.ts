@@ -22,6 +22,10 @@ export class Words {
 
 
     public saveMultiple(words: Word[]): Observable<Word[]> {
+        const userId = StateService.getInstance().userId;
+        const languageId = StateService.getInstance().language._id;
+        words = words.map((word: Word) => ({...word, userId, languageId}));
+
         return this.db.words.insert$(words);
     }
 

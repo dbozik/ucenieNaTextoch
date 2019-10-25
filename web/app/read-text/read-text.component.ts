@@ -6,12 +6,13 @@ import { getColor } from '../color.utils';
 import { ClickService } from '../services/click.service';
 import { LanguageService } from '../services/language.service';
 import { TextService } from '../services/text.service';
+import { WordService } from '../services/word.service';
 
 @Component({
     selector: 'app-read-text',
     templateUrl: './read-text.component.html',
     styleUrls: ['./read-text.component.scss'],
-    providers: [ClickService, TextService, LanguageService],
+    providers: [ClickService, TextService, LanguageService, WordService],
 })
 export class ReadTextComponent implements OnInit {
     public text: Text;
@@ -32,6 +33,7 @@ export class ReadTextComponent implements OnInit {
         private readonly clickService: ClickService,
         private readonly languageService: LanguageService,
         private readonly textService: TextService,
+        private readonly wordService: WordService,
         private readonly changeDetectorRef: ChangeDetectorRef,
     ) {
     }
@@ -104,6 +106,12 @@ export class ReadTextComponent implements OnInit {
 
         console.dir(this.selectionForm.value);
         const selection = this.selectionForm.get('selection').value;
+
+        this.wordService.saveSelection({
+            content: selection,
+            translation: this.selectionForm.get('translation').value,
+            level: 0.1,
+        } as Word).subscribe();
 
         // find selection indices
         const selectionIndexes = this.indexes(this.text.text, selection);

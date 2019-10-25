@@ -5,7 +5,8 @@ import { Routes } from '../../web/shared/routes.enum';
 import * as DA from '../DA';
 import { GetRequestHandler, MethodHandler } from '../Handlers';
 import { Navigation } from '../navigation';
-import { Text, TextPart, Word } from '../Objects';
+import { Word } from '../Objects';
+import { ParseTextService } from './parseTextService';
 
 export class WordService {
     private wordsDA = new DA.Words();
@@ -19,6 +20,8 @@ export class WordService {
         this.processGetWords();
         this.processOpenWordEdit();
         this.processGetWord();
+
+        this.processSaveSelection();
     }
 
 
@@ -66,5 +69,33 @@ export class WordService {
             );
 
         openWordEditChain.run({});
+    }
+
+
+    private processSaveSelection(): void {
+        let selection: Word = null;
+
+        const saveSelectionChain = new GetRequestHandler(ipcEvents.SAVE_SELECTION, (word: Word) => this.wordsDA.saveMultiple([word]));
+        saveSelectionChain.next(
+            new MethodHandler((word: Word) => {
+                selection = word;
+                const parseService = new ParseTextService();
+
+                const firstWord = parseService.splitToParts(word.content)[0].content.toLowerCase();
+
+                return this.wordsDA.get(firstWord);
+            })
+        ).next(
+            new MethodHandler((firstWord: Word) => {
+                if (!firstWord.selectionsIds || firstWord.selectionsIds.length === 0) {
+                    firstWord.selectionsIds = [];
+                }
+                firstWord.selectionsIds.push(selection._id);
+
+                this.wordsDA.edit(firstWord);
+            })
+        );
+
+        saveSelectionChain.run({});
     }
 }

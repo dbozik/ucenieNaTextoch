@@ -8,6 +8,8 @@ export class Word {
     public languageId: string;
     public userId: string;
 
+    public selectionsIds?: string[];
+
     public constructor() {
     }
 }

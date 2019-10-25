@@ -5,9 +5,11 @@ export class ParseTextService {
     private wordSeparatorsRegex: RegExp;
     private sentenceSeparatorsRegex: RegExp;
 
-    public constructor(private wordSeparators: string, private sentenceSeparators: string) {
-        this.wordSeparatorsRegex = new RegExp(`[\\n${wordSeparators.replace(']', '\\]')}]+`);
-        this.sentenceSeparatorsRegex = new RegExp(`[\\n${sentenceSeparators.replace(']', '\\]')}]+`);
+    public constructor() {
+        const language = StateService.getInstance().language;
+
+        this.wordSeparatorsRegex = new RegExp(`[\\n${language.wordSeparators.replace(']', '\\]')}]+`);
+        this.sentenceSeparatorsRegex = new RegExp(`[\\n${language.sentenceSeparators.replace(']', '\\]')}]+`);
     }
 
 

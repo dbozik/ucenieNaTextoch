@@ -29,4 +29,7 @@ export enum ipcEvents {
     GET_WORD = 'lwt-get-word',
     EDIT_WORD = 'lwt-edit-word',
     GET_WORDS = 'lwt-get-words',
+
+    // selections
+    SAVE_SELECTION = 'lwt-save-selection',
 }

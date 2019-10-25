@@ -103,7 +103,7 @@ export class TextService {
                 const language = StateService.getInstance().language;
                 text.languageDictionary = language.dictionary;
 
-                parseTextService = new ParseTextService(language.wordSeparators, language.sentenceSeparators);
+                parseTextService = new ParseTextService();
                 textParts = parseTextService.splitToParts(text.text);
                 const words = parseTextService.extractWords(textParts);
 
@@ -122,7 +122,7 @@ export class TextService {
         const language = StateService.getInstance().language;
         text.languageId = language._id;
 
-        const parseTextService = new ParseTextService(language.wordSeparators, language.sentenceSeparators);
+        const parseTextService = new ParseTextService();
         const words = parseTextService.getWords(text);
 
         return (new WordService()).saveWords(words).pipe(
