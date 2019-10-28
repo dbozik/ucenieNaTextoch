@@ -7,6 +7,7 @@ import { ReadTextComponent } from './read-text/read-text.component';
 import { SettingsComponent } from './settings/settings.component';
 import { SignupComponent } from './signup/signup.component';
 import { TextsComponent } from './texts/texts.component';
+import { WordEditComponent } from "./word-edit/word-edit.component";
 import { WordsComponent } from './words/words.component';
 
 const routes: Routes = [
@@ -33,6 +34,10 @@ const routes: Routes = [
     {
         path: AppRoutes.WORDS,
         component: WordsComponent,
+    },
+    {
+        path: `${AppRoutes.WORD}/:id`,
+        component: WordEditComponent,
     },
     {
         path: AppRoutes.SETTINGS,

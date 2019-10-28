@@ -6,16 +6,23 @@
  - create loader on events (i.e. opening a long text)
  - archive texts
  - read text - search
- - read-text - display, how many percents are loaded
  - more settings - default language, background image, password
  - display settings/db tables as json
- - short texts - scrolled window too small
-
- Story 6
-  - edit a word
-  - export words
-  - multiple word expressions
-  - read text - show percents
+ - process translations with longer texts - performance
+ - MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 lwt-language-selected listeners added. Use emitter.setMaxListeners() to increase limit
+ - add word to word list
+ - import words to word list
+ - read text - error messages on unfound words
+ - language selection subscribe on route and show only on relevant routes
+ - highligh not connected parts with ctrl
+ - maybe highlight subwords
+ - create a windows installer
+ - word component - component destroyed error
+ - selection - attaching to the first word in db does not work
+ - selection - process in the parsing process
+ - selection - check out angular directives for selection
+ - selection - think over replacing
+ - electron - security message on dev
 
 Story 7
  - filter texts

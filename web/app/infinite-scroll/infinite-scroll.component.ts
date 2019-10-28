@@ -23,8 +23,8 @@ export class InfiniteScrollComponent<T = any> implements OnChanges {
 
     public displayedItems: T[] = [];
 
-    @Output()
-    public loaded: EventEmitter<number> = new EventEmitter();
+    @Output('loaded')
+    public loaded: EventEmitter<{percentage: number}> = new EventEmitter();
 
     @ViewChild('scrollBox')
     public scrollBox: ElementRef<HTMLElement>;
@@ -71,6 +71,9 @@ export class InfiniteScrollComponent<T = any> implements OnChanges {
         const lowerIndex = this.displayedItems.length;
         const upperIndex = Math.min(lowerIndex + 100, this.items.length);
         this.displayedItems.push(...this.items.map(item => item).slice(lowerIndex, upperIndex));
+        this.loaded.emit({
+            percentage: this.displayedItems.length / this.items.length,
+        });
         this.changeDetectorRef.detectChanges();
     }
 

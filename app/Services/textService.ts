@@ -6,14 +6,13 @@ import { Routes } from '../../web/shared/routes.enum';
 import * as DA from '../DA';
 import { GetRequestHandler, IpcMainHandler, MethodHandler } from '../Handlers';
 import { Navigation } from '../navigation';
-import { Language, Text, TextPart, WordObject } from '../Objects';
+import { Text, TextPart, Word } from '../Objects';
 
 export class TextService {
 
     private textsDA = new DA.Texts();
     private textsArchivedDA = new DA.TextsArchived();
     private wordsDA = new DA.Words();
-    private languagesDA = new DA.Languages();
 
     public constructor() {
     }
@@ -103,13 +102,13 @@ export class TextService {
                 const language = StateService.getInstance().language;
                 text.languageDictionary = language.dictionary;
 
-                parseTextService = new ParseTextService(language.wordSeparators, language.sentenceSeparators);
+                parseTextService = new ParseTextService();
                 textParts = parseTextService.splitToParts(text.text);
                 const words = parseTextService.extractWords(textParts);
 
                 return this.wordsDA.getList(words);
             }),
-            map((wordObjects: WordObject[]) => {
+            map((wordObjects: Word[]) => {
                 text.textParts = parseTextService.completeTextParts(textParts, wordObjects);
 
                 return text;
@@ -122,7 +121,7 @@ export class TextService {
         const language = StateService.getInstance().language;
         text.languageId = language._id;
 
-        const parseTextService = new ParseTextService(language.wordSeparators, language.sentenceSeparators);
+        const parseTextService = new ParseTextService();
         const words = parseTextService.getWords(text);
 
         return (new WordService()).saveWords(words).pipe(

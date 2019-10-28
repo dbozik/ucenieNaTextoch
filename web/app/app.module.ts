@@ -17,6 +17,8 @@ import { WebviewDirective } from './webview.directive';
 import { WordComponent } from './word/word.component';
 import { WordsComponent } from './words/words.component';
 import { InfiniteScrollComponent } from './infinite-scroll/infinite-scroll.component';
+import { WordEditComponent } from './word-edit/word-edit.component';
+import { WordPopupComponent } from './word-popup/word-popup.component';
 
 @NgModule({
     declarations: [
@@ -33,6 +35,8 @@ import { InfiniteScrollComponent } from './infinite-scroll/infinite-scroll.compo
         LanguageSelectionComponent,
         InfiniteScrollComponent,
         ScrollItemDirective,
+        WordEditComponent,
+        WordPopupComponent,
     ],
     imports: [
         BrowserModule,

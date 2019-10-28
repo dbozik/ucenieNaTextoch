@@ -1,13 +1,15 @@
-import { Text, TextPart, WordObject } from '../Objects';
+import { Text, TextPart, Word } from '../Objects';
 import { StateService } from './stateService';
 
 export class ParseTextService {
     private wordSeparatorsRegex: RegExp;
     private sentenceSeparatorsRegex: RegExp;
 
-    public constructor(private wordSeparators: string, private sentenceSeparators: string) {
-        this.wordSeparatorsRegex = new RegExp(`[\\n${wordSeparators.replace(']', '\\]')}]+`);
-        this.sentenceSeparatorsRegex = new RegExp(`[\\n${sentenceSeparators.replace(']', '\\]')}]+`);
+    public constructor() {
+        const language = StateService.getInstance().language;
+
+        this.wordSeparatorsRegex = new RegExp(`[\\n${language.wordSeparators.replace(']', '\\]')}]+`);
+        this.sentenceSeparatorsRegex = new RegExp(`[\\n${language.sentenceSeparators.replace(']', '\\]')}]+`);
     }
 
 
@@ -26,7 +28,6 @@ export class ParseTextService {
             textParts.push({
                 content: beginPart,
                 type: 'separator',
-                wordId: '',
             });
             text = text.substr(wordIndex);
 
@@ -34,7 +35,6 @@ export class ParseTextService {
             textParts.push({
                 content: word,
                 type: 'word',
-                wordId: ''
             });
             text = text.substr(wordLength);
         });
@@ -43,7 +43,6 @@ export class ParseTextService {
         textParts.push({
             content: text,
             type: 'separator',
-            wordId: ''
         });
 
         return textParts.filter(word => word.content !== '');
@@ -57,10 +56,10 @@ export class ParseTextService {
     }
 
 
-    public completeTextParts(textParts: TextPart[], wordObjects: WordObject[]): TextPart[] {
+    public completeTextParts(textParts: TextPart[], wordObjects: Word[]): TextPart[] {
         const result: TextPart[] = JSON.parse(JSON.stringify(textParts));
         const wordObjectsMap = new Map();
-        wordObjects.forEach(wordObject => wordObjectsMap.set(wordObject.word, wordObject));
+        wordObjects.forEach(wordObject => wordObjectsMap.set(wordObject.content, wordObject));
 
         const textPartsWords = result.filter(textPart => textPart.type === 'word');
 
@@ -68,10 +67,7 @@ export class ParseTextService {
             const wordObject = wordObjectsMap.get(textPart.content.toLowerCase());
 
             if (wordObject) {
-                textPart.wordId = wordObject._id;
-                textPart.translation = wordObject.translation;
-                textPart.level = wordObject.level;
-                textPart.exampleSentence = wordObject.exampleSentence;
+                textPart.word = wordObject;
             } else {
                 console.log(textPart.content);
             }
@@ -81,13 +77,13 @@ export class ParseTextService {
     }
 
 
-    public getWords(text: Text): WordObject[] {
-        const wordObjects: WordObject[] = [];
+    public getWords(text: Text): Word[] {
+        const wordObjects: Word[] = [];
 
         this.sentencesFromText(text).forEach(sentence => {
             this.wordsFromSentence(sentence).forEach(word => {
                 wordObjects.push({
-                    word: word.toLowerCase(),
+                    content: word.toLowerCase(),
                     exampleSentence: sentence,
                     languageId: text.languageId,
                     userId: StateService.getInstance().userId,
@@ -96,7 +92,7 @@ export class ParseTextService {
             });
         });
 
-        return this.uniqBy(wordObjects, 'word');
+        return this.uniqBy(wordObjects, 'content');
     }
 
 
@@ -106,7 +102,7 @@ export class ParseTextService {
     }
 
 
-    private uniqBy(array: any[], key: string): any[] {
+    private uniqBy<T>(array: T[], key: keyof T): any[] {
         const seen = new Set();
         return array.filter(item => {
             const property = item[key]; // key(item);

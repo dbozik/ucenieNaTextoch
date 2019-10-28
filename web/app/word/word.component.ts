@@ -2,17 +2,14 @@ import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
-    ElementRef,
     EventEmitter,
     Input,
     OnChanges,
-    Output,
-    ViewChild
+    Output
 } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
 import { take } from 'rxjs/operators';
-import { TextPart } from '../../../app/Objects';
-import { colorMaxLevel } from '../color.utils';
+import { TextPart, Word } from '../../../app/Objects';
+import { getColor } from '../color.utils';
 import { ClickService } from '../services/click.service';
 
 @Component({
@@ -27,15 +24,12 @@ export class WordComponent implements OnChanges {
     public textPart: TextPart;
 
     @Output()
-    public wordEdit: EventEmitter<TextPart> = new EventEmitter<TextPart>();
+    public wordEdit: EventEmitter<Word> = new EventEmitter<Word>();
     @Output()
     public openTranslation: EventEmitter<string> = new EventEmitter<string>();
 
-    @ViewChild('translationField')
-    public translationField: ElementRef<HTMLInputElement>;
-
-    public popupShowed: boolean = false;
-    public translateForm: FormGroup;
+    public popupWord: Word = null;
+    public popupSelection: Word = null;
 
 
     constructor(
@@ -46,7 +40,8 @@ export class WordComponent implements OnChanges {
 
     ngOnChanges() {
         if (this.textPart) {
-            this.popupShowed = false;
+            this.popupWord = null;
+            this.popupSelection = null;
         }
     }
 
@@ -57,26 +52,15 @@ export class WordComponent implements OnChanges {
 
 
     public clickPopup(): void {
-        if (!this.popupShowed) {
-            this.popupShowed = true;
-
-            this.translateForm = new FormGroup({
-                translation: new FormControl(this.textPart.translation),
-                exampleSentence: new FormControl(this.textPart.exampleSentence),
-                exampleSentenceTranslation: new FormControl(this.textPart.exampleSentenceTranslation),
-            });
-            this.openTranslation.emit(this.textPart.content);
-            this.changeDetection.detectChanges();
-            this.translationField.nativeElement.focus();
-            this.changeDetection.detectChanges();
-
-            this.clickService.wordClicked$.pipe(
-                take(1),
-            ).subscribe(() => {
-                this.popupShowed = false;
-                this.changeDetection.detectChanges();
-            });
+        if (this.textPart.type === 'separator') {
+            return;
         }
+
+        this.openTranslation.emit(this.textPart.content);
+        this.popupWord = this.textPart.word;
+        this.changeDetection.detectChanges();
+
+        this.closePopupOnClick();
     }
 
 
@@ -85,38 +69,33 @@ export class WordComponent implements OnChanges {
     }
 
 
-    public decreaseLevel(): void {
-        this.textPart.level = this.textPart.level / 2;
-
-        this.wordEdit.emit(this.textPart);
+    public onWordEdit(word: Word): void {
+        this.wordEdit.emit(word);
+        this.popupWord = null;
+        this.changeDetection.detectChanges();
     }
 
 
-    public increaseLevel(): void {
-        if (this.textPart.level === 0) {
-            this.textPart.level = 0.1;
-        } else {
-            this.textPart.level = this.textPart.level / 2 + colorMaxLevel / 2;
-        }
+    public clickSelection(selection: Word): void {
+        this.popupSelection = selection;
+        this.changeDetection.detectChanges();
 
-        this.wordEdit.emit(this.textPart);
+        this.closePopupOnClick();
     }
 
 
-    public setKnown(): void {
-        this.textPart.level = colorMaxLevel;
-
-        this.wordEdit.emit(this.textPart);
+    public getColor(level: number): string {
+        return getColor(level);
     }
 
 
-    public updateTranslation(): void {
-        this.textPart.translation = this.translateForm.get('translation').value;
-        this.textPart.exampleSentence = this.translateForm.get('exampleSentence').value;
-        this.textPart.exampleSentenceTranslation = this.translateForm.get('exampleSentenceTranslation').value;
-
-        this.textPart.level = 0.1;
-
-        this.wordEdit.emit(this.textPart);
+    private closePopupOnClick(): void {
+        this.clickService.wordClicked$.pipe(
+            take(1),
+        ).subscribe(() => {
+            this.popupWord = null;
+            this.popupSelection = null;
+            this.changeDetection.detectChanges();
+        });
     }
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { WordObject } from '../../../app/Objects';
+import { Word } from '../../../app/Objects';
 import { ipcEvents } from '../../shared/ipc-events.enum';
 import { IpcService } from './ipc.service';
 
@@ -12,7 +12,27 @@ export class WordService {
     }
 
 
-    public getWords(): Observable<WordObject[]> {
+    public getWords(): Observable<Word[]> {
         return this.ipcService.getData(ipcEvents.GET_WORDS);
+    }
+
+
+    public getWord(wordId: string): Observable<Word> {
+        return this.ipcService.sendData(ipcEvents.GET_WORD, wordId);
+    }
+
+
+    public openWord(wordId: string): Observable<string> {
+        return this.ipcService.sendData(ipcEvents.OPEN_WORD_EDIT, wordId);
+    }
+
+
+    public editWord(word: Word): Observable<Word> {
+        return this.ipcService.sendData(ipcEvents.EDIT_WORD, word);
+    }
+
+
+    public saveSelection(word: Word): Observable<Word> {
+        return this.ipcService.sendData(ipcEvents.SAVE_SELECTION, word);
     }
 }

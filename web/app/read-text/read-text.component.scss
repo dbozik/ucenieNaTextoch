@@ -21,6 +21,37 @@ $min-text-height: 80vh;
     max-height: $min-text-height;
     font-size: 2em;
     line-height: 2em;
+
+    .popuptext {
+        /* width: 160px; */
+        background-color: #555;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 8px 0;
+        position: absolute;
+        z-index: 1;
+        /* bottom: 125%; */
+        left: 50%;
+        top: 0;
+        margin-left: -80px;
+
+        input {
+            color: black;
+        }
+
+        /* Popup arrow */
+        &::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #555 transparent transparent transparent;
+        }
+    }
 }
 
 .translate-box {
