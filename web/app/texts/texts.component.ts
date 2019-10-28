@@ -12,9 +12,8 @@ import { TextService } from '../services/text.service';
     providers: [TextService, LanguageService],
 })
 export class TextsComponent implements OnInit, OnDestroy {
-    private componentDestroyed$: Subject<boolean> = new Subject<boolean>();
-
     public texts: Text[] = [];
+    private componentDestroyed$: Subject<boolean> = new Subject<boolean>();
 
     constructor(
         private readonly languageService: LanguageService,
@@ -32,7 +31,8 @@ export class TextsComponent implements OnInit, OnDestroy {
             })
         ).subscribe((texts: Text[]) => {
             this.texts = texts.sort(
-                (first, second) => (new Date(first.createdOn)).getTime() - (new Date(second.createdOn)).getTime()
+                (first, second) =>
+                    (new Date(second.createdOn)).getTime() - (new Date(first.createdOn)).getTime()
             );
             this.changeDetection.detectChanges();
         });
