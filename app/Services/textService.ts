@@ -6,14 +6,13 @@ import { Routes } from '../../web/shared/routes.enum';
 import * as DA from '../DA';
 import { GetRequestHandler, IpcMainHandler, MethodHandler } from '../Handlers';
 import { Navigation } from '../navigation';
-import { Language, Text, TextPart, Word } from '../Objects';
+import { Text, TextPart, Word } from '../Objects';
 
 export class TextService {
 
     private textsDA = new DA.Texts();
     private textsArchivedDA = new DA.TextsArchived();
     private wordsDA = new DA.Words();
-    private languagesDA = new DA.Languages();
 
     public constructor() {
     }

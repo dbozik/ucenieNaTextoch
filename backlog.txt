@@ -20,6 +20,12 @@
  - highligh not connected parts with ctrl
  - maybe highlight subwords
  - create a windows installer
+ - translate window - on SetKnown, it blicks
+ - word component - component destroyed error
+ - selection - attaching to the first word in db does not work
+ - selection - process in the parsing process
+ - selection - check out angular directives for selection
+ - selection - think over replacing
 
  Story 6
     - edit a word

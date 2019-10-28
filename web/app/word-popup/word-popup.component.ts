@@ -1,4 +1,5 @@
 import {
+    ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
     ElementRef,
@@ -15,7 +16,8 @@ import { colorMaxLevel } from '../color.utils';
 @Component({
     selector: 'app-word-popup',
     templateUrl: './word-popup.component.html',
-    styleUrls: ['./word-popup.component.scss']
+    styleUrls: ['./word-popup.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WordPopupComponent implements OnChanges {
 

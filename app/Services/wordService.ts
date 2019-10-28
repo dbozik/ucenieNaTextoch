@@ -3,7 +3,7 @@ import { switchMap } from 'rxjs/operators';
 import { ipcEvents } from '../../web/shared/ipc-events.enum';
 import { Routes } from '../../web/shared/routes.enum';
 import * as DA from '../DA';
-import { GetRequestHandler, MethodHandler } from '../Handlers';
+import { GetRequestHandler, MethodHandler, SendRequestHandler } from '../Handlers';
 import { Navigation } from '../navigation';
 import { Word } from '../Objects';
 import { ParseTextService } from './parseTextService';
@@ -77,11 +77,12 @@ export class WordService {
 
         const saveSelectionChain = new GetRequestHandler(ipcEvents.SAVE_SELECTION, (word: Word) => this.wordsDA.saveMultiple([word]));
         saveSelectionChain.next(
-            new MethodHandler((word: Word) => {
-                selection = word;
+            new SendRequestHandler((result: Word[]) => {
+                selection = result[0];
                 const parseService = new ParseTextService();
 
-                const firstWord = parseService.splitToParts(word.content)[0].content.toLowerCase();
+                const firstWord = (parseService.splitToParts(selection.content).filter(part => part.type === 'word'))[0]
+                    .content.toLowerCase();
 
                 return this.wordsDA.get(firstWord);
             })
@@ -92,7 +93,7 @@ export class WordService {
                 }
                 firstWord.selectionsIds.push(selection._id);
 
-                this.wordsDA.edit(firstWord);
+                this.wordsDA.edit(firstWord).subscribe();
             })
         );
 

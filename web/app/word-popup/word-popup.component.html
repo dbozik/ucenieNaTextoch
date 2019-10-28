@@ -3,9 +3,9 @@
         {{word.content}}
     </div>
     <div class="btn-group-lg">
-        <button class="minus-button btn btn-dark btn-lg" (click)="decreaseLevel()">-</button>
-        <button class="plus-button btn btn-dark btn-lg" (click)="increaseLevel()">+</button>
-        <button class="btn btn-dark btn-lg" (click)="setKnown()">Known</button>
+        <button class="minus-button btn btn-dark btn-lg" (click)="preventPropagation($event); decreaseLevel()">-</button>
+        <button class="plus-button btn btn-dark btn-lg" (click)="preventPropagation($event); increaseLevel()">+</button>
+        <button class="btn btn-dark btn-lg" (click)="preventPropagation($event); setKnown()">Known</button>
     </div>
 
     <div>Translation:</div>
@@ -26,6 +26,6 @@
     </ng-container>
 
     <div>
-        <button class="btn btn-dark btn-lg" (click)="updateTranslation()">Submit</button>
+        <button class="btn btn-dark btn-lg" (click)="preventPropagation($event); updateTranslation()">Submit</button>
     </div>
 </div>

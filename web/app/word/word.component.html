@@ -9,7 +9,7 @@
           (click)="preventPropagation($event); clickPopup()">
         {{textPart.content}}
 
-        <app-word-popup [word]="popupWord" (wordEdit)="onWordEdit($event)"></app-word-popup>
+        <app-word-popup *ngIf="popupWord" [word]="popupWord" (wordEdit)="onWordEdit($event)"></app-word-popup>
     </span>
 
     <ng-container *ngIf="hasLineBreak(textPart.content)">
