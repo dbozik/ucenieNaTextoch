@@ -77,6 +77,9 @@ export class ReadTextComponent implements OnInit {
             }
 
             this.text.textParts = editedTextParts;
+            this.text.percentageUnknown = Text.getPercentageUnknown(this.text);
+            this.text.percentageLearning = Text.getPercentageLearning(this.text);
+
             this.changeDetectorRef.detectChanges();
         });
     }

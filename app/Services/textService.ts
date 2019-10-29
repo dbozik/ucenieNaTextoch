@@ -125,6 +125,8 @@ export class TextService {
             }),
             map((wordObjects: Word[]) => {
                 text.textParts = parseTextService.completeTextParts(textParts, wordObjects);
+                text.percentageUnknown = Text.getPercentageUnknown(text);
+                text.percentageLearning = Text.getPercentageLearning(text);
 
                 return text;
             }),
