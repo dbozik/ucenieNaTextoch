@@ -23,6 +23,7 @@ export enum ipcEvents {
     GET_TEXT_PARSED = 'lwt-get-text-parsed',
     GET_TEXTS = 'lwt-get-texts',
     OPEN_TEXT = 'lwt-open-text',
+    FILTER_TEXTS = 'lwt-filter-texts',
 
     // words
     OPEN_WORD_EDIT = 'lwt-open-word-edit',

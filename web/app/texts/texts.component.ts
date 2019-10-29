@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from "@angular/forms";
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { Subject } from 'rxjs';
-import { startWith, switchMap, takeUntil } from 'rxjs/operators';
+import { startWith, takeUntil } from 'rxjs/operators';
 import { Text } from '../../../app/Objects';
 import { LanguageService } from '../services/language.service';
 import { TextService } from '../services/text.service';
@@ -30,6 +30,7 @@ export class TextsComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.filterForm = this.formBuilder.group({
             title: '',
+            text: '',
             createdFrom: '',
             createdTo: '',
         });
@@ -53,10 +54,36 @@ export class TextsComponent implements OnInit, OnDestroy {
     }
 
 
+    public filterTexts(): void {
+        if (this.active === 'regular') {
+            this.getRegularTexts();
+        } else {
+            this.getArchivedTexts();
+        }
+    }
+
+
+    public resetFilter(): void {
+        this.filterForm.setValue({
+            title: '',
+            text: '',
+            createdFrom: '',
+            createdTo: '',
+        });
+
+        this.filterTexts();
+    }
+
+
     public getRegularTexts(): void {
         this.active = 'regular';
 
-        this.textService.getTexts().subscribe((texts: Text[]) => {
+        this.textService.filterTexts({
+            titleFragment: this.filterForm.get('title').value,
+            textFragment: this.filterForm.get('text').value,
+            createdFrom: this.filterForm.get('createdFrom').value,
+            createdTo: this.filterForm.get('createdTo').value,
+        }).subscribe((texts: Text[]) => {
             this.texts = texts.sort(
                 (first, second) =>
                     (new Date(second.createdOn)).getTime() - (new Date(first.createdOn)).getTime()

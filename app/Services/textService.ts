@@ -6,7 +6,7 @@ import { Routes } from '../../web/shared/routes.enum';
 import * as DA from '../DA';
 import { GetRequestHandler, IpcMainHandler, MethodHandler } from '../Handlers';
 import { Navigation } from '../navigation';
-import { Text, TextPart, Word } from '../Objects';
+import { Text, TextPart, TextsSearch, Word } from '../Objects';
 
 export class TextService {
 
@@ -24,6 +24,7 @@ export class TextService {
         this.processGetTextParsed();
         this.processGetTexts();
         this.processOpenText();
+        this.processFilterTexts();
     }
 
 
@@ -85,6 +86,20 @@ export class TextService {
     private processGetTextParsed(): void {
         const getTextParsedChain = new GetRequestHandler(ipcEvents.GET_TEXT_PARSED, this.loadTextParsed$);
         getTextParsedChain.run({});
+    }
+
+
+    private processFilterTexts(): void {
+        const filterTextsChain = new GetRequestHandler(ipcEvents.FILTER_TEXTS, (textsFilter: TextsSearch) =>
+            this.textsDA.getListFiltered(
+                textsFilter.titleFragment,
+                textsFilter.textFragment,
+                textsFilter.createdFrom,
+                textsFilter.createdTo
+            )
+        );
+
+        filterTextsChain.run({});
     }
 
 

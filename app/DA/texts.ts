@@ -14,7 +14,7 @@ export class Texts {
         return this.db.texts.insert$(
             {
                 ...StateService.getInstance().userLanguageRequest,
-                createdOn: new Date(),
+                createdOn: (new Date()).getTime(),
                 text,
                 title,
             });
@@ -28,6 +28,29 @@ export class Texts {
 
     public getList(): Observable<Text[]> {
         return this.db.texts.find$(StateService.getInstance().userLanguageRequest);
+    }
+
+
+    public getListFiltered(titleFragment?: string, textFragment?: string, createdFrom?: Date, createdTo?: Date): Observable<Text[]> {
+        const searchObject: any = StateService.getInstance().userLanguageRequest;
+        if (titleFragment) {
+            searchObject.title = new RegExp(titleFragment);
+        }
+        if (textFragment) {
+            searchObject.text = new RegExp(textFragment);
+        }
+        const createdOnSearch: any = {};
+        if (createdFrom) {
+            createdOnSearch.$gte = (new Date(createdFrom)).getTime();
+        }
+        if (createdTo) {
+            createdOnSearch.$lte = (new Date(createdTo)).getTime();
+        }
+        if (Object.keys(createdOnSearch).length !== 0 || createdOnSearch.constructor !== Object) {
+            searchObject.createdOn = createdOnSearch;
+        }
+
+        return this.db.texts.find$(searchObject);
     }
 
 

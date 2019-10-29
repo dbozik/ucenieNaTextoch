@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Text, Word } from '../../../app/Objects';
+import { Text, TextsSearch, Word } from '../../../app/Objects';
 import { ipcEvents } from '../../shared/ipc-events.enum';
 import { IpcService } from './ipc.service';
 
@@ -28,6 +28,11 @@ export class TextService {
 
     public getTexts(): Observable<Text[]> {
         return this.ipcService.getData(ipcEvents.GET_TEXTS);
+    }
+
+
+    public filterTexts(textFilter: TextsSearch): Observable<Text[]> {
+        return this.ipcService.sendData(ipcEvents.FILTER_TEXTS, textFilter);
     }
 
 

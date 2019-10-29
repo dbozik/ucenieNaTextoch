@@ -15,16 +15,23 @@
     </nav>
 
     <form class="form-inline" [formGroup]="filterForm">
-        <label for="title">Title contains:</label>
-        <input type="text" class="form-control" id="title" formControlName="title">
+        <ng-container (keyup.enter)="filterTexts()">
+            <label for="title">Title contains:</label>
+            <input type="text" class="form-control" id="title" formControlName="title">
 
-        <label for="createdFrom">Created from:</label>
-        <input type="date" class="form-control" id="createdFrom" formControlName="createdFrom">
+            <label for="text">Text contains:</label>
+            <input type="text" class="form-control" id="text" formControlName="text">
 
-        <label for="createdTo">Created to:</label>
-        <input type="date" class="form-control" id="createdTo" formControlName="createdTo">
+            <label for="createdFrom">Created from:</label>
+            <input type="date" class="form-control" id="createdFrom" formControlName="createdFrom">
 
-        <button type="submit" class="btn btn-primary">Search</button>
+            <label for="createdTo">Created to:</label>
+            <input type="date" class="form-control" id="createdTo" formControlName="createdTo">
+        </ng-container>
+
+        <button type="submit" class="btn btn-primary" (click)="filterTexts()">Search</button>
+
+        <button class="btn btn-primary" class="margin-right-5" (click)="resetFilter()">Reset</button>
     </form>
 
     <div class="row">
