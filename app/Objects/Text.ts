@@ -1,6 +1,5 @@
-import * as Objects from ".";
-import { TextPart, Word } from ".";
-import { colorMaxLevel } from "../../web/app/color.utils";
+import { TextPart, Word } from '.';
+import { colorMaxLevel } from '../../web/app/color.utils';
 
 export class Text {
     // text
@@ -15,14 +14,14 @@ export class Text {
 
     public userId?: string;
     // word list
-    public words?: Objects.Word[];
+    public words?: Word[];
     // parsed text
     // sentences list
     public sentences?: string[];
 
     public _id?: string;
     public createdOn?: Date;
-    public textParts?: Objects.TextPart[];
+    public textParts?: TextPart[];
 
     public percentageUnknown?: number;
     public percentageLearning?: number;
@@ -36,7 +35,7 @@ export class Text {
 
 
     public static getPercentageLearning(text: Text): number {
-        return this.getPercentage(text, (word: Word) => word.level > 0 && word.level < colorMaxLevel ? 1 : 0);
+        return this.getPercentage(text, (word: Word) => word.level > 0 && word.level < colorMaxLevel * 0.99 ? 1 : 0);
     }
 
 

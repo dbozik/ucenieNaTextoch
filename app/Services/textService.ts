@@ -66,10 +66,33 @@ export class TextService {
 
 
     private processGetTexts(): void {
-        const getTexts$ = () => this.textsDA.getList();
-
-        const getTextsChain = new GetRequestHandler(ipcEvents.GET_TEXTS, getTexts$);
-        getTextsChain.run({});
+        // let texts: Text[] = [];
+        // let parseTextService: ParseTextService;
+        //
+        // const getTextsChain = new GetRequestHandler(ipcEvents.GET_TEXTS, this.textsDA.getList);
+        // getTextsChain.next(
+        //     new SendRequestHandler((textsResult: Text[]) => {
+        //         texts = textsResult;
+        //         parseTextService = new ParseTextService();
+        //
+        //         const words: string[] = [];
+        //         texts.forEach(text => {
+        //             text.textParts = parseTextService.splitToParts(text.text);
+        //             words.push(...parseTextService.extractWords(text.textParts));
+        //         });
+        //
+        //         return this.wordsDA.getList(words);
+        //     })
+        // ).next(
+        //     new MethodHandler((words: Word[]) => {
+        //         texts.forEach((text: Text) => {
+        //             text.textParts = parseTextService.completeTextParts(text.textParts, words);
+        //             text.percentageUnknown = Text.getPercentageUnknown(text);
+        //             text.percentageLearning = Text.getPercentageLearning(text);
+        //         });
+        //     })
+        // );
+        // getTextsChain.run({});
     }
 
 
@@ -90,14 +113,40 @@ export class TextService {
 
 
     private processFilterTexts(): void {
-        const filterTextsChain = new GetRequestHandler(ipcEvents.FILTER_TEXTS, (textsFilter: TextsSearch) =>
+        let texts: Text[] = [];
+        let parseTextService: ParseTextService;
+
+        const getTexts$ = (textsFilter: TextsSearch) =>
             this.textsDA.getListFiltered(
                 textsFilter.titleFragment,
                 textsFilter.textFragment,
                 textsFilter.createdFrom,
                 textsFilter.createdTo
-            )
-        );
+            ).pipe(
+                switchMap((textsResult: Text[]) => {
+                    texts = textsResult;
+                    parseTextService = new ParseTextService();
+
+                    const words: string[] = [];
+                    texts.forEach(text => {
+                        text.textParts = parseTextService.splitToParts(text.text);
+                        words.push(...parseTextService.extractWords(text.textParts));
+                    });
+
+                    return this.wordsDA.getList(words);
+                }),
+                map((words: Word[]) => {
+                    texts.forEach((text: Text) => {
+                        text.textParts = parseTextService.completeTextParts(text.textParts, words);
+                        text.percentageUnknown = Text.getPercentageUnknown(text);
+                        text.percentageLearning = Text.getPercentageLearning(text);
+                    });
+
+                    return texts;
+                }),
+            );
+
+        const filterTextsChain = new GetRequestHandler(ipcEvents.FILTER_TEXTS, getTexts$);
 
         filterTextsChain.run({});
     }
