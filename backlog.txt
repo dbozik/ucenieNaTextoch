@@ -1,42 +1,38 @@
- - signup - check for duplicate logins
- - forgotten password
- - languages - add a hint to dictionary field
- - languages - on remove display a confirm window
- - read text - select an extension - several words - save a link to some word in the selection - for parsing
- - create loader on events (i.e. opening a long text)
- - archive texts
- - read text - search
- - more settings - default language, background image, password
- - display settings/db tables as json
- - process translations with longer texts - performance
- - MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 lwt-language-selected listeners added. Use emitter.setMaxListeners() to increase limit
- - add word to word list
- - import words to word list
- - read text - error messages on unfound words
- - language selection subscribe on route and show only on relevant routes
- - highligh not connected parts with ctrl
- - maybe highlight subwords
- - create a windows installer
- - word component - component destroyed error
- - selection - attaching to the first word in db does not work
- - selection - process in the parsing process
- - selection - check out angular directives for selection
- - selection - think over replacing
- - electron - security message on dev
- - save data with timestamp
- - display tables with index numbers
- - translate window/word edit - add pronounciation field
- - delete example sentence for a known word
- - export mnemosyne csv with <b></b>
- - export mnemosyne with pronounciation
- - import text from pdf
- - open texts on english loads german texts
- - open texts displays some words (not found?)
+F - feature, B - bug
 
-Story 7
-    - filter texts
- - filter words
-    - text percentage
+ -F signup - check for duplicate logins
+ -F forgotten password
+ -F languages - add a hint to dictionary field
+ -F languages - on remove display a confirm window
+ -F read text - select an extension - several words - save a link to some word in the selection - for parsing
+ -F create loader on events (i.e. opening a long text)
+ -F archive texts
+ -F read text - search
+ -F more settings - default language, background image, password
+ -F display settings/db tables as json
+ -B process translations with longer texts - performance
+ -B MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 lwt-language-selected listeners added. Use emitter.setMaxListeners() to increase limit
+ -F add word to word list
+ -F import words to word list
+ -B language selection subscribe on route and show only on relevant routes
+ -F highligh not connected parts with ctrl
+ -F maybe highlight subwords
+ -F create a windows installer
+ -B word component - component destroyed error
+ -B selection - attaching to the first word in db does not work
+ -F selection - process in the parsing process
+ -F selection - check out angular directives for selection
+ -F selection - think over replacing
+ -B electron - security message on dev
+ -F save data with timestamp
+ -F translate window/word edit - add pronounciation field
+ -F delete example sentence for a known word
+ -F export mnemosyne csv with <b></b>
+ -F export mnemosyne with pronounciation
+ -F import text from pdf
+ -B open texts on english loads german texts
+ -B open texts displays some words (not found?)
+ -F save progress in db - on load load gradually until the progress
 
 Story 8
  - edit a text
