@@ -3,6 +3,37 @@
         <h3>Texts</h3>
     </div>
 
+    <nav class="navbar navbar-expand-sm">
+        <ul class="navbar-nav">
+            <li [ngClass]="{'active': active === 'regular', 'nav-item': true}">
+                <a class="nav-link btn btn-primary" (click)="getRegularTexts()">Regular</a>
+            </li>
+            <li [ngClass]="{'active': active === 'archived', 'nav-item': true}">
+                <a class="nav-link btn btn-primary" (click)="getArchivedTexts()">Archived</a>
+            </li>
+        </ul>
+    </nav>
+
+    <form class="form-inline" [formGroup]="filterForm">
+        <ng-container (keyup.enter)="filterTexts()">
+            <label for="title">Title contains:</label>
+            <input type="text" class="form-control" id="title" formControlName="title">
+
+            <label for="text">Text contains:</label>
+            <input type="text" class="form-control" id="text" formControlName="text">
+
+            <label for="createdFrom">Created from:</label>
+            <input type="date" class="form-control" id="createdFrom" formControlName="createdFrom">
+
+            <label for="createdTo">Created to:</label>
+            <input type="date" class="form-control" id="createdTo" formControlName="createdTo">
+        </ng-container>
+
+        <button type="submit" class="btn btn-primary" (click)="filterTexts()">Search</button>
+
+        <button class="btn btn-primary" class="margin-right-5" (click)="resetFilter()">Reset</button>
+    </form>
+
     <div class="row">
         <table class="table table-striped table-bordered">
             <thead>
@@ -10,10 +41,14 @@
                 <th>Title</th>
                 <th>Perex</th>
                 <th>Created On</th>
+                <th>Percentages (unknown/learning)</th>
                 <th>Edit</th>
                 <th>Archive</th>
             </tr>
             </thead>
+
+            <div *ngIf="!texts">NO TEXTS</div>
+
             <tbody>
             <tr *ngFor="let text of texts">
                 <td style="font-weight:bold;" (click)="textClick(text._id)">
@@ -23,6 +58,7 @@
                     {{text.text.slice(0, 100)}}...
                 </td>
                 <td>{{text.createdOn | date}}</td>
+                <td>{{text.percentageUnknown | percent}} / {{text.percentageLearning | percent}}</td>
                 <td><button class="btn btn-primary">Edit</button></td>
                 <td><button class="btn btn-primary">Archive</button></td>
             </tr>

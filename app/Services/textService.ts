@@ -6,7 +6,7 @@ import { Routes } from '../../web/shared/routes.enum';
 import * as DA from '../DA';
 import { GetRequestHandler, IpcMainHandler, MethodHandler } from '../Handlers';
 import { Navigation } from '../navigation';
-import { Text, TextPart, Word } from '../Objects';
+import { Text, TextPart, TextsSearch, Word } from '../Objects';
 
 export class TextService {
 
@@ -24,6 +24,7 @@ export class TextService {
         this.processGetTextParsed();
         this.processGetTexts();
         this.processOpenText();
+        this.processFilterTexts();
     }
 
 
@@ -65,10 +66,33 @@ export class TextService {
 
 
     private processGetTexts(): void {
-        const getTexts$ = () => this.textsDA.getList();
-
-        const getTextsChain = new GetRequestHandler(ipcEvents.GET_TEXTS, getTexts$);
-        getTextsChain.run({});
+        // let texts: Text[] = [];
+        // let parseTextService: ParseTextService;
+        //
+        // const getTextsChain = new GetRequestHandler(ipcEvents.GET_TEXTS, this.textsDA.getList);
+        // getTextsChain.next(
+        //     new SendRequestHandler((textsResult: Text[]) => {
+        //         texts = textsResult;
+        //         parseTextService = new ParseTextService();
+        //
+        //         const words: string[] = [];
+        //         texts.forEach(text => {
+        //             text.textParts = parseTextService.splitToParts(text.text);
+        //             words.push(...parseTextService.extractWords(text.textParts));
+        //         });
+        //
+        //         return this.wordsDA.getList(words);
+        //     })
+        // ).next(
+        //     new MethodHandler((words: Word[]) => {
+        //         texts.forEach((text: Text) => {
+        //             text.textParts = parseTextService.completeTextParts(text.textParts, words);
+        //             text.percentageUnknown = Text.getPercentageUnknown(text);
+        //             text.percentageLearning = Text.getPercentageLearning(text);
+        //         });
+        //     })
+        // );
+        // getTextsChain.run({});
     }
 
 
@@ -85,6 +109,46 @@ export class TextService {
     private processGetTextParsed(): void {
         const getTextParsedChain = new GetRequestHandler(ipcEvents.GET_TEXT_PARSED, this.loadTextParsed$);
         getTextParsedChain.run({});
+    }
+
+
+    private processFilterTexts(): void {
+        let texts: Text[] = [];
+        let parseTextService: ParseTextService;
+
+        const getTexts$ = (textsFilter: TextsSearch) =>
+            this.textsDA.getListFiltered(
+                textsFilter.titleFragment,
+                textsFilter.textFragment,
+                textsFilter.createdFrom,
+                textsFilter.createdTo
+            ).pipe(
+                switchMap((textsResult: Text[]) => {
+                    texts = textsResult;
+                    parseTextService = new ParseTextService();
+
+                    const words: string[] = [];
+                    texts.forEach(text => {
+                        text.textParts = parseTextService.splitToParts(text.text);
+                        words.push(...parseTextService.extractWords(text.textParts));
+                    });
+
+                    return this.wordsDA.getList(words);
+                }),
+                map((words: Word[]) => {
+                    texts.forEach((text: Text) => {
+                        text.textParts = parseTextService.completeTextParts(text.textParts, words);
+                        text.percentageUnknown = Text.getPercentageUnknown(text);
+                        text.percentageLearning = Text.getPercentageLearning(text);
+                    });
+
+                    return texts;
+                }),
+            );
+
+        const filterTextsChain = new GetRequestHandler(ipcEvents.FILTER_TEXTS, getTexts$);
+
+        filterTextsChain.run({});
     }
 
 
@@ -110,6 +174,8 @@ export class TextService {
             }),
             map((wordObjects: Word[]) => {
                 text.textParts = parseTextService.completeTextParts(textParts, wordObjects);
+                text.percentageUnknown = Text.getPercentageUnknown(text);
+                text.percentageLearning = Text.getPercentageLearning(text);
 
                 return text;
             }),

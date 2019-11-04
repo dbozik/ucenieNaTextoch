@@ -1,16 +1,55 @@
 <div class="container">
     <div class="row">
-        <h3>Words</h3>
+        <h3>Words ({{words.length}})</h3>
     </div>
 
     <div class="row">
         <button class="btn btn-primary" (click)="exportWords()">Export</button>
     </div>
 
+    <form class="form-inline" [formGroup]="filterForm" (keyup.enter)="filterWords()">
+        <ng-container (keyup.enter)="filterWords()">
+            <label for="word">Word contains:</label>
+            <input type="text" class="form-control" id="word" formControlName="word">
+
+            <div class="form-check-inline">
+                <label class="form-check-label">
+                    <input type="radio" class="form-check-input" name="level" formControlName="level" value="unknown">Unknown
+                </label>
+            </div>
+            <div class="form-check-inline">
+                <label class="form-check-label">
+                    <input type="radio" class="form-check-input" name="level" formControlName="level" value="known">Known
+                </label>
+            </div>
+            <div class="form-check-inline disabled">
+                <label class="form-check-label">
+                    <input type="radio" class="form-check-input" name="level" formControlName="level" value="learning">Learning
+                </label>
+            </div>
+            <div class="form-check-inline disabled">
+                <label class="form-check-label">
+                    <input type="radio" class="form-check-input" name="level" value="" formControlName="level">Range
+                </label>
+            </div>
+
+            <label for="levelFrom">Level from (%):</label>
+            <input type="number" min="0" max="100" class="form-control" id="levelFrom" formControlName="levelFrom">
+
+            <label for="levelTo">Level to (%):</label>
+            <input type="number" min="0" max="100" class="form-control" id="levelTo" formControlName="levelTo">
+        </ng-container>
+
+        <button type="submit" class="btn btn-primary" (click)="filterWords()">Search</button>
+
+        <button class="btn btn-primary margin-right-5" (click)="resetFilter()">Reset</button>
+    </form>
+
     <div class="row">
         <table class="table table-striped table-bordered">
             <thead>
             <tr>
+                <th></th>
                 <th>Word</th>
                 <th>Translation</th>
                 <th>Example sentence</th>
@@ -20,7 +59,8 @@
             </tr>
             </thead>
             <tbody>
-            <tr *ngFor="let word of words">
+            <tr *ngFor="let word of words; let index = index">
+                <td>{{index + 1}}</td>
                 <td style="font-weight:bold;">
                     {{word.content}}
                 </td>

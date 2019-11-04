@@ -1,0 +1,8 @@
+.nav-item {
+    font-weight: bold;
+    margin-right: 10px;
+
+    .active {
+        font-weight: lighter;
+    }
+}

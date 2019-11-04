@@ -1,6 +1,17 @@
 <ng-container *ngIf="text">
     <div class="row text-title text-center">
-        <h3>{{text.title ? text.title : text.text.slice(0, 10) + '...'}} ({{percentage | percent}})</h3>
+        <h3>{{text.title ? text.title : text.text.slice(0, 10) + '...'}}</h3>
+    </div>
+
+    <div class="row text-title text-center">
+        <h4>({{percentage | percent}} loaded)</h4>
+    </div>
+    <div class="row text-title text-center">
+        <h4>
+            ({{text.percentageUnknown | percent}} unknown)
+            ({{text.percentageLearning | percent}} learning)
+            ({{(1 - text.percentageUnknown - text.percentageLearning) | percent}} known)
+        </h4>
     </div>
 
     <div class="row">

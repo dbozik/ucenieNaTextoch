@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Word } from '../../../app/Objects';
+import { Word, WordsSearch } from '../../../app/Objects';
 import { ipcEvents } from '../../shared/ipc-events.enum';
 import { IpcService } from './ipc.service';
 
@@ -12,8 +12,8 @@ export class WordService {
     }
 
 
-    public getWords(): Observable<Word[]> {
-        return this.ipcService.getData(ipcEvents.GET_WORDS);
+    public getWords(filter: WordsSearch): Observable<Word[]> {
+        return this.ipcService.sendData(ipcEvents.GET_WORDS, filter);
     }
 
 
