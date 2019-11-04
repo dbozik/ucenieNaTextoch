@@ -23,6 +23,13 @@
  - selection - check out angular directives for selection
  - selection - think over replacing
  - electron - security message on dev
+ - save data with timestamp
+ - display tables with index numbers
+ - translate window/word edit - add pronounciation field
+ - delete example sentence for a known word
+ - export mnemosyne csv with <b></b>
+ - export mnemosyne with pronounciation
+ - import text from pdf
 
 Story 7
  - filter texts
