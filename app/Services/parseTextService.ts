@@ -68,8 +68,6 @@ export class ParseTextService {
 
             if (wordObject) {
                 textPart.word = wordObject;
-            } else {
-                console.log(textPart.content);
             }
         });
 

@@ -5,9 +5,10 @@
     </span>
     <app-word-popup [word]="popupSelection" (wordEdit)="onWordEdit($event)" [isSelection]="true"></app-word-popup>
 
-    <span [style.backgroundColor]="textPart.color" [title]="textPart.title" class="popup text-part"
-          (click)="preventPropagation($event); clickPopup()">
-        {{textPart.content}}
+    <span [style.backgroundColor]="textPart.color" [title]="textPart.title" class="popup text-part">
+        <span (click)="preventPropagation($event); clickPopup()">
+            {{textPart.content}}
+        </span>
 
         <app-word-popup *ngIf="popupWord" [word]="popupWord" (wordEdit)="onWordEdit($event)"></app-word-popup>
     </span>

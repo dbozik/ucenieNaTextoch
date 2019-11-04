@@ -18,7 +18,6 @@ F - feature, B - bug
  -F highligh not connected parts with ctrl
  -F maybe highlight subwords
  -F create a windows installer
- -B word component - component destroyed error
  -B selection - attaching to the first word in db does not work
  -F selection - process in the parsing process
  -F selection - check out angular directives for selection
@@ -31,7 +30,6 @@ F - feature, B - bug
  -F export mnemosyne with pronounciation
  -F import text from pdf
  -B open texts on english loads german texts
- -B open texts displays some words (not found?)
  -F save progress in db - on load load gradually until the progress
 
 Story 8
