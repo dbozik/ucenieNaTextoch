@@ -2,10 +2,11 @@ import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { startWith, takeUntil } from 'rxjs/operators';
-import { Word, WordsSearch } from '../../../app/Objects';
+import { Word } from '../../../app/Objects';
 import { getColor } from '../color.utils';
 import { LanguageService } from '../services/language.service';
 import { WordService } from '../services/word.service';
+import { ExportCsvUtils } from './export-csv.utils';
 
 type Levels = 'unknown' | 'known' | 'learning';
 
@@ -32,33 +33,14 @@ export class WordsComponent implements OnInit, OnDestroy {
 
 
     ngOnInit() {
-        this.filterForm = this.formBuilder.group({
-            word: '',
-            level: 'unknown',
-            levelFrom: new FormControl({value: '', disabled: true}, Validators.min(0)),
-            levelTo: new FormControl({value: '', disabled: true}, Validators.max(100)),
-        });
+        this.setFilterForm();
 
         this.languageService.languageSelected$.pipe(
             startWith(true),
             takeUntil(this.componentDestroyed$),
         ).subscribe(() => this.filterWords());
 
-        this.filterForm.valueChanges.subscribe(() => {
-            const levelChosen = !!this.filterForm.get('level').value;
-            const levelFrom = this.filterForm.get('levelFrom');
-            const levelTo = this.filterForm.get('levelTo');
-
-            if (levelChosen) {
-                levelFrom.disable({emitEvent: false});
-                levelTo.disable({emitEvent: false});
-            } else {
-                levelFrom.enable({emitEvent: false});
-                levelTo.enable({emitEvent: false});
-            }
-
-            this.changeDetection.detectChanges();
-        });
+        this.filterForm.valueChanges.subscribe(() => this.setLevelControlsDisabled());
     }
 
 
@@ -68,32 +50,14 @@ export class WordsComponent implements OnInit, OnDestroy {
 
 
     public exportWords() {
-        const DELIMITER = ';';
-        const words: (Word | 'color')[] = this.words;
-
-        // specify how you want to handle null values here
-        const replacer = (key, value) => value === null || typeof value === 'undefined' ? '' : value;
-
-        const header = ['word', 'translate', 'sentence', 'sentenceTranslate'];
-
-        const jsonProcess = (item: string) => JSON.stringify(item, replacer);
-
-        const csv = words.map((word: Word) => [
-            jsonProcess(word.content),
-            jsonProcess(word.translation),
-            jsonProcess(word.exampleSentence),
-            jsonProcess(word.exampleSentenceTranslation),
-        ].join(DELIMITER));
-        csv.unshift(header.join(DELIMITER));
-        const csvArray = csv.join('\r\n');
+        const csvBlob = ExportCsvUtils.exportToCsv(this.words as Word[]);
+        const url = window.URL.createObjectURL(csvBlob);
 
         const downloadLink = document.createElement('a');
-        const blob = new Blob(['\ufeff', csvArray], {type: 'text/csv'});
-        const url = window.URL.createObjectURL(blob);
-
         downloadLink.href = url;
         downloadLink.download = 'export.csv';
         downloadLink.click();
+
         window.URL.revokeObjectURL(url);
         downloadLink.remove();
     }
@@ -105,48 +69,19 @@ export class WordsComponent implements OnInit, OnDestroy {
 
 
     public filterWords(): void {
-        let minLevel: number = null;
-        let maxLevel: number = null;
+        const {levelFrom, levelTo}: { levelFrom: number, levelTo: number } = this.getLevelRange();
+        const word = this.filterForm.get('word').value;
 
-        const levelValue: Levels = this.filterForm.get('level').value;
+        this.wordService.getWords({word, levelFrom, levelTo})
+            .subscribe((words: Word[]) => {
+                if (words) {
+                    this.words = words.sort((first, second) => first.level - second.level)
+                        .map(item => ({...item, color: getColor(item.level)}));
+                }
 
-        if (levelValue) {
-            switch (levelValue) {
-                case 'unknown':
-                    minLevel = 0;
-                    maxLevel = 0;
-                    break;
-                case 'known':
-                    minLevel = 99;
-                    maxLevel = 100;
-                    break;
-                case 'learning':
-                    minLevel = 0.001;
-                    maxLevel = 98.999;
-                    break;
-                default:
-                    break;
-            }
-        } else {
-            const levelFromValue: number = this.filterForm.get('levelFrom').value;
-            const levelToValue: number = this.filterForm.get('levelTo').value;
-
-            minLevel = levelFromValue || null;
-            maxLevel = levelToValue || null;
-        }
-
-        const filter = new WordsSearch(this.filterForm.get('word').value, minLevel, maxLevel);
-
-        this.wordService.getWords(filter).subscribe((words: Word[]) => {
-            if (words) {
-                this.words = words.sort((first, second) => first.level - second.level)
-                    .map(word => ({...word, color: getColor(word.level)}));
-            }
-
-            this.changeDetection.detectChanges();
-        });
+                this.changeDetection.detectChanges();
+            });
     }
-
 
     public resetFilter(): void {
         this.filterForm.setValue({
@@ -157,5 +92,63 @@ export class WordsComponent implements OnInit, OnDestroy {
         });
 
         this.filterWords();
+    }
+
+    private getLevelRange() {
+        let levelFrom: number = null;
+        let levelTo: number = null;
+
+        const levelValue: Levels = this.filterForm.get('level').value;
+
+        if (levelValue) {
+            switch (levelValue) {
+                case 'unknown':
+                    levelFrom = 0;
+                    levelTo = 0;
+                    break;
+                case 'known':
+                    levelFrom = 99;
+                    levelTo = 100;
+                    break;
+                case 'learning':
+                    levelFrom = 0.001;
+                    levelTo = 98.999;
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            const levelFromValue: number = this.filterForm.get('levelFrom').value;
+            const levelToValue: number = this.filterForm.get('levelTo').value;
+
+            levelFrom = levelFromValue || null;
+            levelTo = levelToValue || null;
+        }
+        return {levelFrom, levelTo};
+    }
+
+    private setFilterForm() {
+        this.filterForm = this.formBuilder.group({
+            word: '',
+            level: 'unknown',
+            levelFrom: new FormControl({value: '', disabled: true}, Validators.min(0)),
+            levelTo: new FormControl({value: '', disabled: true}, Validators.max(100)),
+        });
+    }
+
+    private setLevelControlsDisabled() {
+        const levelChosen: boolean = !!this.filterForm.get('level').value;
+        const levelFrom = this.filterForm.get('levelFrom');
+        const levelTo = this.filterForm.get('levelTo');
+
+        if (levelChosen) {
+            levelFrom.disable({emitEvent: false});
+            levelTo.disable({emitEvent: false});
+        } else {
+            levelFrom.enable({emitEvent: false});
+            levelTo.enable({emitEvent: false});
+        }
+
+        this.changeDetection.detectChanges();
     }
 }

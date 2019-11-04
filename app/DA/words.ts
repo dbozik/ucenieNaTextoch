@@ -1,4 +1,5 @@
 import { Observable } from 'rxjs';
+import { colorMaxLevel } from '../../web/app/color.utils';
 import { Word, WordsSearch } from '../Objects';
 import { StateService } from '../Services';
 import { Database } from './database';
@@ -8,6 +9,28 @@ export class Words {
 
     public constructor() {
     }
+
+
+    private static filterRequest(input: WordsSearch) {
+        const request: Partial<WordsSearch & Word> = {};
+
+        if (input.word) {
+            request.content = new RegExp(input.word) as any;
+        }
+        const levelRequest: any = {};
+        if (input.levelFrom || input.levelFrom === 0) {
+            levelRequest.$gte = input.levelFrom * colorMaxLevel / 100;
+        }
+        if (input.levelTo || input.levelTo === 0) {
+            levelRequest.$lte = input.levelTo * colorMaxLevel / 100;
+        }
+        if (levelRequest) {
+            request.level = levelRequest;
+        }
+
+        return request;
+    }
+
 
     public add(word: string, exampleSentence: string)
         : Observable<Word> {
@@ -34,6 +57,7 @@ export class Words {
         return this.db.words.findOne$({content: word});
     }
 
+
     public getById(id: string): Observable<Word> {
         return this.db.words.findOne$({_id: id});
     }
@@ -42,24 +66,12 @@ export class Words {
     public getList(words: string[]): Observable<Word[]>;
     public getList(filter: WordsSearch): Observable<Word[]>;
     public getList(input: any): Observable<Word[]> {
-        const request: Partial<WordsSearch & Word & { userId: string, languageId: string }> = {
-                ...StateService.getInstance().userLanguageRequest
-            };
+        let request: Partial<WordsSearch & Word & { userId: string, languageId: string }> = {
+            ...StateService.getInstance().userLanguageRequest
+        };
 
         if (input instanceof WordsSearch) {
-            if (input.word) {
-                request.content = new RegExp(input.word) as any;
-            }
-            const levelRequest: any = {};
-            if (input.levelFrom || input.levelFrom === 0) {
-                levelRequest.$gte = input.levelFrom;
-            }
-            if (input.levelTo || input.levelTo === 0) {
-                levelRequest.$lte = input.levelTo;
-            }
-            if (levelRequest) {
-                request.level = levelRequest;
-            }
+            request = {...request, ...Words.filterRequest(input)};
         } else {
             request.content = {$in: input} as any;
         }

@@ -7,7 +7,7 @@
         <button class="btn btn-primary" (click)="exportWords()">Export</button>
     </div>
 
-    <form class="form-inline" [formGroup]="filterForm">
+    <form class="form-inline" [formGroup]="filterForm" (keyup.enter)="filterWords()">
         <ng-container (keyup.enter)="filterWords()">
             <label for="word">Word contains:</label>
             <input type="text" class="form-control" id="word" formControlName="word">

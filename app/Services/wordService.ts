@@ -54,11 +54,9 @@ export class WordService {
 
 
     private processGetWords(): void {
-        const getWords$ = (filter: WordsSearch) => this.wordsDA.getList(new WordsSearch(
-            filter.word,
-            filter.levelFrom * colorMaxLevel / 100,
-            filter.levelTo * colorMaxLevel / 100
-        ));
+        const getWords$ = (filter: WordsSearch) => this.wordsDA.getList(
+            new WordsSearch( filter.word, filter.levelFrom, filter.levelTo)
+        );
 
         const getWordsChain = new GetRequestHandler(ipcEvents.GET_WORDS, getWords$);
         getWordsChain.run({});
