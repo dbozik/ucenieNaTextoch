@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { TextPart, Word } from '../Objects';
+import { Word, WordsSearch } from '../Objects';
 import { StateService } from '../Services';
 import { Database } from './database';
 
@@ -39,15 +39,33 @@ export class Words {
     }
 
 
-    public getList(words: string[]): Observable<Word[]> {
-        return this.db.words.find$({...StateService.getInstance().userLanguageRequest, content: {$in: words}});
-    }
+    public getList(words: string[]): Observable<Word[]>;
+    public getList(filter: WordsSearch): Observable<Word[]>;
+    public getList(input: any): Observable<Word[]> {
+        const request: Partial<WordsSearch & Word & { userId: string, languageId: string }> = {
+                ...StateService.getInstance().userLanguageRequest
+            };
 
-    public getByLanguage(): Observable<Word[]> {
-        const userId = StateService.getInstance().userId;
-        const languageId = StateService.getInstance().language._id;
+        if (input instanceof WordsSearch) {
+            if (input.word) {
+                request.content = new RegExp(input.word) as any;
+            }
+            const levelRequest: any = {};
+            if (input.levelFrom || input.levelFrom === 0) {
+                levelRequest.$gte = input.levelFrom;
+            }
+            if (input.levelTo || input.levelTo === 0) {
+                levelRequest.$lte = input.levelTo;
+            }
+            if (levelRequest) {
+                request.level = levelRequest;
+            }
+        } else {
+            request.content = {$in: input} as any;
+        }
 
-        return this.db.words.find$({userId, languageId});
+        return this.db.words.find$(request);
+
     }
 
 

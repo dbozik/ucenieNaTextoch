@@ -4,3 +4,4 @@ export * from './TextPart';
 export * from './Language';
 export * from './User';
 export * from './TextsSearch';
+export * from './WordsSearch';

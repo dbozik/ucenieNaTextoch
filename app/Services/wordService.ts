@@ -1,11 +1,12 @@
 import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { colorMaxLevel } from "../../web/app/color.utils";
 import { ipcEvents } from '../../web/shared/ipc-events.enum';
 import { Routes } from '../../web/shared/routes.enum';
 import * as DA from '../DA';
 import { GetRequestHandler, MethodHandler, SendRequestHandler } from '../Handlers';
 import { Navigation } from '../navigation';
-import { Word } from '../Objects';
+import { Word, WordsSearch } from '../Objects';
 import { ParseTextService } from './parseTextService';
 
 export class WordService {
@@ -53,7 +54,11 @@ export class WordService {
 
 
     private processGetWords(): void {
-        const getWords$ = () => this.wordsDA.getByLanguage();
+        const getWords$ = (filter: WordsSearch) => this.wordsDA.getList(new WordsSearch(
+            filter.word,
+            filter.levelFrom * colorMaxLevel / 100,
+            filter.levelTo * colorMaxLevel / 100
+        ));
 
         const getWordsChain = new GetRequestHandler(ipcEvents.GET_WORDS, getWords$);
         getWordsChain.run({});

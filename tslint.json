@@ -64,6 +64,7 @@
         ],
         "trailing-comma": false,
         "no-output-on-prefix": true,
+        "unified-signatures": false,
         "use-input-property-decorator": true,
         "use-output-property-decorator": true,
         "use-host-property-decorator": true,

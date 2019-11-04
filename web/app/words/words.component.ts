@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { startWith, takeUntil } from 'rxjs/operators';
-import { Word } from '../../../app/Objects';
+import { Word, WordsSearch } from '../../../app/Objects';
 import { getColor } from '../color.utils';
 import { LanguageService } from '../services/language.service';
 import { WordService } from '../services/word.service';
@@ -110,26 +110,39 @@ export class WordsComponent implements OnInit, OnDestroy {
 
         const levelValue: Levels = this.filterForm.get('level').value;
 
-        switch (levelValue) {
-            case 'unknown':
-                minLevel = 0;
-                maxLevel = 0;
-                break;
-            case 'known':
-                minLevel = 99;
-                maxLevel = 100;
-                break;
-            case 'learning':
-                minLevel = 0.001;
-                maxLevel = 98.999;
-                break;
-            default:
-                break;
+        if (levelValue) {
+            switch (levelValue) {
+                case 'unknown':
+                    minLevel = 0;
+                    maxLevel = 0;
+                    break;
+                case 'known':
+                    minLevel = 99;
+                    maxLevel = 100;
+                    break;
+                case 'learning':
+                    minLevel = 0.001;
+                    maxLevel = 98.999;
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            const levelFromValue: number = this.filterForm.get('levelFrom').value;
+            const levelToValue: number = this.filterForm.get('levelTo').value;
+
+            minLevel = levelFromValue || null;
+            maxLevel = levelToValue || null;
         }
 
-        this.wordService.getWords().subscribe((words: Word[]) => {
-            this.words = words.sort((first, second) => first.level - second.level)
-                .map(word => ({...word, color: getColor(word.level)}));
+        const filter = new WordsSearch(this.filterForm.get('word').value, minLevel, maxLevel);
+
+        this.wordService.getWords(filter).subscribe((words: Word[]) => {
+            if (words) {
+                this.words = words.sort((first, second) => first.level - second.level)
+                    .map(word => ({...word, color: getColor(word.level)}));
+            }
+
             this.changeDetection.detectChanges();
         });
     }
