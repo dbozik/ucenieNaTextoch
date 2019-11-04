@@ -30,11 +30,13 @@
  - export mnemosyne csv with <b></b>
  - export mnemosyne with pronounciation
  - import text from pdf
+ - open texts on english loads german texts
+ - open texts displays some words (not found?)
 
 Story 7
- - filter texts
+    - filter texts
  - filter words
- - text percentage
+    - text percentage
 
 Story 8
  - edit a text
