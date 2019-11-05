@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, ReplaySubject, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Language } from '../../../app/Objects';
 import { ipcEvents } from '../../shared/ipc-events.enum';
@@ -7,7 +7,7 @@ import { IpcService } from './ipc.service';
 
 @Injectable()
 export class LanguageService {
-    private languageSelectedSource$: Subject<boolean> = new ReplaySubject(1);
+    private languageSelectedSource$: Subject<boolean> = new BehaviorSubject(true);
     private languageChangedSource$: Subject<boolean> = new ReplaySubject(1);
 
     public languageSelected$: Observable<boolean> = this.languageSelectedSource$.asObservable();

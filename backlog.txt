@@ -31,6 +31,7 @@ F - feature, B - bug
  -F import text from pdf
  -B open texts on english loads german texts
  -F save progress in db - on load load gradually until the progress
+ -F archive the text from read-text page
 
 Story 8
  - edit a text
