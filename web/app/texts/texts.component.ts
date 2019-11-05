@@ -75,7 +75,6 @@ export class TextsComponent implements OnInit, OnDestroy {
 
 
     public getRegularTexts(): void {
-        console.log('get regular texts');
         this.active = 'regular';
 
         this.textService.filterTexts({
@@ -84,7 +83,6 @@ export class TextsComponent implements OnInit, OnDestroy {
             createdFrom: this.filterForm.get('createdFrom').value,
             createdTo: this.filterForm.get('createdTo').value,
         }).subscribe((texts: Text[]) => {
-            console.log('filtered texts');
             this.texts = texts.sort(
                 (first, second) =>
                     (new Date(second.createdOn)).getTime() - (new Date(first.createdOn)).getTime()

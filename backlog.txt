@@ -22,17 +22,28 @@ F - feature, B - bug
  -F selection - process in the parsing process
  -F selection - check out angular directives for selection
  -F selection - think over replacing
- -B electron - security message on dev
+ -B electron - security message on dev - problem with executeJavascript from main
  -F save data with timestamp
  -F translate window/word edit - add pronounciation field
  -F delete example sentence for a known word
  -F export mnemosyne csv with <b></b>
  -F export mnemosyne with pronounciation
  -F import text from pdf
- -B open texts on english loads german texts
  -F save progress in db - on load load gradually until the progress
  -F archive the text from read-text page
+ -B correctly display translation popups
+ -F favicon for the app
+ -B read-text - correct sizes for blocks without scrolling
+ -F change navigation using ipcMain and navigating on receive in angular + solve content security error + solve routing display of language selection
 
 Story 8
  - edit a text
  - archive texts
+ - archive a text from read-text
+ - list of archived texts - unarchive, do not edit
+
+Story 9
+ - export words for mnemosyne
+ - word - add pronounciation
+ - delete example sentence on known words
+ - loader - texts, words
