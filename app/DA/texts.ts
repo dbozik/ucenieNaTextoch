@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { tap } from "rxjs/operators";
+import { tap } from 'rxjs/operators';
 import { Text } from '../Objects';
 import { StateService } from '../Services';
 import { Database } from './database';

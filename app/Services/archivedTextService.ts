@@ -37,13 +37,17 @@ export class ArchivedTextService {
 
 
     private processUnarchiveText(): void {
-        const unarchiveTextChain = new GetRequestHandler(ipcEvents.UNARCHIVE_TEXT, (textId: string) => this.textsArchivedDA.get(textId));
+        let archivedTextId: string = '';
+        const unarchiveTextChain = new GetRequestHandler(ipcEvents.UNARCHIVE_TEXT, (textId: string) => {
+            archivedTextId = textId;
+            return this.textsArchivedDA.get(textId);
+        });
         unarchiveTextChain
             .next(
                 new SendRequestHandler((text: Text) => this.textsDA.addText(text.text, text.title))
             )
             .next(
-                new SendRequestHandler((text: Text) => this.textsArchivedDA.delete(text._id))
+                new SendRequestHandler((text: Text) => this.textsArchivedDA.delete(archivedTextId))
             );
 
         unarchiveTextChain.run({});

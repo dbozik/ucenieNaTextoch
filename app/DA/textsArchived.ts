@@ -16,6 +16,7 @@ export class TextsArchived {
         return this.db.textsArchived.insert$(
             {
                 ...StateService.getInstance().userLanguageRequest,
+                _id: text._id,
                 text: text.text,
                 title: text.title,
                 createdOn: text.createdOn,

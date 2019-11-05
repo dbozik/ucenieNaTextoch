@@ -4,13 +4,14 @@ import { Subject } from 'rxjs';
 import { startWith, takeUntil } from 'rxjs/operators';
 import { Text } from '../../../app/Objects';
 import { LanguageService } from '../services/language.service';
+import { TextArchiveService } from '../services/text-archive.service';
 import { TextService } from '../services/text.service';
 
 @Component({
     selector: 'app-texts',
     templateUrl: './texts.component.html',
     styleUrls: ['./texts.component.scss'],
-    providers: [TextService, LanguageService],
+    providers: [TextService, TextArchiveService, LanguageService],
 })
 export class TextsComponent implements OnInit, OnDestroy {
     public texts: Text[] = [];
@@ -21,11 +22,23 @@ export class TextsComponent implements OnInit, OnDestroy {
 
     constructor(
         private readonly languageService: LanguageService,
+        private readonly textArchiveService: TextArchiveService,
         private readonly textService: TextService,
         private readonly changeDetection: ChangeDetectorRef,
         private readonly formBuilder: FormBuilder,
     ) {
     }
+
+
+    public get isRegularTexts(): boolean {
+        return this.active === 'regular';
+    }
+
+
+    public get isArchivedTexts(): boolean {
+        return this.active === 'archived';
+    }
+
 
     ngOnInit() {
         this.filterForm = this.formBuilder.group({
@@ -49,7 +62,9 @@ export class TextsComponent implements OnInit, OnDestroy {
 
 
     public textClick(textId: string): void {
-        this.textService.openText(textId);
+        if (this.isRegularTexts) {
+            this.textService.openText(textId);
+        }
     }
 
 
@@ -95,7 +110,28 @@ export class TextsComponent implements OnInit, OnDestroy {
     public getArchivedTexts(): void {
         this.active = 'archived';
 
-        this.texts = [];
+        this.textArchiveService.getList().subscribe((texts: Text[]) => {
+            this.texts = texts.sort(
+                (first, second) =>
+                    (new Date(second.createdOn)).getTime() - (new Date(first.createdOn)).getTime()
+            );
+            this.changeDetection.detectChanges();
+        });
+    }
+
+
+    public archive(textId: string): void {
+        this.textArchiveService.archiveText(textId).subscribe(() => this.removeText(textId));
+    }
+
+
+    public unarchive(textId: string): void {
+        this.textArchiveService.unarchiveText(textId).subscribe(() => this.removeText(textId));
+    }
+
+
+    private removeText(textId): void {
+        this.texts = this.texts.filter(text => text._id !== textId);
         this.changeDetection.detectChanges();
     }
 
