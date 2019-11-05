@@ -93,9 +93,11 @@ export class WordComponent implements OnChanges {
         this.clickService.wordClicked$.pipe(
             take(1),
         ).subscribe(() => {
-            this.popupWord = null;
-            this.popupSelection = null;
-            this.changeDetection.detectChanges();
+            if (this.popupWord || this.popupSelection) {
+                this.popupWord = null;
+                this.popupSelection = null;
+                this.changeDetection.detectChanges();
+            }
         });
     }
 }

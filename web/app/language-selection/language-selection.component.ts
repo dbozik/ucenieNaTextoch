@@ -38,8 +38,8 @@ export class LanguageSelectionComponent implements OnInit {
                         startWith(true),
                         switchMap(() => this.languageService.getLanguages())
                         ).subscribe((languages: Language[]) => {
-                    this.languages = languages;
-                    if (this.languages && this.languages.length > 0) {
+                    if (languages && languages.length > 0) {
+                        this.languages = languages.sort((first, second) => first.name.localeCompare(second.name));
                         this.languagesControl.setValue(this.languages[0]._id);
                     }
                     this.changeDetection.detectChanges();

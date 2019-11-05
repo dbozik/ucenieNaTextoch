@@ -63,7 +63,7 @@ export class ReadTextComponent implements OnInit {
             const editedTextParts: TextPart[] = [];
 
             for (const textPart of this.text.textParts) {
-                if (textPart.type === 'word' && textPart.word._id === word._id) {
+                if (textPart.type === 'word' && !!textPart.word && textPart.word._id === word._id) {
                     editedTextParts.push({
                         content: textPart.content,
                         type: 'word',
@@ -173,8 +173,8 @@ export class ReadTextComponent implements OnInit {
     private processTextParts(textParts: TextPart[]): TextPart[] {
         return textParts.map((textPart: TextPart) => ({
             ...textPart,
-            color: textPart.type === 'word' ? getColor(textPart.word.level) : '',
-            title: textPart.type === 'word' ? textPart.word.translation || '' : ''
+            color: textPart.type === 'word' && !!textPart.word ? getColor(textPart.word.level) : '',
+            title: textPart.type === 'word' && !!textPart.word ? textPart.word.translation || '' : ''
         }));
     }
 

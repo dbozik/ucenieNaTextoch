@@ -61,6 +61,7 @@ export class UserService {
         ).next(
             new MethodHandler<any>((languages: Language[]) => {
                 if (languages && languages.length > 0) {
+                    languages = languages.sort((first, second) => first.name.localeCompare(second.name));
                     StateService.getInstance().language = languages[0];
                 }
             })

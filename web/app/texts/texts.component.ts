@@ -36,7 +36,6 @@ export class TextsComponent implements OnInit, OnDestroy {
         });
 
         this.languageService.languageSelected$.pipe(
-            startWith(true),
             takeUntil(this.componentDestroyed$),
         ).subscribe(() => {
             this.getRegularTexts();
