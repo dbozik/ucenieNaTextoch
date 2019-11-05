@@ -4,3 +4,4 @@ export * from './wordService';
 export * from './languageService';
 export * from './userService';
 export * from './stateService';
+export * from './archivedTextService';

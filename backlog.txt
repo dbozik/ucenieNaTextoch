@@ -47,3 +47,8 @@ Story 9
  - word - add pronounciation
  - delete example sentence on known words
  - loader - texts, words
+ - create a windows installer
+
+Story 10
+ - text selection
+ - change navigation using ipcMain events
