@@ -19,6 +19,7 @@ export class ReadTextComponent implements OnInit {
     public text: Text;
     public translateLink: string = '';
     public percentage: number = 0;
+    public loading: boolean = true;
 
     @ViewChild('translationField')
     public translationField: ElementRef<HTMLInputElement>;
@@ -49,6 +50,7 @@ export class ReadTextComponent implements OnInit {
 
             this.languageDictionary = this.text.languageDictionary;
             this.setTranslateLink('', this.languageDictionary);
+            this.loading = false;
             this.changeDetectorRef.detectChanges();
         });
     }

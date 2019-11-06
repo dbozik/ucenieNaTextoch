@@ -1,11 +1,13 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { Subject } from 'rxjs';
-import { startWith, takeUntil } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { Text } from '../../../app/Objects';
 import { LanguageService } from '../services/language.service';
 import { TextArchiveService } from '../services/text-archive.service';
 import { TextService } from '../services/text.service';
+
+type TextType = 'regular' | 'archived';
 
 @Component({
     selector: 'app-texts',
@@ -15,8 +17,9 @@ import { TextService } from '../services/text.service';
 })
 export class TextsComponent implements OnInit, OnDestroy {
     public texts: Text[] = [];
-    public active: 'regular' | 'archived' = 'regular';
+    public active: TextType = 'regular';
     public filterForm: FormGroup;
+    public loading: boolean = true;
 
     private componentDestroyed$: Subject<boolean> = new Subject<boolean>();
 
@@ -51,7 +54,7 @@ export class TextsComponent implements OnInit, OnDestroy {
         this.languageService.languageSelected$.pipe(
             takeUntil(this.componentDestroyed$),
         ).subscribe(() => {
-            this.getRegularTexts();
+            this.getTexts(this.active);
         });
     }
 
@@ -69,11 +72,7 @@ export class TextsComponent implements OnInit, OnDestroy {
 
 
     public filterTexts(): void {
-        if (this.active === 'regular') {
-            this.getRegularTexts();
-        } else {
-            this.getArchivedTexts();
-        }
+        this.getTexts(this.active);
     }
 
 
@@ -89,32 +88,19 @@ export class TextsComponent implements OnInit, OnDestroy {
     }
 
 
-    public getRegularTexts(): void {
-        this.active = 'regular';
+    public getTexts(type: TextType): void {
+        this.active = type;
+        this.loading = true;
+        this.texts = [];
+        this.changeDetection.detectChanges();
 
-        this.textService.filterTexts({
-            titleFragment: this.filterForm.get('title').value,
-            textFragment: this.filterForm.get('text').value,
-            createdFrom: this.filterForm.get('createdFrom').value,
-            createdTo: this.filterForm.get('createdTo').value,
-        }).subscribe((texts: Text[]) => {
+        const loadTexts$ = type === 'regular' ? this.getRegularTexts() : this.getArchivedTexts();
+        loadTexts$.subscribe((texts: Text[]) => {
             this.texts = texts.sort(
                 (first, second) =>
                     (new Date(second.createdOn)).getTime() - (new Date(first.createdOn)).getTime()
             );
-            this.changeDetection.detectChanges();
-        });
-    }
-
-
-    public getArchivedTexts(): void {
-        this.active = 'archived';
-
-        this.textArchiveService.getList().subscribe((texts: Text[]) => {
-            this.texts = texts.sort(
-                (first, second) =>
-                    (new Date(second.createdOn)).getTime() - (new Date(first.createdOn)).getTime()
-            );
+            this.loading = false;
             this.changeDetection.detectChanges();
         });
     }
@@ -132,6 +118,21 @@ export class TextsComponent implements OnInit, OnDestroy {
 
     public unarchive(textId: string): void {
         this.textArchiveService.unarchiveText(textId).subscribe(() => this.removeText(textId));
+    }
+
+
+    private getRegularTexts(): Observable<Text[]> {
+        return this.textService.filterTexts({
+            titleFragment: this.filterForm.get('title').value,
+            textFragment: this.filterForm.get('text').value,
+            createdFrom: this.filterForm.get('createdFrom').value,
+            createdTo: this.filterForm.get('createdTo').value,
+        });
+    }
+
+
+    private getArchivedTexts(): Observable<Text[]> {
+        return this.textArchiveService.getList();
     }
 
 

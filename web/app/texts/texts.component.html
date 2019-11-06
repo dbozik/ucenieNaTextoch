@@ -6,10 +6,10 @@
     <nav class="navbar navbar-expand-sm">
         <ul class="navbar-nav">
             <li [ngClass]="{'active': isRegularTexts, 'nav-item': true}">
-                <a class="nav-link btn btn-primary" (click)="getRegularTexts()">Regular</a>
+                <a class="nav-link btn btn-primary" (click)="getTexts('regular')">Active</a>
             </li>
             <li [ngClass]="{'active': isArchivedTexts, 'nav-item': true}">
-                <a class="nav-link btn btn-primary" (click)="getArchivedTexts()">Archived</a>
+                <a class="nav-link btn btn-primary" (click)="getTexts('archived')">Archived</a>
             </li>
         </ul>
     </nav>
@@ -55,8 +55,6 @@
             </tr>
             </thead>
 
-            <div *ngIf="!texts">NO TEXTS</div>
-
             <tbody>
             <tr *ngFor="let text of texts; let index = index">
                 <td>{{index + 1}}</td>
@@ -80,5 +78,9 @@
             </tr>
             </tbody>
         </table>
+
+        <div *ngIf="!texts">NO TEXTS</div>
+
+        <div class="spinner-border" *ngIf="loading"></div>
     </div>
 </div>

@@ -20,6 +20,7 @@ export class WordsComponent implements OnInit, OnDestroy {
 
     public words: (Word | 'color')[] = [];
     public filterForm: FormGroup;
+    public loading: boolean = true;
 
     private componentDestroyed$: Subject<boolean> = new Subject<boolean>();
 
@@ -71,6 +72,9 @@ export class WordsComponent implements OnInit, OnDestroy {
     public filterWords(): void {
         const {levelFrom, levelTo}: { levelFrom: number, levelTo: number } = this.getLevelRange();
         const word = this.filterForm.get('word').value;
+        this.words = [];
+        this.loading = true;
+        this.changeDetection.detectChanges();
 
         this.wordService.getWords({word, levelFrom, levelTo})
             .subscribe((words: Word[]) => {
@@ -78,6 +82,7 @@ export class WordsComponent implements OnInit, OnDestroy {
                     this.words = words.sort((first, second) => first.level - second.level)
                         .map(item => ({...item, color: getColor(item.level)}));
                 }
+                this.loading = false;
 
                 this.changeDetection.detectChanges();
             });
