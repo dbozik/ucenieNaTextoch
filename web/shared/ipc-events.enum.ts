@@ -24,6 +24,13 @@ export enum ipcEvents {
     GET_TEXTS = 'lwt-get-texts',
     OPEN_TEXT = 'lwt-open-text',
     FILTER_TEXTS = 'lwt-filter-texts',
+    OPEN_TEXT_EDIT = 'lwt-open-text-edit',
+    EDIT_TEXT = 'lwt-edit-text',
+
+    // archive
+    GET_ARCHIVED_TEXTS = 'lwt-get-archived-texts',
+    ARCHIVE_TEXT = 'lwt-archive-text',
+    UNARCHIVE_TEXT = 'lwt-unarchive-text',
 
     // words
     OPEN_WORD_EDIT = 'lwt-open-word-edit',

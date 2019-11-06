@@ -1,4 +1,4 @@
-import { Observable, ReplaySubject, Subject } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { ParseTextService, StateService, WordService } from '.';
 import { ipcEvents } from '../../web/shared/ipc-events.enum';
@@ -11,7 +11,6 @@ import { Text, TextPart, TextsSearch, Word } from '../Objects';
 export class TextService {
 
     private textsDA = new DA.Texts();
-    private textsArchivedDA = new DA.TextsArchived();
     private wordsDA = new DA.Words();
 
     public constructor() {
@@ -20,32 +19,12 @@ export class TextService {
 
     public init(): void {
         this.processSaveText();
+        this.processEditText();
         this.processGetText();
         this.processGetTextParsed();
         this.processGetTexts();
         this.processOpenText();
-        this.processFilterTexts();
-    }
-
-
-    // public getArchivedList(): Observable<Text[]> {
-    //     const texts = new DA.TextsArchived();
-    //
-    //     return texts.getList();
-    // }
-
-
-    public archive(textId: string): Observable<boolean> {
-        const resultSource$: Subject<boolean> = new ReplaySubject<boolean>(1);
-        this.textsDA.get(textId).subscribe(text => {
-            this.textsArchivedDA.addText(text);
-            this.textsDA.delete(textId);
-
-            resultSource$.next(true);
-            resultSource$.complete();
-        });
-
-        return resultSource$.asObservable();
+        this.processOpenTextEdit();
     }
 
 
@@ -59,40 +38,15 @@ export class TextService {
     }
 
 
-    private processGetText(): void {
-        const getTextChain = new GetRequestHandler(ipcEvents.GET_TEXT, this.getText$);
-        getTextChain.run({});
+    private processEditText(): void {
+        const editTextChain = new GetRequestHandler(ipcEvents.EDIT_TEXT, this.editText$);
+        editTextChain.run({});
     }
 
 
-    private processGetTexts(): void {
-        // let texts: Text[] = [];
-        // let parseTextService: ParseTextService;
-        //
-        // const getTextsChain = new GetRequestHandler(ipcEvents.GET_TEXTS, this.textsDA.getList);
-        // getTextsChain.next(
-        //     new SendRequestHandler((textsResult: Text[]) => {
-        //         texts = textsResult;
-        //         parseTextService = new ParseTextService();
-        //
-        //         const words: string[] = [];
-        //         texts.forEach(text => {
-        //             text.textParts = parseTextService.splitToParts(text.text);
-        //             words.push(...parseTextService.extractWords(text.textParts));
-        //         });
-        //
-        //         return this.wordsDA.getList(words);
-        //     })
-        // ).next(
-        //     new MethodHandler((words: Word[]) => {
-        //         texts.forEach((text: Text) => {
-        //             text.textParts = parseTextService.completeTextParts(text.textParts, words);
-        //             text.percentageUnknown = Text.getPercentageUnknown(text);
-        //             text.percentageLearning = Text.getPercentageLearning(text);
-        //         });
-        //     })
-        // );
-        // getTextsChain.run({});
+    private processGetText(): void {
+        const getTextChain = new GetRequestHandler(ipcEvents.GET_TEXT, this.getText$);
+        getTextChain.run({});
     }
 
 
@@ -106,13 +60,23 @@ export class TextService {
     }
 
 
+    private processOpenTextEdit(): void {
+        const openTextEditChain = new IpcMainHandler(ipcEvents.OPEN_TEXT_EDIT);
+        openTextEditChain
+            .next(
+                new MethodHandler<any>((textId: string) => (new Navigation()).openPage(`${Routes.EDIT_TEXT}/${textId}`))
+            );
+        openTextEditChain.run({});
+    }
+
+
     private processGetTextParsed(): void {
         const getTextParsedChain = new GetRequestHandler(ipcEvents.GET_TEXT_PARSED, this.loadTextParsed$);
         getTextParsedChain.run({});
     }
 
 
-    private processFilterTexts(): void {
+    private processGetTexts(): void {
         let texts: Text[] = [];
         let parseTextService: ParseTextService;
 
@@ -174,6 +138,7 @@ export class TextService {
             }),
             map((wordObjects: Word[]) => {
                 text.textParts = parseTextService.completeTextParts(textParts, wordObjects);
+                text.unsavedWords = Array.from(parseTextService.unsavedWords);
                 text.percentageUnknown = Text.getPercentageUnknown(text);
                 text.percentageLearning = Text.getPercentageLearning(text);
 
@@ -187,13 +152,26 @@ export class TextService {
         const language = StateService.getInstance().language;
         text.languageId = language._id;
 
-        const parseTextService = new ParseTextService();
-        const words = parseTextService.getWords(text);
-
-        return (new WordService()).saveWords(words).pipe(
+        return this.saveWords$(text).pipe(
             switchMap(() => {
                 return this.textsDA.addText(text.text, text.title);
             })
         );
     }
+
+
+    private editText$ = (text: Text) => {
+        return this.saveWords$(text).pipe(
+            switchMap(() => this.textsDA.editText(text))
+        );
+    }
+
+
+    private saveWords$ = (text: Text) => {
+        const parseTextService = new ParseTextService();
+        const words = parseTextService.getWords(text);
+
+        return (new WordService()).saveWords(words);
+    }
+
 }

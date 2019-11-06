@@ -1,4 +1,5 @@
 import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { Text } from '../Objects';
 import { StateService } from '../Services';
 import { Database } from './database';
@@ -54,9 +55,25 @@ export class Texts {
     }
 
 
-    public delete(textId): void {
-        this.db.texts.remove$({_id: textId}).subscribe(() => {
-            this.db.texts.persistence.compactDatafile();
-        });
+    public delete(textId): Observable<Text> {
+        return this.db.texts.remove$({_id: textId}).pipe(
+            tap(() => this.db.texts.persistence.compactDatafile())
+        );
+    }
+
+
+    public editText(text: Text): Observable<Text> {
+        return this.db.texts.update$(
+            {
+                _id: text._id,
+            },
+            {
+                userId: text.userId,
+                createdOn: text.createdOn,
+                title: text.title,
+                text: text.text,
+                languageId: text.languageId,
+            }
+        );
     }
 }

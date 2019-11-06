@@ -6,7 +6,6 @@ F - feature, B - bug
  -F languages - on remove display a confirm window
  -F read text - select an extension - several words - save a link to some word in the selection - for parsing
  -F create loader on events (i.e. opening a long text)
- -F archive texts
  -F read text - search
  -F more settings - default language, background image, password
  -F display settings/db tables as json
@@ -29,21 +28,25 @@ F - feature, B - bug
  -F export mnemosyne csv with <b></b>
  -F export mnemosyne with pronounciation
  -F import text from pdf
- -F save progress in db - on load load gradually until the progress
+ -F read text - save progress in db - on load load gradually until the progress
  -F archive the text from read-text page
  -B correctly display translation popups
  -F favicon for the app
- -B read-text - correct sizes for blocks without scrolling
  -F change navigation using ipcMain and navigating on receive in angular + solve content security error + solve routing display of language selection
 
 Story 8
  - edit a text
- - archive texts
+     - archive texts
  - archive a text from read-text
- - list of archived texts - unarchive, do not edit
+     - list of archived texts - unarchive, do not edit
 
 Story 9
  - export words for mnemosyne
  - word - add pronounciation
  - delete example sentence on known words
  - loader - texts, words
+ - create a windows installer
+
+Story 10
+ - text selection
+ - change navigation using ipcMain events

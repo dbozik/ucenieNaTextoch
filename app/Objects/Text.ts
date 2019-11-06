@@ -25,6 +25,7 @@ export class Text {
 
     public percentageUnknown?: number;
     public percentageLearning?: number;
+    public unsavedWords?: string[];
 
     constructor() {
     }

@@ -5,16 +5,16 @@
 
     <nav class="navbar navbar-expand-sm">
         <ul class="navbar-nav">
-            <li [ngClass]="{'active': active === 'regular', 'nav-item': true}">
+            <li [ngClass]="{'active': isRegularTexts, 'nav-item': true}">
                 <a class="nav-link btn btn-primary" (click)="getRegularTexts()">Regular</a>
             </li>
-            <li [ngClass]="{'active': active === 'archived', 'nav-item': true}">
+            <li [ngClass]="{'active': isArchivedTexts, 'nav-item': true}">
                 <a class="nav-link btn btn-primary" (click)="getArchivedTexts()">Archived</a>
             </li>
         </ul>
     </nav>
 
-    <form class="form-inline" [formGroup]="filterForm">
+    <form class="form-inline" [formGroup]="filterForm" *ngIf="isRegularTexts">
         <ng-container (keyup.enter)="filterTexts()">
             <label for="title">Title contains:</label>
             <input type="text" class="form-control" id="title" formControlName="title">
@@ -31,7 +31,7 @@
 
         <button type="submit" class="btn btn-primary" (click)="filterTexts()">Search</button>
 
-        <button class="btn btn-primary" class="margin-right-5" (click)="resetFilter()">Reset</button>
+        <button class="btn btn-primary margin-right-5" (click)="resetFilter()">Reset</button>
     </form>
 
     <div class="row">
@@ -42,9 +42,16 @@
                 <th>Title</th>
                 <th>Perex</th>
                 <th>Created On</th>
-                <th>Percentages (unknown/learning)</th>
-                <th>Edit</th>
-                <th>Archive</th>
+
+                <ng-container *ngIf="isRegularTexts">
+                    <th>Percentages (unknown/learning)</th>
+                    <th>Edit</th>
+                    <th>Archive</th>
+                </ng-container>
+
+                <ng-container *ngIf="isArchivedTexts">
+                    <th>Unarchive</th>
+                </ng-container>
             </tr>
             </thead>
 
@@ -53,16 +60,23 @@
             <tbody>
             <tr *ngFor="let text of texts; let index = index">
                 <td>{{index + 1}}</td>
-                <td style="font-weight:bold;" (click)="textClick(text._id)">
+                <td class="font-weight-bold" (click)="textClick(text._id)">
                     {{text.title ? text.title : text.text.slice(0, 10) + '...'}}
                 </td>
-                <td style="font-weight:lighter;" (click)="textClick(text._id)">
+                <td class="font-weight-lighter" (click)="textClick(text._id)">
                     {{text.text.slice(0, 100)}}...
                 </td>
                 <td>{{text.createdOn | date}}</td>
-                <td>{{text.percentageUnknown | percent}} / {{text.percentageLearning | percent}}</td>
-                <td><button class="btn btn-primary">Edit</button></td>
-                <td><button class="btn btn-primary">Archive</button></td>
+
+                <ng-container *ngIf="isRegularTexts">
+                    <td>{{text.percentageUnknown | percent}} / {{text.percentageLearning | percent}}</td>
+                    <td><button class="btn btn-primary" (click)="openEdit(text._id)">Edit</button></td>
+                    <td><button class="btn btn-primary" (click)="archive(text._id)">Archive</button></td>
+                </ng-container>
+
+                <ng-container *ngIf="isArchivedTexts">
+                    <td class="btn btn-primary" (click)="unarchive(text._id)">Unarchive</td>
+                </ng-container>
             </tr>
             </tbody>
         </table>

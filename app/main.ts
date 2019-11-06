@@ -1,7 +1,7 @@
 import { BrowserWindow } from 'electron';
-import * as Services from '../app/Services';
 import { LwtApp } from './lwt-app';
 import { Navigation } from './navigation';
+import { ArchivedTextService, LanguageService, TextService, UserService, WordService } from './Services';
 
 export default class Main {
     public static lwtApp: LwtApp;
@@ -24,9 +24,10 @@ export default class Main {
 
 
     private static loadServices(): void {
-        (new Services.UserService()).init();
-        (new Services.TextService()).init();
-        (new Services.LanguageService()).init();
-        (new Services.WordService()).init();
+        (new UserService()).init();
+        (new TextService()).init();
+        (new LanguageService()).init();
+        (new WordService()).init();
+        (new ArchivedTextService()).init();
     }
 }
