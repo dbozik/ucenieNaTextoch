@@ -5,6 +5,7 @@ import { Text, TextPart, Word } from '../../../app/Objects';
 import { getColor } from '../color.utils';
 import { ClickService } from '../services/click.service';
 import { LanguageService } from '../services/language.service';
+import { TextArchiveService } from "../services/text-archive.service";
 import { TextService } from '../services/text.service';
 import { WordService } from '../services/word.service';
 
@@ -12,7 +13,7 @@ import { WordService } from '../services/word.service';
     selector: 'app-read-text',
     templateUrl: './read-text.component.html',
     styleUrls: ['./read-text.component.scss'],
-    providers: [ClickService, TextService, LanguageService, WordService],
+    providers: [ClickService, TextService, LanguageService, WordService, TextArchiveService],
 })
 export class ReadTextComponent implements OnInit {
     public text: Text;
@@ -33,6 +34,7 @@ export class ReadTextComponent implements OnInit {
         private readonly clickService: ClickService,
         private readonly languageService: LanguageService,
         private readonly textService: TextService,
+        private readonly textArchiveService: TextArchiveService,
         private readonly wordService: WordService,
         private readonly changeDetectorRef: ChangeDetectorRef,
     ) {
@@ -99,6 +101,11 @@ export class ReadTextComponent implements OnInit {
     public onLoaded(payload: { percentage: number }): void {
         this.percentage = payload.percentage;
         this.changeDetectorRef.detectChanges();
+    }
+
+
+    public archive(): void {
+        this.textArchiveService.archiveText(this.text._id).subscribe();
     }
 
 
