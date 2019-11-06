@@ -7,6 +7,11 @@ import { Language } from '../Objects';
 
 export class LanguageService {
     private languageDA = new DA.Languages();
+    private languagesChangedHandler: MethodHandler<any> = new MethodHandler<any>((data) => {
+        LwtApp.getInstance().mainWindow.webContents.send(ipcEvents.LANGUAGES_CHANGED);
+
+        return data;
+    });
 
     public constructor() {
     }
@@ -58,13 +63,8 @@ export class LanguageService {
         };
 
         const addLanguageChain = new GetRequestHandler(ipcEvents.ADD_LANGUAGE, addLanguage$);
-        addLanguageChain
-            .next(
-                new MethodHandler<any>((data) => {
-                    LwtApp.getInstance().mainWindow.webContents.send(ipcEvents.LANGUAGES_CHANGED);
-                    return data;
-                })
-            );
+        addLanguageChain.next(this.languagesChangedHandler);
+
         addLanguageChain.run({});
     }
 
@@ -79,6 +79,7 @@ export class LanguageService {
         );
 
         const editLanguageChain = new GetRequestHandler(ipcEvents.EDIT_LANGUAGE, editLanguage$);
+        editLanguageChain.next(this.languagesChangedHandler);
 
         editLanguageChain.run({});
     }
@@ -88,14 +89,7 @@ export class LanguageService {
         const deleteLanguageChain = new GetRequestHandler(ipcEvents.DELETE_LANGUAGE,
             (languageId: string) => this.languageDA.delete(languageId)
         );
-        deleteLanguageChain
-            .next(
-                new MethodHandler<any>((data) => {
-                    LwtApp.getInstance().mainWindow.webContents.send(ipcEvents.LANGUAGES_CHANGED);
-
-                    return data;
-                })
-            );
+        deleteLanguageChain.next(this.languagesChangedHandler);
 
         deleteLanguageChain.run({});
     }

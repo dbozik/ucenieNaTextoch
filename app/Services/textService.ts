@@ -19,6 +19,7 @@ export class TextService {
 
     public init(): void {
         this.processSaveText();
+        this.processEditText();
         this.processGetText();
         this.processGetTextParsed();
         this.processGetTexts();
@@ -34,6 +35,12 @@ export class TextService {
                 new MethodHandler((text: Text) => (new Navigation()).openPage(`${Routes.READ_TEXT}/${text._id}`))
             );
         getRequestHandler.run({});
+    }
+
+
+    private processEditText(): void {
+        const editTextChain = new GetRequestHandler(ipcEvents.EDIT_TEXT, this.editText$);
+        editTextChain.run({});
     }
 
 
@@ -145,13 +152,26 @@ export class TextService {
         const language = StateService.getInstance().language;
         text.languageId = language._id;
 
-        const parseTextService = new ParseTextService();
-        const words = parseTextService.getWords(text);
-
-        return (new WordService()).saveWords(words).pipe(
+        return this.saveWords$(text).pipe(
             switchMap(() => {
                 return this.textsDA.addText(text.text, text.title);
             })
         );
     }
+
+
+    private editText$ = (text: Text) => {
+        return this.saveWords$(text).pipe(
+            switchMap(() => this.textsDA.editText(text))
+        );
+    }
+
+
+    private saveWords$ = (text: Text) => {
+        const parseTextService = new ParseTextService();
+        const words = parseTextService.getWords(text);
+
+        return (new WordService()).saveWords(words);
+    }
+
 }

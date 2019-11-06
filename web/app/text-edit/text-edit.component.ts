@@ -53,7 +53,7 @@ export class TextEditComponent implements OnInit {
             return;
         }
 
-        this.textService.edit({...this.editForm.value, _id: this.text._id}).subscribe(() => {
+        this.textService.edit({...this.text,  ...this.editForm.value}).subscribe(() => {
             this.successMessage = true;
             this.changeDetector.detectChanges();
         });

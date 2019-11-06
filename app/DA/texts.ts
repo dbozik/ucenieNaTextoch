@@ -60,4 +60,20 @@ export class Texts {
             tap(() => this.db.texts.persistence.compactDatafile())
         );
     }
+
+
+    public editText(text: Text): Observable<Text> {
+        return this.db.texts.update$(
+            {
+                _id: text._id,
+            },
+            {
+                userId: text.userId,
+                createdOn: text.createdOn,
+                title: text.title,
+                text: text.text,
+                languageId: text.languageId,
+            }
+        );
+    }
 }
