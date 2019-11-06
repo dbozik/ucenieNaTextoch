@@ -47,10 +47,12 @@ export class WordPopupComponent implements OnChanges {
             if (this.isSelection) {
                 this.translateForm = this.formBuilder.group({
                     translation: new FormControl(this.word.translation),
+                    pronounciation: new FormControl(this.word.pronounciation),
                 });
             } else {
                 this.translateForm = this.formBuilder.group({
                     translation: new FormControl(this.word.translation),
+                    pronounciation: new FormControl(this.word.pronounciation),
                     exampleSentence: new FormControl(this.word.exampleSentence),
                     exampleSentenceTranslation: new FormControl(this.word.exampleSentenceTranslation),
                 });
@@ -95,6 +97,7 @@ export class WordPopupComponent implements OnChanges {
 
     public updateTranslation(): void {
         this.word.translation = this.translateForm.get('translation').value;
+        this.word.pronounciation = this.translateForm.get('pronounciation').value;
 
         if (!this.word.translation) {
             this.increaseLevel();

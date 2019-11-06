@@ -77,6 +77,7 @@ export class WordEditComponent implements OnInit {
         this.editForm = this.formBuilder.group({
             content: this.word.content,
             translation: this.word.translation,
+            pronounciation: this.word.pronounciation,
             exampleSentence: this.word.exampleSentence,
             exampleSentenceTranslation: this.word.exampleSentenceTranslation,
             level: new FormControl(this.word.level, Validators.max(colorMaxLevel)),

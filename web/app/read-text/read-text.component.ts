@@ -5,7 +5,7 @@ import { Text, TextPart, Word } from '../../../app/Objects';
 import { getColor } from '../color.utils';
 import { ClickService } from '../services/click.service';
 import { LanguageService } from '../services/language.service';
-import { TextArchiveService } from "../services/text-archive.service";
+import { TextArchiveService } from '../services/text-archive.service';
 import { TextService } from '../services/text.service';
 import { WordService } from '../services/word.service';
 
@@ -178,11 +178,22 @@ export class ReadTextComponent implements OnInit {
 
 
     private processTextParts(textParts: TextPart[]): TextPart[] {
-        return textParts.map((textPart: TextPart) => ({
-            ...textPart,
-            color: textPart.type === 'word' && !!textPart.word ? getColor(textPart.word.level) : '',
-            title: textPart.type === 'word' && !!textPart.word ? textPart.word.translation || '' : ''
-        }));
+        return textParts.map((textPart: TextPart) => {
+            const titleParts: string[] = [];
+            let color: string = '';
+            if (textPart.type === 'word' && !!textPart.word) {
+                if (textPart.word.translation) {
+                    titleParts.push(textPart.word.translation);
+                }
+                if (textPart.word.pronounciation) {
+                    titleParts.push(textPart.word.pronounciation);
+                }
+                color = getColor(textPart.word.level);
+            }
+
+            return {...textPart, color, title: titleParts.join(' - '),
+            };
+        });
     }
 
 
