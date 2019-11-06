@@ -70,7 +70,7 @@
 
                 <ng-container *ngIf="isRegularTexts">
                     <td>{{text.percentageUnknown | percent}} / {{text.percentageLearning | percent}}</td>
-                    <td><button class="btn btn-primary">Edit</button></td>
+                    <td><button class="btn btn-primary" (click)="openEdit(text._id)">Edit</button></td>
                     <td><button class="btn btn-primary" (click)="archive(text._id)">Archive</button></td>
                 </ng-container>
 

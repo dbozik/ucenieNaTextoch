@@ -120,6 +120,11 @@ export class TextsComponent implements OnInit, OnDestroy {
     }
 
 
+    public openEdit(textId: string): void {
+        this.textService.openTextEdit(textId);
+    }
+
+
     public archive(textId: string): void {
         this.textArchiveService.archiveText(textId).subscribe(() => this.removeText(textId));
     }

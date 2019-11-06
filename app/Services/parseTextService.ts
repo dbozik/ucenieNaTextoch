@@ -5,6 +5,8 @@ export class ParseTextService {
     private wordSeparatorsRegex: RegExp;
     private sentenceSeparatorsRegex: RegExp;
 
+    public unsavedWords: Set<string> = new Set<string>();
+
     public constructor() {
         const language = StateService.getInstance().language;
 
@@ -68,6 +70,8 @@ export class ParseTextService {
 
             if (wordObject) {
                 textPart.word = wordObject;
+            } else {
+                this.unsavedWords.add(textPart.content.toLowerCase());
             }
         });
 

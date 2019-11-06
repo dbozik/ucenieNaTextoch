@@ -1,0 +1,27 @@
+<form *ngIf="editForm" [formGroup]="editForm" (click)="onClick()">
+    <h4 style="color: green;" *ngIf="successMessage">Saved successfully</h4>
+
+    <div class="form-group">
+        <label for="title">Title</label>
+        <input type="text" class="form-control" id="title" formControlName="title">
+    </div>
+
+    <div class="form-group">
+        <label for="text">Text</label>
+        <textarea type="text" rows="15" class="form-control" id="text" formControlName="text"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="language">Language</label>
+        <select class="form-control" id="language" formControlName="languageId">
+            <option *ngFor="let language of languages" [value]="language._id">{{language.name}}</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="unsavedWords">Unsaved words</label>
+        <div class="form-control" id="unsavedWords">{{unsavedWords.join(', ')}}</div>
+    </div>
+
+    <button type="submit" class="btn btn-primary" (click)="submit()">Save</button>
+</form>

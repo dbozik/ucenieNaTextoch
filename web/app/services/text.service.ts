@@ -21,6 +21,11 @@ export class TextService {
     }
 
 
+    public edit(text: Text): Observable<Text> {
+        return this.ipcService.sendData(ipcEvents.EDIT_TEXT, text);
+    }
+
+
     public getParsed(textId: string): Observable<Text> {
         return this.ipcService.sendData(ipcEvents.GET_TEXT_PARSED, textId);
     }
@@ -38,6 +43,11 @@ export class TextService {
 
     public openText(textId: string): Observable<Text> {
         return this.ipcService.sendData(ipcEvents.OPEN_TEXT, textId);
+    }
+
+
+    public openTextEdit(textId: string): Observable<Text> {
+        return this.ipcService.sendData(ipcEvents.OPEN_TEXT_EDIT, textId);
     }
 
 

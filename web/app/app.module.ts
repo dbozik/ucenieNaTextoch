@@ -19,6 +19,7 @@ import { WordsComponent } from './words/words.component';
 import { InfiniteScrollComponent } from './infinite-scroll/infinite-scroll.component';
 import { WordEditComponent } from './word-edit/word-edit.component';
 import { WordPopupComponent } from './word-popup/word-popup.component';
+import { TextEditComponent } from './text-edit/text-edit.component';
 
 @NgModule({
     declarations: [
@@ -37,6 +38,7 @@ import { WordPopupComponent } from './word-popup/word-popup.component';
         ScrollItemDirective,
         WordEditComponent,
         WordPopupComponent,
+        TextEditComponent,
     ],
     imports: [
         BrowserModule,

@@ -23,6 +23,7 @@ export class TextService {
         this.processGetTextParsed();
         this.processGetTexts();
         this.processOpenText();
+        this.processOpenTextEdit();
     }
 
 
@@ -49,6 +50,16 @@ export class TextService {
                 new MethodHandler<any>((textId: string) => (new Navigation()).openPage(`${Routes.READ_TEXT}/${textId}`))
             );
         openTextChain.run({});
+    }
+
+
+    private processOpenTextEdit(): void {
+        const openTextEditChain = new IpcMainHandler(ipcEvents.OPEN_TEXT_EDIT);
+        openTextEditChain
+            .next(
+                new MethodHandler<any>((textId: string) => (new Navigation()).openPage(`${Routes.EDIT_TEXT}/${textId}`))
+            );
+        openTextEditChain.run({});
     }
 
 
@@ -120,6 +131,7 @@ export class TextService {
             }),
             map((wordObjects: Word[]) => {
                 text.textParts = parseTextService.completeTextParts(textParts, wordObjects);
+                text.unsavedWords = Array.from(parseTextService.unsavedWords);
                 text.percentageUnknown = Text.getPercentageUnknown(text);
                 text.percentageLearning = Text.getPercentageLearning(text);
 
