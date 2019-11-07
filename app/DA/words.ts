@@ -1,4 +1,5 @@
 import { Observable } from 'rxjs';
+import { tap } from "rxjs/operators";
 import { colorMaxLevel } from '../../web/app/color.utils';
 import { Word, WordsSearch } from '../Objects';
 import { StateService } from '../Services';
@@ -94,6 +95,9 @@ export class Words {
                     exampleSentence: word.exampleSentence,
                     exampleSentenceTranslation: word.exampleSentenceTranslation,
                 }
-            });
+            })
+            .pipe(
+                tap(() => this.db.words.persistence.compactDatafile())
+            );
     }
 }

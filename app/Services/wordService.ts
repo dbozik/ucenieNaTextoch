@@ -1,6 +1,6 @@
 import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { colorMaxLevel } from "../../web/app/color.utils";
+import { colorMaxLevel, learningMaxPercentage } from '../../web/app/color.utils';
 import { ipcEvents } from '../../web/shared/ipc-events.enum';
 import { Routes } from '../../web/shared/routes.enum';
 import * as DA from '../DA';
@@ -45,7 +45,13 @@ export class WordService {
 
 
     private processEditWord(): void {
-        const editWord$ = (word: Word) => this.wordsDA.edit(word);
+        const editWord$ = (word: Word) => {
+            if (!word.exampleSentenceTranslation && word.level > learningMaxPercentage * colorMaxLevel) {
+                word.exampleSentence = '';
+            }
+
+            return this.wordsDA.edit(word);
+        };
 
         const editWordChain = new GetRequestHandler(ipcEvents.EDIT_WORD, editWord$);
 

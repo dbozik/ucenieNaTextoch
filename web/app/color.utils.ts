@@ -1,4 +1,6 @@
 export const colorMaxLevel = 10000;
+export const learningMinPercentage = 0.00001;
+export const learningMaxPercentage = 0.98999;
 
 export function getColor(level: number): string {
     if (typeof level === 'undefined') {

@@ -3,7 +3,7 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { Subject } from 'rxjs';
 import { startWith, takeUntil } from 'rxjs/operators';
 import { Word } from '../../../app/Objects';
-import { getColor } from '../color.utils';
+import { getColor, learningMaxPercentage, learningMinPercentage } from '../color.utils';
 import { LanguageService } from '../services/language.service';
 import { WordService } from '../services/word.service';
 import { ExportCsvUtils } from './export-csv.utils';
@@ -116,8 +116,8 @@ export class WordsComponent implements OnInit, OnDestroy {
                     levelTo = 100;
                     break;
                 case 'learning':
-                    levelFrom = 0.001;
-                    levelTo = 98.999;
+                    levelFrom = learningMinPercentage * 100;
+                    levelTo = learningMaxPercentage * 100;
                     break;
                 default:
                     break;
