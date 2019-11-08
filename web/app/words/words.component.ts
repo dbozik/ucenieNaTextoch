@@ -6,7 +6,7 @@ import { Word } from '../../../app/Objects';
 import { getColor, learningMaxPercentage, learningMinPercentage } from '../color.utils';
 import { LanguageService } from '../services/language.service';
 import { WordService } from '../services/word.service';
-import { ExportCsvUtils } from './export-csv.utils';
+import { ExportUtils } from './export.utils';
 
 type Levels = 'unknown' | 'known' | 'learning';
 
@@ -51,12 +51,12 @@ export class WordsComponent implements OnInit, OnDestroy {
 
 
     public exportWords() {
-        const csvBlob = ExportCsvUtils.exportToCsv(this.words as Word[]);
-        const url = window.URL.createObjectURL(csvBlob);
+        const fileBlob = ExportUtils.exportForMnemosyne(this.words as Word[]);
+        const url = window.URL.createObjectURL(fileBlob);
 
         const downloadLink = document.createElement('a');
         downloadLink.href = url;
-        downloadLink.download = 'export.csv';
+        downloadLink.download = 'export.txt';
         downloadLink.click();
 
         window.URL.revokeObjectURL(url);

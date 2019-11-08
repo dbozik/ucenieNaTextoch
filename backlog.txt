@@ -37,7 +37,7 @@ F - feature, B - bug
 Story 9
  - export words for mnemosyne
      - word - add pronounciation
- - delete example sentence on known words
+     - delete example sentence on known words
      - loader - texts, words
  - create a windows installer
 
