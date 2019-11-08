@@ -33,9 +33,13 @@ F - feature, B - bug
  -B correctly display translation popups
  -F favicon for the app
  -F change navigation using ipcMain and navigating on receive in angular + solve content security error + solve routing display of language selection
+ -F read text - up/down arrows move texts
+ -F texts - display progress
+ -F read text - scroll to the progress immediately
+ -F add exported field on words + editable + filterable
 
 Story 9
- - export words for mnemosyne
+     - export words for mnemosyne
      - word - add pronounciation
      - delete example sentence on known words
      - loader - texts, words
