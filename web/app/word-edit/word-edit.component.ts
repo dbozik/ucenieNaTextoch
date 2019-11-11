@@ -1,10 +1,11 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, NgZone } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Language, Word } from '../../../app/Objects';
 import { colorMaxLevel, getColor } from '../color.utils';
 import { LanguageService } from '../services/language.service';
 import { WordService } from '../services/word.service';
+import { Routes } from '../../shared/routes.enum';
 
 @Component({
     selector: 'app-word-edit',
@@ -27,7 +28,9 @@ export class WordEditComponent implements OnInit {
     constructor(
         private readonly changeDetector: ChangeDetectorRef,
         private readonly formBuilder: FormBuilder,
+        private readonly ngZone: NgZone,
         private readonly route: ActivatedRoute,
+        private readonly router: Router,
         private readonly languageService: LanguageService,
         private readonly wordService: WordService,
     ) {
@@ -70,6 +73,11 @@ export class WordEditComponent implements OnInit {
 
     public onClick(): void {
         this.successMessage = false;
+    }
+
+
+    public back(): void {
+        this.ngZone.run(() => this.router.navigate([Routes.WORDS]));
     }
 
 

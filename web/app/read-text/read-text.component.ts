@@ -1,6 +1,6 @@
-import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild, NgZone } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Text, TextPart, Word } from '../../../app/Objects';
 import { getColor } from '../color.utils';
 import { ClickService } from '../services/click.service';
@@ -8,6 +8,7 @@ import { LanguageService } from '../services/language.service';
 import { TextArchiveService } from '../services/text-archive.service';
 import { TextService } from '../services/text.service';
 import { WordService } from '../services/word.service';
+import { Routes } from '../../shared/routes.enum';
 
 @Component({
     selector: 'app-read-text',
@@ -31,9 +32,10 @@ export class ReadTextComponent implements OnInit {
 
     constructor(
         private readonly formBuilder: FormBuilder,
+        private readonly ngZone: NgZone,
         private readonly route: ActivatedRoute,
+        private readonly router: Router,
         private readonly clickService: ClickService,
-        private readonly languageService: LanguageService,
         private readonly textService: TextService,
         private readonly textArchiveService: TextArchiveService,
         private readonly wordService: WordService,
@@ -108,6 +110,7 @@ export class ReadTextComponent implements OnInit {
 
     public archive(): void {
         this.textArchiveService.archiveText(this.text._id).subscribe();
+        this.ngZone.run(() => this.router.navigate([Routes.TEXTS]));
     }
 
 
@@ -193,7 +196,8 @@ export class ReadTextComponent implements OnInit {
                 color = getColor(textPart.word.level);
             }
 
-            return {...textPart, color, title: titleParts.join(' - '),
+            return {
+                ...textPart, color, title: titleParts.join(' - '),
             };
         });
     }

@@ -58,7 +58,7 @@ export class SignupComponent implements OnInit {
 
 
     public onBack(): void {
-        this.router.navigateByUrl(Routes.LOGIN);
+        this.router.navigate([Routes.LOGIN]);
     }
 
 }

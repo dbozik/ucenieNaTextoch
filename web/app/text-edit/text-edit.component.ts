@@ -1,9 +1,10 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, NgZone } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Language, Text } from '../../../app/Objects';
 import { LanguageService } from '../services/language.service';
 import { TextService } from '../services/text.service';
+import { Routes } from '../../shared/routes.enum';
 
 @Component({
     selector: 'app-text-edit',
@@ -24,7 +25,9 @@ export class TextEditComponent implements OnInit {
     constructor(
         private readonly changeDetector: ChangeDetectorRef,
         private readonly formBuilder: FormBuilder,
+        private readonly ngZone: NgZone,
         private readonly route: ActivatedRoute,
+        private readonly router: Router,
         private readonly languageService: LanguageService,
         private readonly textService: TextService,
     ) {
@@ -53,7 +56,7 @@ export class TextEditComponent implements OnInit {
             return;
         }
 
-        this.textService.edit({...this.text,  ...this.editForm.value}).subscribe(() => {
+        this.textService.edit({ ...this.text, ...this.editForm.value }).subscribe(() => {
             this.successMessage = true;
             this.changeDetector.detectChanges();
         });
@@ -62,6 +65,11 @@ export class TextEditComponent implements OnInit {
 
     public onClick(): void {
         this.successMessage = false;
+    }
+
+
+    public back(): void {
+        this.ngZone.run(() => this.router.navigate([Routes.TEXTS]));
     }
 
 

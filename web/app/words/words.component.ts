@@ -91,7 +91,7 @@ export class WordsComponent implements OnInit, OnDestroy {
     public resetFilter(): void {
         this.filterForm.setValue({
             word: '',
-            level: 'unknown',
+            level: 'learning',
             levelFrom: '',
             levelTo: '',
         });
@@ -135,7 +135,7 @@ export class WordsComponent implements OnInit, OnDestroy {
     private setFilterForm() {
         this.filterForm = this.formBuilder.group({
             word: '',
-            level: 'unknown',
+            level: 'learning',
             levelFrom: new FormControl({value: '', disabled: true}, Validators.min(0)),
             levelTo: new FormControl({value: '', disabled: true}, Validators.max(100)),
         });

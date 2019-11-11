@@ -1,5 +1,9 @@
 <form *ngIf="editForm" [formGroup]="editForm" (click)="onClick()">
-    <h2>{{word.content}}</h2>
+    <div>
+        <h2>{{word.content}}</h2>
+
+        <button class="btn btn-primary right-button" (click)="back()">Back</button>
+    </div>
 
     <h4 style="color: green;" *ngIf="successMessage">Saved successfully</h4>
 
@@ -25,12 +29,14 @@
 
     <div class="form-group">
         <label for="exampleSentenceTranslation">Example sentence translation</label>
-        <input type="text" class="form-control" id="exampleSentenceTranslation" formControlName="exampleSentenceTranslation">
+        <input type="text" class="form-control" id="exampleSentenceTranslation"
+            formControlName="exampleSentenceTranslation">
     </div>
 
     <div class="form-group">
         <label for="level">Level</label>
-        <input type="number" [max]="colorMaxLevel" class="form-control" id="level" [style.backgroundColor]="color" formControlName="level">
+        <input type="number" [max]="colorMaxLevel" class="form-control" id="level" [style.backgroundColor]="color"
+            formControlName="level">
     </div>
 
     <div class="form-group">

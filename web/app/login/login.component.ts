@@ -48,7 +48,7 @@ export class LoginComponent implements OnInit {
 
 
     public onSignup(): void {
-        this.router.navigateByUrl(Routes.SIGNUP);
+        this.router.navigate([Routes.SIGNUP]);
     }
 
 

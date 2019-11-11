@@ -29,8 +29,11 @@ F - feature, B - bug
  -F add exported field on words + editable + filterable
  -F texts lengths show, also in read text
  -F words - display level in %
- -B word detail doesn't open
- -B text detail doesn't open
+ -F navigation
+    - words - learning default
+    - word - back button - words
+    - text - back button - texts
+    - read-text - archived - texts
 
 Story 9
      - export words for mnemosyne
