@@ -32,7 +32,7 @@ export class TextService {
         const getRequestHandler = new GetRequestHandler(ipcEvents.ADD_TEXT, this.saveText$);
         getRequestHandler
             .next(
-                new MethodHandler((text: Text) => (new Navigation()).openPage(`${Routes.READ_TEXT}/${text._id}`))
+                new MethodHandler((text: Text) => (new Navigation()).openPage([Routes.READ_TEXT, text._id]))
             );
         getRequestHandler.run({});
     }
@@ -54,7 +54,7 @@ export class TextService {
         const openTextChain = new IpcMainHandler(ipcEvents.OPEN_TEXT);
         openTextChain
             .next(
-                new MethodHandler<any>((textId: string) => (new Navigation()).openPage(`${Routes.READ_TEXT}/${textId}`))
+                new MethodHandler<any>((textId: string) => (new Navigation()).openPage([Routes.READ_TEXT, textId]))
             );
         openTextChain.run({});
     }
@@ -64,7 +64,7 @@ export class TextService {
         const openTextEditChain = new IpcMainHandler(ipcEvents.OPEN_TEXT_EDIT);
         openTextEditChain
             .next(
-                new MethodHandler<any>((textId: string) => (new Navigation()).openPage(`${Routes.EDIT_TEXT}/${textId}`))
+                new MethodHandler<any>((textId: string) => (new Navigation()).openPage([Routes.READ_TEXT, textId]))
             );
         openTextEditChain.run({});
     }

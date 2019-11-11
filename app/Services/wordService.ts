@@ -74,7 +74,7 @@ export class WordService {
 
         openWordEditChain
             .next(
-                new MethodHandler((wordId: string) => (new Navigation()).openPage(`${Routes.WORD}/${wordId}`))
+                new MethodHandler((wordId: string) => (new Navigation()).openPage[Routes.WORD, wordId])
             );
 
         openWordEditChain.run({});

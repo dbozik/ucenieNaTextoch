@@ -4,7 +4,7 @@ import { BaseHandler } from './base-handler';
 export class RedirectHandler<T> extends BaseHandler<T> {
 
     constructor(
-        private redirectUrl: string,
+        private redirectUrl: string[],
     ) {
         super();
     }

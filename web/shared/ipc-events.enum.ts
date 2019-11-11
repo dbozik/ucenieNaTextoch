@@ -1,4 +1,6 @@
 export enum ipcEvents {
+    ROUTING = 'lwt-routing',
+
     // login
     LOGIN = 'lwt-login',
     LOGIN_FAILED = 'lwt-login-failed',

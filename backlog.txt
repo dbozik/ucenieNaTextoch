@@ -37,6 +37,7 @@ F - feature, B - bug
  -F texts - display progress
  -F read text - scroll to the progress immediately
  -F add exported field on words + editable + filterable
+ -F texts lengths show, also in read text
 
 Story 9
      - export words for mnemosyne

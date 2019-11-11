@@ -52,7 +52,6 @@ export class LwtApp {
         const environment: 'dev' | 'prod' = process.env.NODE_ENV.trim() as 'dev' | 'prod';
 
         this.mainWindow.loadFile('./dist/web/index.html');
-        this.navigation.openPage(Routes.LOGIN);
         if (environment !== 'prod') {
             this.mainWindow.webContents.openDevTools();
         }

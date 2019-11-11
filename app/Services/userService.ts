@@ -26,7 +26,7 @@ export class UserService {
                 new SendRequestHandler(signupRequest$)
             )
             .next(
-                new RedirectHandler(Routes.LOGIN)
+                new RedirectHandler([Routes.LOGIN])
             );
 
         signupChain.run({});
@@ -70,7 +70,7 @@ export class UserService {
         ).next(
             new MethodHandler<any>(() => LwtApp.getInstance().mainWindow.webContents.send(ipcEvents.LOGGED_IN))
         ).next(
-            new RedirectHandler(Routes.TEXTS)
+            new RedirectHandler([Routes.TEXTS])
         );
 
         signinChain.run({});

@@ -18,25 +18,25 @@ export class Navigation {
         {
             label: 'Add Text!',
             click: () => {
-                this.openPage(Routes.ADD_TEXT);
+                this.openPage([Routes.ADD_TEXT]);
             },
         },
         {
             label: 'Texts',
             click: () => {
-                this.openPage(Routes.TEXTS);
+                this.openPage([Routes.TEXTS]);
             },
         },
         {
             label: 'Vocabulary',
             click: () => {
-                this.openPage(Routes.WORDS);
+                this.openPage([Routes.WORDS]);
             },
         },
         {
             label: 'Settings',
             click: () => {
-                this.openPage(Routes.SETTINGS);
+                this.openPage([Routes.SETTINGS]);
             },
         },
         {
@@ -44,20 +44,14 @@ export class Navigation {
             click: () => {
                 this.closeMenu();
                 LwtApp.getInstance().mainWindow.webContents.send(ipcEvents.LOGGED_OUT);
-                this.openPage(Routes.LOGIN);
+                this.openPage([Routes.LOGIN]);
             },
         }
     ];
 
 
-    public openPage(page: string): void {
-        const javascript: string = this.wrapFn(() => {
-            window.ngZone.run(() => {
-                window.router.navigateByUrl(`/${page}`);
-            });
-        }).replace('${page}', page);
-
-        Main.lwtApp.mainWindow.webContents.executeJavaScript(javascript);
+    public openPage(page: string[]): void {
+        LwtApp.getInstance().mainWindow.webContents.send(ipcEvents.ROUTING, page);
     }
 
 
