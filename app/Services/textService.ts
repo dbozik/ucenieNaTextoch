@@ -64,7 +64,7 @@ export class TextService {
         const openTextEditChain = new IpcMainHandler(ipcEvents.OPEN_TEXT_EDIT);
         openTextEditChain
             .next(
-                new MethodHandler<any>((textId: string) => (new Navigation()).openPage([Routes.READ_TEXT, textId]))
+                new MethodHandler<any>((textId: string) => (new Navigation()).openPage([Routes.EDIT_TEXT, textId]))
             );
         openTextEditChain.run({});
     }

@@ -4,7 +4,7 @@ import { colorMaxLevel, learningMaxPercentage } from '../../web/app/color.utils'
 import { ipcEvents } from '../../web/shared/ipc-events.enum';
 import { Routes } from '../../web/shared/routes.enum';
 import * as DA from '../DA';
-import { GetRequestHandler, MethodHandler, SendRequestHandler } from '../Handlers';
+import { GetRequestHandler, MethodHandler, SendRequestHandler, IpcMainHandler } from '../Handlers';
 import { Navigation } from '../navigation';
 import { Word, WordsSearch } from '../Objects';
 import { ParseTextService } from './parseTextService';
@@ -70,11 +70,11 @@ export class WordService {
 
 
     private processOpenWordEdit(): void {
-        const openWordEditChain = new GetRequestHandler(ipcEvents.OPEN_WORD_EDIT, (wordId: string) => of(wordId));
+        const openWordEditChain = new IpcMainHandler(ipcEvents.OPEN_WORD_EDIT);
 
         openWordEditChain
             .next(
-                new MethodHandler((wordId: string) => (new Navigation()).openPage[Routes.WORD, wordId])
+                new MethodHandler<any>((wordId: string) => (new Navigation()).openPage([Routes.WORD, wordId]))
             );
 
         openWordEditChain.run({});
