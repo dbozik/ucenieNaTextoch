@@ -47,7 +47,11 @@ export class LwtApp {
     private onReady = () => {
         this.navigation.closeMenu();
 
-        this.mainWindow = new this.browserWindow({width: 1500, height: 927});
+        this.mainWindow = new this.browserWindow({
+            width: 1500, 
+            height: 927, 
+            icon: './web/favicon.ico',
+        });
 
         const environment: 'dev' | 'prod' = process.env.NODE_ENV.trim() as 'dev' | 'prod';
 
