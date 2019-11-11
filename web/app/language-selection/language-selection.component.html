@@ -1,4 +1,4 @@
-<div class="row" *ngIf="languages && languages.length > 0">
+<div class="row" *ngIf="languages && languages.length > 0" [hidden]="hidden">
     <select [formControl]="languagesControl" class="form-control">
         <option *ngFor="let language of languages" [value]="language._id">
             {{language.name}}
