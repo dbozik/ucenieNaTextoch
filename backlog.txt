@@ -29,6 +29,7 @@ F - feature, B - bug
  -F add exported field on words + editable + filterable
  -F texts lengths show, also in read text
  -F words - display level in %
+ -F text detail - on change language delete words in the original language (possibly if they fit the sentence)
  -F navigation
     - words - learning default
     - word - back button - words
