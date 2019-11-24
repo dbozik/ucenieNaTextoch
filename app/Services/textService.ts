@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { ParseTextService, StateService, WordService } from '.';
 import { ipcEvents } from '../../web/shared/ipc-events.enum';
@@ -161,8 +161,34 @@ export class TextService {
 
 
     private editText$ = (text: Text) => {
-        return this.saveWords$(text).pipe(
-            switchMap(() => this.textsDA.editText(text))
+        // get the old text
+        return this.textsDA.get(text._id).pipe(
+            switchMap((oldText: Text) => {
+                if (text.languageId !== oldText.languageId) {
+                    const parseTextService: ParseTextService = new ParseTextService();
+                    // get all the words from the text
+                    const words: Word[] = parseTextService.getWords(text);
+                    const userId = StateService.getInstance().userId;
+
+                    // delete 'unseen' words from the old language
+                    return this.wordsDA.delete({
+                        userId,
+                        content: { $in: words },
+                        languageId: oldText.languageId,
+                        level: 0,
+                    });
+                }
+
+                return of([]);
+            }),
+            switchMap(() => {
+                // change language, for further processing a text with a changed language
+                const { ipcRenderer } = require('electron');
+                ipcRenderer.send(ipcEvents.SELECT_LANGUAGE, text.languageId);
+
+                return this.saveWords$(text);
+            }),
+            switchMap(() => this.textsDA.editText(text)),
         );
     }
 

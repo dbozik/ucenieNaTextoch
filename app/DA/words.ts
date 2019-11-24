@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { tap } from "rxjs/operators";
+import { tap } from 'rxjs/operators';
 import { colorMaxLevel } from '../../web/app/color.utils';
 import { Word, WordsSearch } from '../Objects';
 import { StateService } from '../Services';
@@ -78,7 +78,6 @@ export class Words {
         }
 
         return this.db.words.find$(request);
-
     }
 
 
@@ -99,5 +98,11 @@ export class Words {
             .pipe(
                 tap(() => this.db.words.persistence.compactDatafile())
             );
+    }
+
+    public delete(query: any): Observable<Word[]> {
+        return this.db.words.remove$(query).pipe(
+            tap(() => this.db.words.persistence.compactDatafile())
+        );
     }
 }
