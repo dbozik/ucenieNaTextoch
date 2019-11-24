@@ -190,8 +190,8 @@ export class ReadTextComponent implements OnInit {
                 if (textPart.word.translation) {
                     titleParts.push(textPart.word.translation);
                 }
-                if (textPart.word.pronounciation) {
-                    titleParts.push(textPart.word.pronounciation);
+                if (textPart.word.comment) {
+                    titleParts.push(textPart.word.comment);
                 }
                 color = getColor(textPart.word.level);
             }

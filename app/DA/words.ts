@@ -91,7 +91,7 @@ export class Words {
                     level: word.level,
                     languageId: word.languageId,
                     translation: word.translation,
-                    pronounciation: word.pronounciation,
+                    pronounciation: word.comment,
                     exampleSentence: word.exampleSentence,
                     exampleSentenceTranslation: word.exampleSentenceTranslation,
                 }

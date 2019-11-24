@@ -12,7 +12,7 @@ export class ExportUtils {
         const mnemosyneEntries = words.map((word: Word) => [
             jsonProcess(word.exampleSentence).replace(new RegExp(word.content, 'i'),
                 `<b>${word.exampleSentence.match(new RegExp(word.content, 'i'))}</b>`),
-            jsonProcess(word.pronounciation),
+            `(${jsonProcess(word.comment)})`,
             jsonProcess(word.exampleSentence).replace(new RegExp(word.content, 'i'), `<b>[${word.translation}]</b>`),
         ].join(DELIMITER));
         const mnemosyneArray = mnemosyneEntries.join('\r\n');
