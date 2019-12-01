@@ -97,7 +97,7 @@ export class WordPopupComponent implements OnChanges {
 
     public updateTranslation(): void {
         this.word.translation = this.translateForm.get('translation').value;
-        this.word.comment = this.translateForm.get('pronounciation').value;
+        this.word.comment = this.translateForm.get('comment').value;
 
         if (!this.word.translation) {
             this.increaseLevel();

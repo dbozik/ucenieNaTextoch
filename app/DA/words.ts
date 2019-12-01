@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { tap, map } from 'rxjs/operators';
 import { colorMaxLevel } from '../../web/app/color.utils';
 import { Word, WordsSearch } from '../Objects';
 import { StateService } from '../Services';
@@ -102,7 +102,11 @@ export class Words {
 
     public delete(query: any): Observable<Word[]> {
         return this.db.words.remove$(query).pipe(
-            tap(() => this.db.words.persistence.compactDatafile())
+            map((words: Word[]) => {
+                this.db.words.persistence.compactDatafile();
+
+                return words;
+            })
         );
     }
 }

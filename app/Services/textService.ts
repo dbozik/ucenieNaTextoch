@@ -7,6 +7,7 @@ import * as DA from '../DA';
 import { GetRequestHandler, IpcMainHandler, MethodHandler } from '../Handlers';
 import { Navigation } from '../navigation';
 import { Text, TextPart, TextsSearch, Word } from '../Objects';
+import { ipcRenderer, ipcMain } from 'electron';
 
 export class TextService {
 
@@ -183,8 +184,8 @@ export class TextService {
             }),
             switchMap(() => {
                 // change language, for further processing a text with a changed language
-                const { ipcRenderer } = require('electron');
-                ipcRenderer.send(ipcEvents.SELECT_LANGUAGE, text.languageId);
+                // const { ipcRenderer } = require('electron');
+                // ipcRenderer.send(ipcEvents.SELECT_LANGUAGE, text.languageId);
 
                 return this.saveWords$(text);
             }),
