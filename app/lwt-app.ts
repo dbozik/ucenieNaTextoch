@@ -53,7 +53,7 @@ export class LwtApp {
             icon: './web/favicon.ico',
         });
 
-        const environment: 'dev' | 'prod' = process.env.NODE_ENV.trim() as 'dev' | 'prod';
+        const environment: 'dev' | 'prod' = 'dev'; // process.env.NODE_ENV.trim() as 'dev' | 'prod';
 
         this.mainWindow.loadFile('./dist/web/index.html');
         if (environment !== 'prod') {
