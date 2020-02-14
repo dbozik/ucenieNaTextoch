@@ -48,12 +48,15 @@ export class LwtApp {
         this.navigation.closeMenu();
 
         this.mainWindow = new this.browserWindow({
-            width: 1500, 
-            height: 927, 
+            width: 1500,
+            height: 927,
             icon: './web/favicon.ico',
         });
 
-        const environment: 'dev' | 'prod' = 'dev'; // process.env.NODE_ENV.trim() as 'dev' | 'prod';
+        const environment: 'dev' | 'prod' =
+            !!process.env && !!process.env.NODE_ENV
+                ? process.env.NODE_ENV.trim() as 'dev' | 'prod'
+                : 'prod';
 
         this.mainWindow.loadFile('./dist/web/index.html');
         if (environment !== 'prod') {
